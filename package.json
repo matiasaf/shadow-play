@@ -1,0 +1,19 @@
+{
+  "name": "my-last-movies",
+  "type": "module",
+  "version": "0.1.0",
+  "description": "Cuaderno de cine — un sitio para estudiar las películas que voy viendo",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "astro": "^5.5.0",
+    "d3": "^7.9.0"
+  },
+  "devDependencies": {
+    "@types/d3": "^7.4.3"
+  }
+}

@@ -1,0 +1,106 @@
+---
+import { getCollection, render } from 'astro:content';
+import { Image } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const movies = await getCollection('movies', ({ data }) => !data.draft);
+  return movies.map((movie) => ({
+    params: { slug: movie.id },
+    props: { movie, all: movies },
+  }));
+}
+
+const { movie, all } = Astro.props;
+const { data } = movie;
+const { Content } = await render(movie);
+
+// Resolver títulos de las películas conectadas
+const titleBySlug = new Map(all.map((m) => [m.id, m.data.title]));
+
+const watched = data.watchedOn.toLocaleDateString('es-AR', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
+
+const metaParts = [
+  data.director,
+  String(data.year),
+  data.country,
+  data.runtime ? `${data.runtime} min` : null,
+].filter(Boolean);
+---
+
+<BaseLayout title={`${data.title} — Cuaderno de cine`} description={data.logline}>
+  <article>
+    <header class="wrap film-hero">
+      <a href="/" class="back-link">← Volver al cuaderno</a>
+      <h1>{data.title}</h1>
+      {data.originalTitle && <p class="original">{data.originalTitle}</p>}
+
+      <div class="film-meta">
+        {
+          metaParts.map((part, i) => (
+            <>
+              {i > 0 && <span class="sep">·</span>}
+              <span>{part}</span>
+            </>
+          ))
+        }
+        {
+          data.rating && (
+            <>
+              <span class="sep">·</span>
+              <span class="rating" title={`${data.rating} de 5`}>
+                {'★'.repeat(data.rating)}
+                <span class="off">{'★'.repeat(5 - data.rating)}</span>
+              </span>
+            </>
+          )
+        }
+      </div>
+
+      <p class="film-meta" style="margin-top:0.3rem;">Visto el {watched}</p>
+
+      <p class="film-logline">{data.logline}</p>
+    </header>
+
+    {
+      data.frame && (
+        <figure class="wrap frame-figure">
+          <Image src={data.frame} alt={`Fotograma de ${data.title}`} width={1100} height={620} />
+          {data.frameCaption && <figcaption>{data.frameCaption}</figcaption>}
+        </figure>
+      )
+    }
+
+    <div class="wrap">
+      <div class="prose">
+        <Content />
+      </div>
+
+      {
+        data.connections.length > 0 && (
+          <section class="connections">
+            <h2>Conexiones</h2>
+            {data.connections.map((c) => {
+              const title = titleBySlug.get(c.slug);
+              return title ? (
+                <a class="connection" href={`/peliculas/${c.slug}/`}>
+                  <div class="to">{title} ↗</div>
+                  <div class="why">{c.note}</div>
+                </a>
+              ) : (
+                <div class="connection">
+                  <div class="to">{c.slug}</div>
+                  <div class="why">{c.note}</div>
+                </div>
+              );
+            })}
+          </section>
+        )
+      }
+    </div>
+  </article>
+</BaseLayout>

@@ -1,0 +1,47 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  movie: CollectionEntry<'movies'>;
+  index?: number;
+}
+
+const { movie, index = 1 } = Astro.props;
+const { data } = movie;
+const archiveNumber = String(index).padStart(3, '0');
+const category = data.tags[0] ?? 'Ficha de estudio';
+---
+
+<a class="card" href={`/peliculas/${movie.id}/`}>
+  <div class="card-frame">
+    {
+      data.frame ? (
+        <Image src={data.frame} alt={`Fotograma de ${data.title}`} width={480} height={270} />
+      ) : (
+        <span class="placeholder">
+          <span>{data.title.charAt(0)}</span>
+          <small>Fotograma pendiente</small>
+        </span>
+      )
+    }
+  </div>
+  <div class="card-body">
+    <div class="card-kicker">
+      <span>{category}</span>
+      <span>#{archiveNumber}</span>
+    </div>
+    <h2 class="card-title">{data.title}</h2>
+    <p class="card-meta">{data.director} · {data.year}</p>
+    <p class="card-logline">{data.logline}</p>
+    {
+      data.tags.length > 0 && (
+        <div class="tag-row">
+          {data.tags.slice(0, 3).map((tag) => (
+            <span class="tag">{tag}</span>
+          ))}
+        </div>
+      )
+    }
+  </div>
+</a>
