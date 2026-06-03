@@ -17,6 +17,7 @@ const countries = new Set(movies.map((movie) => movie.data.country).filter(Boole
 
 <BaseLayout title={t('brand')} description={t('meta.home')} lang={lang}>
   <section class="wrap intro home-hero" id="about">
+    <div class="hero-gunfire" aria-hidden="true"></div>
     <div class="hero-marquee" aria-hidden="true">
       <span>{caseNo(movies.length)} · {t('home.archiveTag')}</span>
       <span>EST. MMXXVI</span>
@@ -61,4 +62,68 @@ const countries = new Set(movies.map((movie) => movie.data.country).filter(Boole
       </div>
     </div>
   </section>
+
+  <script>
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!reduce) {
+      document.documentElement.classList.add('js-anim');
+
+      // 4 — cards are "shot into" the archive as they scroll into view
+      const cards = Array.from(document.querySelectorAll<HTMLElement>('.movie-grid .card'));
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue;
+            const card = entry.target as HTMLElement;
+            const delay = Number(card.dataset.delay ?? 0);
+            window.setTimeout(() => card.classList.add('is-hit'), delay);
+            io.unobserve(card);
+          }
+        },
+        { threshold: 0.18 }
+      );
+      cards.forEach((card, i) => {
+        card.dataset.delay = String((i % 3) * 90);
+        io.observe(card);
+      });
+
+      // 3 — click inside the hero leaves a bullet hole + muzzle flash + recoil
+      const hero = document.querySelector<HTMLElement>('.home-hero');
+      if (hero) {
+        const flash = document.createElement('div');
+        flash.className = 'muzzle-screen-flash';
+        document.body.appendChild(flash);
+
+        const bulletSvg = `<svg viewBox="0 0 100 100" width="46" height="46" aria-hidden="true">
+          <circle cx="50" cy="50" r="26" fill="rgba(0,0,0,0.55)"/>
+          <g stroke="rgba(255,255,255,0.5)" stroke-width="1.4" fill="none">
+            <path d="M50 50 L82 28 M50 50 L88 60 M50 50 L58 90 M50 50 L18 78 M50 50 L10 46 M50 50 L36 12"/>
+          </g>
+          <circle cx="50" cy="50" r="8.5" fill="#000" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+        </svg>`;
+
+        hero.addEventListener('click', (ev) => {
+          // ignore clicks on links/buttons inside the hero
+          if ((ev.target as HTMLElement).closest('a, button')) return;
+          const rect = hero.getBoundingClientRect();
+          const hole = document.createElement('span');
+          hole.className = 'bullet-hole';
+          hole.style.left = `${ev.clientX - rect.left}px`;
+          hole.style.top = `${ev.clientY - rect.top}px`;
+          hole.innerHTML = bulletSvg;
+          hero.appendChild(hole);
+
+          flash.classList.remove('fire');
+          void flash.offsetWidth;
+          flash.classList.add('fire');
+
+          hero.classList.remove('hero-shake');
+          void hero.offsetWidth;
+          hero.classList.add('hero-shake');
+
+          window.setTimeout(() => hole.remove(), 3800);
+        });
+      }
+    }
+  </script>
 </BaseLayout>

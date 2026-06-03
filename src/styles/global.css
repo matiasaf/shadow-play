@@ -826,3 +826,242 @@ img {
     gap: 2rem;
   }
 }
+
+/* ===================================================================== */
+/* Noir gunfire — muzzle flashes in the dark. All motion is opt-in via   */
+/* prefers-reduced-motion and degrades to plain visible content.         */
+/* ===================================================================== */
+
+/* Ambient: distant gunfire flickering behind the hero */
+.hero-gunfire {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.hero-gunfire::before,
+.hero-gunfire::after {
+  content: '';
+  position: absolute;
+  width: 16rem;
+  height: 16rem;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.55), transparent 62%);
+  opacity: 0;
+  mix-blend-mode: screen;
+  filter: blur(9px);
+}
+
+/* The "shot in" cards start hidden only when JS + motion are available */
+.js-anim .card {
+  opacity: 0;
+  transform: translateY(14px) scale(0.985);
+}
+
+.js-anim .card.is-hit {
+  opacity: 1;
+  transform: none;
+}
+
+/* Click-to-shoot artifacts */
+.bullet-hole {
+  position: absolute;
+  z-index: 5;
+  width: 46px;
+  height: 46px;
+  margin: -23px 0 0 -23px;
+  pointer-events: none;
+}
+
+.muzzle-screen-flash {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  background: #fff;
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* 1 — Muzzle-flash title reveal (fires once on load) */
+  .home-hero h1 {
+    animation: muzzle-title 1.15s steps(1, end) 0.15s both;
+  }
+
+  @keyframes muzzle-title {
+    0% {
+      opacity: 0;
+      filter: brightness(3.5);
+    }
+    7% {
+      opacity: 1;
+      filter: brightness(4.5);
+    }
+    11% {
+      opacity: 0.12;
+      filter: brightness(1);
+    }
+    19% {
+      opacity: 1;
+      filter: brightness(4);
+    }
+    23% {
+      opacity: 0.08;
+    }
+    33% {
+      opacity: 1;
+      filter: brightness(3.5);
+    }
+    39% {
+      opacity: 0.4;
+      filter: brightness(1);
+    }
+    100% {
+      opacity: 1;
+      filter: brightness(1);
+    }
+  }
+
+  /* 2 — Distant ambient gunfire */
+  .hero-gunfire::before {
+    top: 24%;
+    left: 11%;
+    animation: gunfire-a 7s ease-out infinite;
+  }
+
+  .hero-gunfire::after {
+    right: 13%;
+    bottom: 20%;
+    animation: gunfire-b 9.5s ease-out infinite 2.6s;
+  }
+
+  @keyframes gunfire-a {
+    0%,
+    100% {
+      opacity: 0;
+    }
+    1.4% {
+      opacity: 0.7;
+    }
+    3% {
+      opacity: 0.04;
+    }
+    4.2% {
+      opacity: 0.5;
+    }
+    6% {
+      opacity: 0;
+    }
+  }
+
+  @keyframes gunfire-b {
+    0%,
+    100% {
+      opacity: 0;
+    }
+    1.6% {
+      opacity: 0.6;
+    }
+    3.4% {
+      opacity: 0.05;
+    }
+    4.6% {
+      opacity: 0.45;
+    }
+    6.4% {
+      opacity: 0;
+    }
+  }
+
+  /* 3 — Bullet hole + screen flash + recoil shake */
+  .bullet-hole {
+    animation: bullet-in 0.14s ease-out, bullet-out 0.7s ease 3s forwards;
+  }
+
+  @keyframes bullet-in {
+    0% {
+      transform: scale(0.2);
+      opacity: 0;
+    }
+    60% {
+      transform: scale(1.15);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  @keyframes bullet-out {
+    to {
+      opacity: 0;
+    }
+  }
+
+  .muzzle-screen-flash.fire {
+    animation: screen-flash 0.2s ease-out;
+  }
+
+  @keyframes screen-flash {
+    0% {
+      opacity: 0.5;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+
+  .hero-shake {
+    animation: hero-shake 0.4s ease;
+  }
+
+  @keyframes hero-shake {
+    0%,
+    100% {
+      transform: translate(0, 0);
+    }
+    15% {
+      transform: translate(3px, -2px);
+    }
+    35% {
+      transform: translate(-4px, 2px);
+    }
+    55% {
+      transform: translate(3px, 1px);
+    }
+    75% {
+      transform: translate(-2px, -1px);
+    }
+  }
+
+  /* 4 — Cards "shot into" the archive on scroll */
+  .js-anim .card.is-hit {
+    animation: card-hit 0.55s ease;
+  }
+
+  @keyframes card-hit {
+    0% {
+      opacity: 0;
+      transform: translateY(14px) scale(0.985);
+    }
+    14% {
+      opacity: 1;
+      filter: brightness(2.6);
+    }
+    18% {
+      transform: translate(2px, -2px) scale(1.004);
+    }
+    28% {
+      transform: translate(-2px, 1px);
+      filter: brightness(1);
+    }
+    100% {
+      opacity: 1;
+      transform: none;
+      filter: none;
+    }
+  }
+}
