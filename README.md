@@ -1,53 +1,67 @@
-# 🎞️ Cuaderno de cine
+# 🎞️ Shadowplay
 
-Un sitio personal para **estudiar** las películas que voy viendo, no solo reseñarlas.
-Cada película es una ficha con su idea central, sus temas, un análisis del guion, una
-escena destacada y conexiones con otras películas.
+A personal site to **study** the films I watch, not just review them. Each film is a
+study with its central idea, its themes, a screenplay analysis, a standout scene and
+connections to other films.
 
-Hecho con [Astro](https://astro.build/) + Content Collections (todo en Markdown, sin
-base de datos).
+Built with [Astro](https://astro.build/) + Content Collections (all Markdown, no
+database). The site is **bilingual**: English is the default (served at `/`) and Spanish
+lives under `/es`.
 
-## Cómo correrlo
+## Running it
 
 ```bash
-npm install      # instala dependencias (solo la primera vez)
-npm run dev      # servidor de desarrollo en http://localhost:4321
-npm run build    # genera el sitio estático en dist/
-npm run preview  # previsualiza el build
+npm install      # install dependencies (first time only)
+npm run dev      # dev server at http://localhost:4321
+npm run build    # build the static site into dist/
+npm run preview  # preview the build
 ```
 
-## Cómo agregar una película
+## Internationalization (i18n)
 
-1. Copiá `src/content/movies/_plantilla.md` y renombralo (ej: `dune.md`).
-   El nombre del archivo es el `slug` (la URL será `/peliculas/dune/`).
-2. Completá el frontmatter (datos + `logline` + `tags` + `connections`).
-3. Escribí tu análisis en el cuerpo, usando las secciones de la plantilla.
-4. Poné `draft: false`.
-5. (Opcional) Agregá un fotograma en `src/assets/frames/` y referencialo con `frame:`.
+- Languages are configured in `astro.config.mjs` (`defaultLocale: 'en'`, `locales: ['en','es']`).
+- UI strings live in `src/i18n/ui.ts` — add a key to **both** `en` and `es`.
+- The language switcher is in `src/components/LanguageSwitcher.astro`.
+- Routes mirror per language: `/`, `/map`, `/films/<slug>` and `/es/`, `/es/map`,
+  `/es/films/<slug>`. The page files are thin wrappers around the shared views
+  (`HomeView`, `MapView`, `FilmView`) that take a `lang` prop.
 
-### El frontmatter
+## Adding a film
 
-| Campo           | Obligatorio | Qué es                                                  |
-| --------------- | ----------- | ------------------------------------------------------- |
-| `title`         | sí          | Título (en español o el que prefieras)                  |
-| `originalTitle` | no          | Título original                                         |
-| `director`      | sí          | Director/a                                              |
-| `year`          | sí          | Año                                                     |
-| `country`       | no          | País                                                    |
-| `runtime`       | no          | Duración en minutos                                     |
-| `watchedOn`     | sí          | Fecha en que la viste (`AAAA-MM-DD`)                    |
-| `frame`         | no          | Ruta al fotograma destacado                             |
-| `frameCaption`  | no          | Por qué ese fotograma resume la película                |
-| `logline`       | sí          | La película en una frase, con tus palabras              |
-| `rating`        | no          | Tu puntaje del 1 al 5                                   |
-| `tags`          | no          | Temas y motivos (alimentan el futuro mapa de conexiones)|
-| `connections`   | no          | Links a otras películas + por qué se conectan           |
-| `draft`         | no          | `true` = no se publica todavía                          |
+Each film has one Markdown file **per language** under `src/content/movies/<lang>/`:
 
-## Ideas para crecer
+1. Copy `src/content/movies/_template.md` into both `en/` and `es/` with the same file
+   name (the file name is the language-neutral `slug`, e.g. `dune.md` → `/films/dune/`).
+2. Fill in the frontmatter (data + `logline` + `tags` + `connections`).
+3. Write your analysis in the body, using the template sections.
+4. Set `draft: false`.
+5. (Optional) Add a frame in `src/assets/frames/` and reference it with `frame:`
+   (use `../../../assets/frames/your-frame.jpg` — three levels up from the lang folder).
 
-- **Mapa de conexiones:** los `tags` y `connections` ya guardan los datos para armar
-  un grafo navegable de todo lo que viste.
-- **Filtrar por tag:** página `/tema/[tag]` que liste las películas de cada tema.
-- **Autocompletar datos** (poster, año, director) desde la API de TMDB.
-- **RSS** para que te sigan el cuaderno.
+> `connections` reference the language-neutral `slug` (e.g. `paterson`), so they resolve
+> within whichever language is being viewed.
+
+### The frontmatter
+
+| Field           | Required | What it is                                              |
+| --------------- | -------- | ------------------------------------------------------- |
+| `title`         | yes      | Title in this language                                  |
+| `originalTitle` | no       | Original title                                          |
+| `director`      | yes      | Director                                                |
+| `year`          | yes      | Year                                                    |
+| `country`       | no       | Country                                                 |
+| `runtime`       | no       | Runtime in minutes                                      |
+| `watchedOn`     | yes      | Date you watched it (`YYYY-MM-DD`)                      |
+| `frame`         | no       | Path to the standout frame                              |
+| `frameCaption`  | no       | Why that frame sums up the film                         |
+| `logline`       | yes      | The film in one sentence, in your words                 |
+| `rating`        | no       | Your 1–5 score                                          |
+| `tags`          | no       | Themes and motifs (feed the connection map)             |
+| `connections`   | no       | Links to other films + why they connect                 |
+| `draft`         | no       | `true` = not published yet                              |
+
+## Ideas to grow
+
+- **Filter by tag:** a `/tag/[tag]` page listing the films for each theme.
+- **Autofill data** (poster, year, director) from the TMDB API.
+- **RSS** so people can follow the journal.

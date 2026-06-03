@@ -1,8 +1,8 @@
 {
-  "name": "my-last-movies",
+  "name": "shadowplay",
   "type": "module",
   "version": "0.1.0",
-  "description": "Cuaderno de cine — un sitio para estudiar las películas que voy viendo",
+  "description": "Shadowplay — a bilingual film study journal (en/es)",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",

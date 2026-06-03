@@ -1,0 +1,55 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import MovieCard from './MovieCard.astro';
+import { useTranslations, type Lang } from '../i18n/ui';
+import { getMovies } from '../lib/movies';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const movies = await getMovies(lang);
+const countries = new Set(movies.map((movie) => movie.data.country).filter(Boolean));
+---
+
+<BaseLayout title={t('brand')} description={t('meta.home')} lang={lang}>
+  <section class="wrap intro home-hero" id="about">
+    <p class="eyebrow">{t('home.eyebrow')}</p>
+    <h1>{t('home.title.a')} <span>{t('home.title.b')}</span></h1>
+    <div class="editorial-divider" aria-hidden="true">
+      <i></i>
+      <b></b>
+      <i></i>
+    </div>
+    <p>{t('home.intro')}</p>
+  </section>
+
+  <section class="wrap archive-section" aria-label={t('home.archiveLabel')}>
+    <div class="movie-grid">
+      {
+        movies.map((movie, index) => (
+          <MovieCard movie={movie} index={movies.length - index} lang={lang} />
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="wrap editorial-note">
+    <div class="note-copy">
+      <h2>"{t('home.quote')}"</h2>
+      <p>{t('home.note')}</p>
+    </div>
+    <div class="note-stats" aria-label={t('home.summaryLabel')}>
+      <div>
+        <strong>{movies.length}</strong>
+        <span>{t('home.stat.studies')}</span>
+      </div>
+      <div>
+        <strong>{countries.size}</strong>
+        <span>{t('home.stat.countries')}</span>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,11 +1,11 @@
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
 
-// Cada película es un archivo Markdown en src/content/movies/.
-// El frontmatter guarda los datos + los "disparadores de estudio" cortos,
-// y el cuerpo del Markdown guarda el análisis largo (Temas, Guion, etc.).
+// Each film is a Markdown file under src/content/movies/<lang>/<slug>.md
+// (e.g. en/heat.md, es/heat.md). The frontmatter holds the data + the short
+// "study triggers"; the Markdown body holds the long analysis (Themes, etc.).
 const movies = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/movies' }),
+  loader: glob({ pattern: '**/[^_]*.md', base: './src/content/movies' }),
   schema: ({ image }) =>
     z.object({
       // --- Datos de la película ---

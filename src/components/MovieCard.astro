@@ -1,27 +1,31 @@
 ---
 import { Image } from 'astro:assets';
-import type { CollectionEntry } from 'astro:content';
+import { useTranslations, localizePath, type Lang } from '../i18n/ui';
+import { slugOf, type MovieEntry } from '../lib/movies';
 
 interface Props {
-  movie: CollectionEntry<'movies'>;
+  movie: MovieEntry;
   index?: number;
+  lang: Lang;
 }
 
-const { movie, index = 1 } = Astro.props;
+const { movie, index = 1, lang } = Astro.props;
 const { data } = movie;
+const t = useTranslations(lang);
 const archiveNumber = String(index).padStart(3, '0');
-const category = data.tags[0] ?? 'Ficha de estudio';
+const category = data.tags[0] ?? t('card.category.fallback');
+const href = localizePath(`/films/${slugOf(movie)}/`, lang);
 ---
 
-<a class="card" href={`/peliculas/${movie.id}/`}>
+<a class="card" href={href}>
   <div class="card-frame">
     {
       data.frame ? (
-        <Image src={data.frame} alt={`Fotograma de ${data.title}`} width={480} height={270} />
+        <Image src={data.frame} alt={`${t('film.frameAlt')} ${data.title}`} width={480} height={270} />
       ) : (
         <span class="placeholder">
           <span>{data.title.charAt(0)}</span>
-          <small>Fotograma pendiente</small>
+          <small>{t('card.framePending')}</small>
         </span>
       )
     }

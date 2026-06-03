@@ -6,7 +6,7 @@ year: 1995
 country: 'Estados Unidos'
 runtime: 170
 watchedOn: 2026-06-01
-frame: '../../assets/frames/heat.jpg'
+frame: '../../../assets/frames/heat.jpg'
 frameCaption: 'El café entre Hanna y McCauley: dos hombres, una mesa, la primera vez que se miran a los ojos. Mann filma la película entera en ese plano-contraplano.'
 logline: 'Un detective y un ladrón profesional, espejos uno del otro, se persiguen en una Los Ángeles nocturna donde el oficio devora cualquier vida posible.'
 rating: 5

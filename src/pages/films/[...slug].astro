@@ -1,0 +1,16 @@
+---
+import FilmView from '../../components/FilmView.astro';
+import { getMovies, slugOf } from '../../lib/movies';
+
+export async function getStaticPaths() {
+  const movies = await getMovies('en');
+  return movies.map((movie) => ({
+    params: { slug: slugOf(movie) },
+    props: { movie, all: movies },
+  }));
+}
+
+const { movie, all } = Astro.props;
+---
+
+<FilmView lang="en" movie={movie} all={all} />

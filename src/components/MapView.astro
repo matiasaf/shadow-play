@@ -1,11 +1,20 @@
 ---
-import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { useTranslations, localizePath, type Lang } from '../i18n/ui';
+import { getMovies, slugOf } from '../lib/movies';
 
-const movies = await getCollection('movies', ({ data }) => !data.draft);
+interface Props {
+  lang: Lang;
+}
 
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const movies = await getMovies(lang);
+
+// Nodes are keyed by the language-neutral slug ("heat"), so connections
+// declared with that slug resolve within the current language.
 const nodes = movies.map((m) => ({
-  id: m.id,
+  id: slugOf(m),
   title: m.data.title,
   director: m.data.director,
   year: m.data.year,
@@ -21,10 +30,11 @@ const edges = new Map<
 >();
 
 for (const m of movies) {
+  const from = slugOf(m);
   for (const c of m.data.connections) {
     if (!ids.has(c.slug)) continue;
-    edges.set(keyFor(m.id, c.slug), {
-      source: m.id,
+    edges.set(keyFor(from, c.slug), {
+      source: from,
       target: c.slug,
       type: 'explicit',
       note: c.note,
@@ -36,15 +46,15 @@ for (let i = 0; i < movies.length; i++) {
   for (let j = i + 1; j < movies.length; j++) {
     const a = movies[i]!;
     const b = movies[j]!;
-    const shared = a.data.tags.filter((t) => b.data.tags.includes(t));
+    const shared = a.data.tags.filter((tag) => b.data.tags.includes(tag));
     if (shared.length === 0) continue;
-    const key = keyFor(a.id, b.id);
+    const key = keyFor(slugOf(a), slugOf(b));
     if (edges.has(key)) continue;
     edges.set(key, {
-      source: a.id,
-      target: b.id,
+      source: slugOf(a),
+      target: slugOf(b),
       type: 'tag',
-      note: `Comparten: ${shared.join(', ')}`,
+      note: `${t('map.shareNote')}: ${shared.join(', ')}`,
     });
   }
 }
@@ -60,49 +70,48 @@ const graph = {
   nodes: nodes.map((n) => ({ ...n, degree: degree[n.id] ?? 0 })),
   links,
 };
+
+const config = {
+  filmsBase: localizePath('/films/', lang),
+  noRelations: t('map.noRelations'),
+};
 ---
 
-<BaseLayout
-  title="El mapa — Cuaderno de cine"
-  description="Cómo se conectan entre sí las películas que voy viendo: temas, motivos y vínculos."
->
+<BaseLayout title={`${t('map.title')} — ${t('brand')}`} description={t('meta.map')} lang={lang}>
   <section class="wrap intro map-intro">
-    <p class="eyebrow">Archivo relacional</p>
-    <h1>El mapa</h1>
-    <p>
-      Cada película es una diapositiva sobre la mesa. Las líneas claras son conexiones escritas
-      a mano; las tenues, vínculos automáticos por temas en común.
-    </p>
+    <p class="eyebrow">{t('map.eyebrow')}</p>
+    <h1>{t('map.title')}</h1>
+    <p>{t('map.intro')}</p>
   </section>
 
   <section class="wrap map-wrap">
     <div class="map-shell">
       <div class="map-stage">
-        <svg id="graph" role="img" aria-label="Mapa de conexiones entre películas"></svg>
+        <svg id="graph" role="img" aria-label={t('map.svgLabel')}></svg>
         <div class="map-hints" aria-hidden="true">
-          <span>Arrastrar para navegar</span>
-          <span>Scroll para zoom</span>
+          <span>{t('map.drag')}</span>
+          <span>{t('map.zoom')}</span>
         </div>
       </div>
 
       <aside class="map-panel" id="panel">
         <div class="panel-head">
-          <span>Archivo de estudio</span>
-          <button class="panel-close" id="panel-close" aria-label="Cerrar">×</button>
+          <span>{t('map.studyFile')}</span>
+          <button class="panel-close" id="panel-close" aria-label={t('map.close')}>×</button>
         </div>
         <div class="paper-card">
-          <div class="paper-frame" id="panel-frame"><span id="panel-initial">C</span></div>
-          <h2 id="panel-title">Cuaderno de cine</h2>
-          <p class="panel-meta" id="panel-meta">Seleccioná una película</p>
+          <div class="paper-frame" id="panel-frame"><span id="panel-initial">S</span></div>
+          <h2 id="panel-title">{t('brand')}</h2>
+          <p class="panel-meta" id="panel-meta">{t('map.selectFilm')}</p>
           <div class="panel-tags" id="panel-tags"></div>
           <div class="panel-observation">
-            <span>Observaciones</span>
-            <p id="panel-desc">Tocá una diapositiva para ver sus temas, conexiones y ficha completa.</p>
+            <span>{t('map.observations')}</span>
+            <p id="panel-desc">{t('map.placeholderDesc')}</p>
           </div>
-          <a class="panel-link" id="panel-link" href="/">Ver ficha completa</a>
+          <a class="panel-link" id="panel-link" href={localizePath('/', lang)}>{t('map.seeStudy')}</a>
         </div>
         <div class="panel-relations">
-          <h3 id="panel-conn-h">Correlaciones relacionadas</h3>
+          <h3 id="panel-conn-h">{t('map.related')}</h3>
           <ul class="panel-conns" id="panel-conns"></ul>
         </div>
       </aside>
@@ -111,14 +120,14 @@ const graph = {
     {
       links.length === 0 && (
         <p class="map-empty">
-          Todavía no hay conexiones. Agregá <code>tags</code> o <code>connections</code> en tus
-          fichas y van a aparecer acá.
+          {t('map.empty')}
         </p>
       )
     }
   </section>
 
   <script type="application/json" id="graph-data" set:html={JSON.stringify(graph)} />
+  <script type="application/json" id="map-config" set:html={JSON.stringify(config)} />
 
   <script>
     import * as d3 from 'd3';
@@ -144,8 +153,13 @@ const graph = {
     };
 
     const dataEl = document.getElementById('graph-data');
+    const configEl = document.getElementById('map-config');
     if (dataEl) {
       const graph = JSON.parse(dataEl.textContent || '{}') as { nodes: Node[]; links: Link[] };
+      const config = JSON.parse(configEl?.textContent || '{}') as {
+        filmsBase: string;
+        noRelations: string;
+      };
       const nodes = graph.nodes;
       const links = graph.links;
 
@@ -305,10 +319,10 @@ const graph = {
 
         const tagsEl = document.getElementById('panel-tags') as HTMLElement;
         tagsEl.innerHTML = '';
-        for (const t of n.tags) {
+        for (const tag of n.tags) {
           const span = document.createElement('span');
           span.className = 'tag';
-          span.textContent = t;
+          span.textContent = tag;
           tagsEl.appendChild(span);
         }
 
@@ -319,7 +333,7 @@ const graph = {
           const otherId = idOf(l.source) === id ? idOf(l.target) : idOf(l.source);
           const other = nodes.find((x) => x.id === otherId)!;
           const li = document.createElement('li');
-          li.innerHTML = `<a href="/peliculas/${other.id}/"><span>${other.title.charAt(0)}</span><strong>${other.title}</strong></a><em class="${
+          li.innerHTML = `<a href="${config.filmsBase}${other.id}/"><span>${other.title.charAt(0)}</span><strong>${other.title}</strong></a><em class="${
             l.type === 'explicit' ? 'why' : 'why faint'
           }">${l.note}</em>`;
           list.appendChild(li);
@@ -327,11 +341,11 @@ const graph = {
         if (related.length === 0) {
           const li = document.createElement('li');
           li.className = 'empty-relation';
-          li.textContent = 'Sin correlaciones todavía.';
+          li.textContent = config.noRelations;
           list.appendChild(li);
         }
 
-        (document.getElementById('panel-link') as HTMLAnchorElement).href = `/peliculas/${id}/`;
+        (document.getElementById('panel-link') as HTMLAnchorElement).href = `${config.filmsBase}${id}/`;
         panel.classList.add('is-filled');
       }
 
