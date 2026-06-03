@@ -28,6 +28,8 @@ export const ui = {
     'home.intro':
       'Every film I watch becomes a study: a frame that sums it up, its themes and ideas, how the screenplay is built, and the connections to the rest of the archive. Less scoring, more thinking.',
     'home.archiveLabel': 'Film archive',
+    'home.archiveTag': 'Archive',
+    'home.scroll': 'Scroll',
     'home.quote': "Cinema isn't a verdict: it's a way of looking twice.",
     'home.note':
       "In this journal I'm not trying to close a film with a score. I'm trying to understand why a scene comes back days later: the composition, the rhythm, the silences and the connections that surface once the archive starts talking to itself.",
@@ -38,7 +40,10 @@ export const ui = {
     'card.category.fallback': 'Study note',
     'card.framePending': 'Frame pending',
 
+    'frame.noFrame': 'No frame',
+
     'film.back': 'Back to the archive',
+    'film.studyFile': 'Study file',
     'film.watched': 'Watched on',
     'film.ratingOf': 'of 5',
     'film.connections': 'Connections',
@@ -86,6 +91,8 @@ export const ui = {
     'home.intro':
       'Cada película que veo se vuelve una ficha: un fotograma que la resume, sus temas e ideas, cómo está construido el guion, y las conexiones con el resto del archivo. Menos puntaje, más pensamiento.',
     'home.archiveLabel': 'Archivo de películas',
+    'home.archiveTag': 'Archivo',
+    'home.scroll': 'Scroll',
     'home.quote': 'El cine no es un veredicto: es una forma de mirar dos veces.',
     'home.note':
       'En este cuaderno no busco cerrar una película con un puntaje. Busco entender por qué una escena vuelve días después: la composición, el ritmo, los silencios y las conexiones que aparecen cuando el archivo empieza a hablar entre sí.',
@@ -96,7 +103,10 @@ export const ui = {
     'card.category.fallback': 'Ficha de estudio',
     'card.framePending': 'Fotograma pendiente',
 
+    'frame.noFrame': 'Sin fotograma',
+
     'film.back': 'Volver al archivo',
+    'film.studyFile': 'Ficha de estudio',
     'film.watched': 'Vista el',
     'film.ratingOf': 'de 5',
     'film.connections': 'Conexiones',

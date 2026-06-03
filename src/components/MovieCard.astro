@@ -1,7 +1,9 @@
 ---
-import { Image } from 'astro:assets';
-import { useTranslations, localizePath, type Lang } from '../i18n/ui';
+import Frame from './Frame.astro';
+import { useTranslations, type Lang } from '../i18n/ui';
 import { slugOf, type MovieEntry } from '../lib/movies';
+import { localizePath } from '../i18n/ui';
+import { caseNo, runtimeTimecode } from '../lib/format';
 
 interface Props {
   movie: MovieEntry;
@@ -12,31 +14,30 @@ interface Props {
 const { movie, index = 1, lang } = Astro.props;
 const { data } = movie;
 const t = useTranslations(lang);
-const archiveNumber = String(index).padStart(3, '0');
-const category = data.tags[0] ?? t('card.category.fallback');
 const href = localizePath(`/films/${slugOf(movie)}/`, lang);
+const meta = [data.director, String(data.year), data.country].filter(Boolean).join(' · ');
 ---
 
 <a class="card" href={href}>
-  <div class="card-frame">
-    {
-      data.frame ? (
-        <Image src={data.frame} alt={`${t('film.frameAlt')} ${data.title}`} width={480} height={270} />
-      ) : (
-        <span class="placeholder">
-          <span>{data.title.charAt(0)}</span>
-          <small>{t('card.framePending')}</small>
-        </span>
-      )
-    }
+  <div class="sprockets" aria-hidden="true"></div>
+  <div class="card-frame is-frame">
+    <Frame
+      src={data.frame}
+      alt={`${t('film.frameAlt')} ${data.title}`}
+      title={data.title}
+      code={runtimeTimecode(data.runtime)}
+      noFrameLabel={t('frame.noFrame')}
+      width={520}
+      height={293}
+    />
   </div>
   <div class="card-body">
     <div class="card-kicker">
-      <span>{category}</span>
-      <span>#{archiveNumber}</span>
+      <span>{caseNo(index)}</span>
+      <span>{runtimeTimecode(data.runtime)} · {data.year}</span>
     </div>
     <h2 class="card-title">{data.title}</h2>
-    <p class="card-meta">{data.director} · {data.year}</p>
+    <p class="card-meta">{meta}</p>
     <p class="card-logline">{data.logline}</p>
     {
       data.tags.length > 0 && (

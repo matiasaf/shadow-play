@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import MovieCard from './MovieCard.astro';
 import { useTranslations, type Lang } from '../i18n/ui';
 import { getMovies } from '../lib/movies';
+import { caseNo } from '../lib/format';
 
 interface Props {
   lang: Lang;
@@ -16,6 +17,10 @@ const countries = new Set(movies.map((movie) => movie.data.country).filter(Boole
 
 <BaseLayout title={t('brand')} description={t('meta.home')} lang={lang}>
   <section class="wrap intro home-hero" id="about">
+    <div class="hero-marquee" aria-hidden="true">
+      <span>{caseNo(movies.length)} · {t('home.archiveTag')}</span>
+      <span>EST. MMXXVI</span>
+    </div>
     <p class="eyebrow">{t('home.eyebrow')}</p>
     <h1>{t('home.title.a')} <span>{t('home.title.b')}</span></h1>
     <div class="editorial-divider" aria-hidden="true">
@@ -24,6 +29,10 @@ const countries = new Set(movies.map((movie) => movie.data.country).filter(Boole
       <i></i>
     </div>
     <p>{t('home.intro')}</p>
+    <div class="hero-scroll" aria-hidden="true">
+      <span>{t('home.scroll')}</span>
+      <i></i>
+    </div>
   </section>
 
   <section class="wrap archive-section" aria-label={t('home.archiveLabel')}>
