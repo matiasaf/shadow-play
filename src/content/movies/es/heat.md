@@ -12,8 +12,8 @@ logline: 'Un detective y un ladrón profesional, espejos uno del otro, se persig
 rating: 5
 tags: ['dualidad', 'oficio', 'soledad', 'ciudad nocturna', 'masculinidad', 'tiempo']
 connections:
-  - slug: 'perfect-days'
-    note: 'Las dos son retratos de hombres definidos por su oficio y su soledad, pero en espejo: la rutina como plenitud en una, como condena en la otra.'
+  - slug: 'double-indemnity'
+    note: 'Dos relatos de crimen donde el delincuente y el hombre de la ley se reconocen como espejo: el oficio y el deseo empujan a los protagonistas hacia su propia perdición.'
 draft: false
 ---
 

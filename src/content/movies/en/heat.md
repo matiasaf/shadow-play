@@ -12,8 +12,8 @@ logline: 'A detective and a professional thief, mirror images of each other, hun
 rating: 5
 tags: ['duality', 'craft', 'loneliness', 'nocturnal city', 'masculinity', 'time']
 connections:
-  - slug: 'perfect-days'
-    note: 'Both are portraits of men defined by their craft and their solitude, but mirrored: routine as fullness in one, as a sentence in the other.'
+  - slug: 'double-indemnity'
+    note: 'Two crime stories where the criminal and the man of the law recognize each other as mirrors: craft and desire drive the protagonists to their own undoing.'
 draft: false
 ---
 
