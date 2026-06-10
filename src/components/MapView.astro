@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { useTranslations, localizePath, type Lang } from '../i18n/ui';
 import { getMovies, slugOf } from '../lib/movies';
-import { directorSlug } from '../lib/directors';
+import { directorSlug, getDirectors, obsessionsOf } from '../lib/directors';
 
 interface Props {
   lang: Lang;
@@ -11,53 +11,47 @@ interface Props {
 const { lang } = Astro.props;
 const t = useTranslations(lang);
 const movies = await getMovies(lang);
+const directors = await getDirectors(lang);
 
-// Nodes are keyed by the language-neutral slug ("heat"), so connections
-// declared with that slug resolve within the current language.
-const nodes = movies.map((m) => ({
-  id: slugOf(m),
-  title: m.data.title,
-  director: m.data.director,
-  directorSlug: directorSlug(m.data.director),
-  year: m.data.year,
-  logline: m.data.logline,
-  tags: m.data.tags,
+const filmNodes = movies.map((movie) => ({
+  id: `film:${slugOf(movie)}`,
+  slug: slugOf(movie),
+  kind: 'film' as const,
+  title: movie.data.title,
+  director: movie.data.director,
+  directorSlug: directorSlug(movie.data.director),
+  year: movie.data.year,
+  logline: movie.data.logline,
+  tags: movie.data.tags,
+  frame: movie.data.frame?.src ?? null,
 }));
-const ids = new Set(nodes.map((n) => n.id));
 
+const directorNodes = directors.map((director) => ({
+  id: `director:${director.slug}`,
+  slug: director.slug,
+  kind: 'director' as const,
+  title: director.name,
+  worldview: director.entry?.data.worldview ?? t('director.essayPending'),
+  obsessions: obsessionsOf(director),
+  filmIds: director.films.map((film) => `film:${slugOf(film)}`),
+}));
+
+const filmIds = new Set(filmNodes.map((node) => node.slug));
 const keyFor = (a: string, b: string) => [a, b].sort().join('__');
-const edges = new Map<
+const relationLinks = new Map<
   string,
-  { source: string; target: string; type: 'explicit' | 'director' | 'tag'; note: string }
+  { source: string; target: string; type: 'idea' | 'theme'; note: string }
 >();
 
-for (const m of movies) {
-  const from = slugOf(m);
-  for (const c of m.data.connections) {
-    if (!ids.has(c.slug)) continue;
-    edges.set(keyFor(from, c.slug), {
-      source: from,
-      target: c.slug,
-      type: 'explicit',
-      note: c.note,
-    });
-  }
-}
-
-// Films by the same director cluster together: an automatic visible link,
-// stronger than tag links but never overriding a handwritten connection.
-for (let i = 0; i < movies.length; i++) {
-  for (let j = i + 1; j < movies.length; j++) {
-    const a = movies[i]!;
-    const b = movies[j]!;
-    if (directorSlug(a.data.director) !== directorSlug(b.data.director)) continue;
-    const key = keyFor(slugOf(a), slugOf(b));
-    if (edges.has(key)) continue;
-    edges.set(key, {
-      source: slugOf(a),
-      target: slugOf(b),
-      type: 'director',
-      note: `${t('map.sameDirector')}: ${a.data.director}`,
+for (const movie of movies) {
+  const from = slugOf(movie);
+  for (const connection of movie.data.connections) {
+    if (!filmIds.has(connection.slug)) continue;
+    relationLinks.set(keyFor(from, connection.slug), {
+      source: `film:${from}`,
+      target: `film:${connection.slug}`,
+      type: 'idea',
+      note: connection.note,
     });
   }
 }
@@ -66,49 +60,100 @@ for (let i = 0; i < movies.length; i++) {
   for (let j = i + 1; j < movies.length; j++) {
     const a = movies[i]!;
     const b = movies[j]!;
+    const aSlug = slugOf(a);
+    const bSlug = slugOf(b);
+    if (relationLinks.has(keyFor(aSlug, bSlug))) continue;
     const shared = a.data.tags.filter((tag) => b.data.tags.includes(tag));
     if (shared.length === 0) continue;
-    const key = keyFor(slugOf(a), slugOf(b));
-    if (edges.has(key)) continue;
-    edges.set(key, {
-      source: slugOf(a),
-      target: slugOf(b),
-      type: 'tag',
+    relationLinks.set(keyFor(aSlug, bSlug), {
+      source: `film:${aSlug}`,
+      target: `film:${bSlug}`,
+      type: 'theme',
       note: `${t('map.shareNote')}: ${shared.join(', ')}`,
     });
   }
 }
 
-const links = [...edges.values()];
-const degree: Record<string, number> = Object.fromEntries(nodes.map((n) => [n.id, 0]));
-for (const l of links) {
-  degree[l.source]!++;
-  degree[l.target]!++;
-}
+const membershipLinks = directors.flatMap((director) =>
+  director.films.map((film) => ({
+    source: `director:${director.slug}`,
+    target: `film:${slugOf(film)}`,
+    type: 'membership' as const,
+    note: director.name,
+  }))
+);
 
 const graph = {
-  nodes: nodes.map((n) => ({ ...n, degree: degree[n.id] ?? 0 })),
-  links,
+  nodes: [...directorNodes, ...filmNodes],
+  links: [...membershipLinks, ...relationLinks.values()],
 };
+const ideaCount = [...relationLinks.values()].filter((link) => link.type === 'idea').length;
+const themeCount = [...relationLinks.values()].filter((link) => link.type === 'theme').length;
 
 const config = {
   filmsBase: localizePath('/films/', lang),
   directorsBase: localizePath('/directors/', lang),
+  filmLabel: t('map.filmLabel'),
+  filmsLabel: t('map.filmsLabel'),
+  ideaLabel: t('map.ideaLabel'),
+  themeLabel: t('map.themeLabel'),
   noRelations: t('map.noRelations'),
+  seeFilm: t('map.seeStudy'),
+  seeDirector: t('map.seeDirector'),
 };
 ---
 
 <BaseLayout title={`${t('map.title')} — ${t('brand')}`} description={t('meta.map')} lang={lang}>
-  <section class="wrap intro map-intro">
-    <p class="eyebrow">{t('map.eyebrow')}</p>
-    <h1>{t('map.title')}</h1>
-    <p>{t('map.intro')}</p>
+  <section class="wrap map-intro">
+    <div class="map-heading">
+      <p class="eyebrow">{t('map.eyebrow')}</p>
+      <h1>{t('map.title')}</h1>
+    </div>
+    <div class="map-intro-copy">
+      <p>{t('map.intro')}</p>
+      <dl class="map-stats" aria-label={t('map.summary')}>
+        <div>
+          <dt>{t('map.directorsCount')}</dt>
+          <dd>{String(directors.length).padStart(2, '0')}</dd>
+        </div>
+        <div>
+          <dt>{t('map.filmsCount')}</dt>
+          <dd>{String(movies.length).padStart(2, '0')}</dd>
+        </div>
+        <div>
+          <dt>{t('map.linksCount')}</dt>
+          <dd>{String(ideaCount).padStart(2, '0')}</dd>
+        </div>
+      </dl>
+    </div>
   </section>
 
   <section class="wrap map-wrap">
+    <div class="map-toolbar" aria-label={t('map.layers')}>
+      <div class="map-toolbar-copy">
+        <span class="map-toolbar-index">01</span>
+        <div>
+          <strong>{t('map.readingTitle')}</strong>
+          <span>{t('map.readingHelp')}</span>
+        </div>
+      </div>
+      <div class="layer-controls">
+        <button class="layer-button is-active" type="button" data-layer="idea" aria-pressed="true">
+          <i class="legend-line idea"></i><span>{t('map.ideas')}</span><b>{String(ideaCount).padStart(2, '0')}</b>
+        </button>
+        <button class="layer-button" type="button" data-layer="theme" aria-pressed="false">
+          <i class="legend-line theme"></i><span>{t('map.themes')}</span><b>{String(themeCount).padStart(2, '0')}</b>
+        </button>
+      </div>
+    </div>
+
     <div class="map-shell">
       <div class="map-stage">
         <svg id="graph" role="img" aria-label={t('map.svgLabel')}></svg>
+        <div class="map-stage-label" aria-hidden="true">
+          <span>{t('map.fieldLabel')}</span>
+          <b>{String(graph.nodes.length).padStart(2, '0')}</b>
+        </div>
         <div class="map-hints" aria-hidden="true">
           <span>{t('map.drag')}</span>
           <span>{t('map.zoom')}</span>
@@ -117,34 +162,21 @@ const config = {
 
       <aside class="map-panel" id="panel">
         <div class="panel-head">
-          <span>{t('map.studyFile')}</span>
+          <span id="panel-kind">{t('map.memoryFile')}</span>
           <button class="panel-close" id="panel-close" aria-label={t('map.close')}>×</button>
         </div>
-        <div class="paper-card">
-          <div class="paper-frame" id="panel-frame"><span id="panel-initial">S</span></div>
-          <h2 id="panel-title">{t('brand')}</h2>
-          <p class="panel-meta" id="panel-meta">{t('map.selectFilm')}</p>
-          <div class="panel-tags" id="panel-tags"></div>
-          <div class="panel-observation">
-            <span>{t('map.observations')}</span>
-            <p id="panel-desc">{t('map.placeholderDesc')}</p>
-          </div>
-          <a class="panel-link" id="panel-link" href={localizePath('/', lang)}>{t('map.seeStudy')}</a>
-        </div>
+        <div class="panel-visual" id="panel-visual"><span id="panel-initial">S</span></div>
+        <p class="panel-kicker" id="panel-kicker">{t('map.selectNode')}</p>
+        <h2 id="panel-title">{t('brand')}</h2>
+        <p class="panel-desc" id="panel-desc">{t('map.placeholderDesc')}</p>
+        <div class="panel-tags" id="panel-tags"></div>
+        <a class="panel-link" id="panel-link" href={localizePath('/', lang)}>{t('map.seeStudy')}</a>
         <div class="panel-relations">
-          <h3 id="panel-conn-h">{t('map.related')}</h3>
+          <h3 id="panel-relations-title">{t('map.related')}</h3>
           <ul class="panel-conns" id="panel-conns"></ul>
         </div>
       </aside>
     </div>
-
-    {
-      links.length === 0 && (
-        <p class="map-empty">
-          {t('map.empty')}
-        </p>
-      )
-    }
   </section>
 
   <script type="application/json" id="graph-data" set:html={JSON.stringify(graph)} />
@@ -153,680 +185,424 @@ const config = {
   <script>
     import * as d3 from 'd3';
 
-    type Node = {
+    type FilmNode = {
       id: string;
+      slug: string;
+      kind: 'film';
       title: string;
       director: string;
       directorSlug: string;
       year: number;
       logline: string;
       tags: string[];
-      degree: number;
+      frame: string | null;
       x?: number;
       y?: number;
       fx?: number | null;
       fy?: number | null;
     };
+    type DirectorNode = {
+      id: string;
+      slug: string;
+      kind: 'director';
+      title: string;
+      worldview: string;
+      obsessions: string[];
+      filmIds: string[];
+      x?: number;
+      y?: number;
+      fx?: number | null;
+      fy?: number | null;
+    };
+    type GraphNode = FilmNode | DirectorNode;
     type Link = {
-      source: string | Node;
-      target: string | Node;
-      type: 'explicit' | 'director' | 'tag';
+      source: string | GraphNode;
+      target: string | GraphNode;
+      type: 'membership' | 'idea' | 'theme';
       note: string;
     };
 
     const dataEl = document.getElementById('graph-data');
     const configEl = document.getElementById('map-config');
-    if (dataEl) {
-      const graph = JSON.parse(dataEl.textContent || '{}') as { nodes: Node[]; links: Link[] };
-      const config = JSON.parse(configEl?.textContent || '{}') as {
+    if (dataEl && configEl) {
+      const graph = JSON.parse(dataEl.textContent || '{}') as { nodes: GraphNode[]; links: Link[] };
+      const config = JSON.parse(configEl.textContent || '{}') as {
         filmsBase: string;
         directorsBase: string;
+        filmLabel: string;
+        filmsLabel: string;
+        ideaLabel: string;
+        themeLabel: string;
         noRelations: string;
+        seeFilm: string;
+        seeDirector: string;
       };
-      const nodes = graph.nodes;
-      const links = graph.links;
-
       const svgEl = document.getElementById('graph') as unknown as SVGSVGElement;
       const panel = document.getElementById('panel')!;
+      const nodes = graph.nodes;
+      const links = graph.links;
+      const idOf = (node: string | GraphNode) => (typeof node === 'string' ? node : node.id);
+      const filmSize = { width: 112, height: 84 };
 
-      const idOf = (n: string | Node) => (typeof n === 'string' ? n : n.id);
-      const slideSize = (d: Node) => 74 + Math.min(d.degree, 4) * 8;
-
-      const neighbors = new Map<string, Set<string>>(nodes.map((n) => [n.id, new Set<string>()]));
-      for (const l of links) {
-        neighbors.get(idOf(l.source))!.add(idOf(l.target));
-        neighbors.get(idOf(l.target))!.add(idOf(l.source));
-      }
-
-      let width = svgEl.clientWidth || 800;
-      let height = Math.max(560, Math.round(width * 0.62));
-
+      let width = svgEl.clientWidth || 900;
+      let height = Math.max(650, Math.round(width * 0.68));
       const svg = d3.select(svgEl).attr('viewBox', `0 0 ${width} ${height}`);
       const container = svg.append('g');
-
-      const zoom = d3
-        .zoom<SVGSVGElement, unknown>()
-        .scaleExtent([0.45, 3.5])
-        .on('zoom', (e) => container.attr('transform', e.transform.toString()));
-      svg.call(zoom);
+      svg.call(
+        d3
+          .zoom<SVGSVGElement, unknown>()
+          .scaleExtent([0.45, 2.8])
+          .on('zoom', (event) => container.attr('transform', event.transform.toString()))
+      );
 
       const link = container
         .append('g')
         .attr('class', 'links')
-        .selectAll('line')
+        .selectAll<SVGLineElement, Link>('line')
         .data(links)
         .join('line')
-        .attr('class', (d) => `edge edge-${d.type}`);
+        .attr('class', (item) => `edge edge-${item.type}`)
+        .classed('is-hidden', (item) => item.type === 'theme');
 
       const node = container
         .append('g')
         .attr('class', 'nodes')
-        .selectAll<SVGGElement, Node>('g')
+        .selectAll<SVGGElement, GraphNode>('g')
         .data(nodes)
         .join('g')
-        .attr('class', 'node')
+        .attr('class', (item) => `node node-${item.kind}`)
         .style('cursor', 'pointer');
 
-      node
-        .append('rect')
-        .attr('class', 'slide-shadow')
-        .attr('x', (d) => -slideSize(d) / 2 + 5)
-        .attr('y', (d) => -slideSize(d) / 2 + 9)
-        .attr('width', slideSize)
-        .attr('height', (d) => slideSize(d) * 1.18);
-
-      node
-        .append('rect')
-        .attr('class', 'slide-frame')
-        .attr('x', (d) => -slideSize(d) / 2)
-        .attr('y', (d) => -slideSize(d) / 2)
-        .attr('width', slideSize)
-        .attr('height', (d) => slideSize(d) * 1.18);
-
-      node
-        .append('rect')
-        .attr('class', 'slide-window')
-        .attr('x', (d) => -slideSize(d) / 2 + 8)
-        .attr('y', (d) => -slideSize(d) / 2 + 8)
-        .attr('width', (d) => slideSize(d) - 16)
-        .attr('height', (d) => slideSize(d) * 0.82);
-
-      node
+      const directors = node.filter((item) => item.kind === 'director');
+      directors.append('circle').attr('class', 'director-halo').attr('r', 76);
+      directors.append('circle').attr('class', 'director-core').attr('r', 51);
+      directors
         .append('text')
-        .attr('class', 'slide-initial')
-        .attr('y', 8)
-        .text((d) => d.title.charAt(0));
-
-      node
+        .attr('class', 'director-name')
+        .attr('y', -4)
+        .text((item) => item.title.split(' ').at(-1) ?? item.title);
+      directors
         .append('text')
-        .attr('class', 'slide-code')
-        .attr('y', (d) => slideSize(d) / 2 + 16)
-        .text((d, i) => `#${String(i + 1).padStart(2, '0')} ${d.director.split(' ').at(-1)}`);
+        .attr('class', 'director-count')
+        .attr('y', 17)
+        .text((item) => {
+          const director = item as DirectorNode;
+          const label = director.filmIds.length === 1 ? config.filmLabel : config.filmsLabel;
+          return `${director.filmIds.length} ${label}`;
+        });
 
-      node
+      const films = node.filter((item) => item.kind === 'film');
+      films
+        .append('rect')
+        .attr('class', 'film-shadow')
+        .attr('x', -filmSize.width / 2 + 5)
+        .attr('y', -filmSize.height / 2 + 7)
+        .attr('width', filmSize.width)
+        .attr('height', filmSize.height);
+      films
+        .append('rect')
+        .attr('class', 'film-card')
+        .attr('x', -filmSize.width / 2)
+        .attr('y', -filmSize.height / 2)
+        .attr('width', filmSize.width)
+        .attr('height', filmSize.height);
+      films
+        .append('image')
+        .attr('class', 'film-image')
+        .attr('href', (item) => (item as FilmNode).frame ?? '')
+        .attr('x', -filmSize.width / 2 + 6)
+        .attr('y', -filmSize.height / 2 + 6)
+        .attr('width', filmSize.width - 12)
+        .attr('height', 52)
+        .attr('preserveAspectRatio', 'xMidYMid slice')
+        .classed('has-image', (item) => Boolean((item as FilmNode).frame));
+      films
         .append('text')
-        .attr('class', 'slide-title')
-        .attr('y', (d) => slideSize(d) / 2 + 34)
-        .text((d) => d.title);
+        .attr('class', 'film-initial')
+        .attr('y', -2)
+        .text((item) => item.title.charAt(0));
+      films
+        .append('text')
+        .attr('class', 'film-title')
+        .attr('y', filmSize.height / 2 - 10)
+        .text((item) => item.title);
+      films
+        .append('text')
+        .attr('class', 'film-year')
+        .attr('y', filmSize.height / 2 + 16)
+        .text((item) => String((item as FilmNode).year));
 
-      const sim = d3
-        .forceSimulation<Node>(nodes)
+      const simulation = d3
+        .forceSimulation<GraphNode>(nodes)
         .force(
           'link',
           d3
-            .forceLink<Node, Link>(links)
-            .id((d) => d.id)
-            .distance((l) => (l.type === 'explicit' ? 170 : l.type === 'director' ? 150 : 230))
-            .strength((l) => (l.type === 'explicit' ? 0.5 : l.type === 'director' ? 0.6 : 0.2))
+            .forceLink<GraphNode, Link>(links)
+            .id((item) => item.id)
+            .distance((item) => (item.type === 'membership' ? 145 : item.type === 'idea' ? 250 : 300))
+            .strength((item) => (item.type === 'membership' ? 0.92 : item.type === 'idea' ? 0.14 : 0.025))
         )
-        .force('charge', d3.forceManyBody().strength(-520))
+        .force('charge', d3.forceManyBody().strength((item) => (item.kind === 'director' ? -1150 : -360)))
         .force('center', d3.forceCenter(width / 2, height / 2))
-        .force(
-          'collide',
-          d3.forceCollide<Node>().radius((d) => slideSize(d) * 0.86)
-        )
-        .on('tick', ticked);
-
-      function ticked() {
-        link
-          .attr('x1', (d) => (d.source as Node).x!)
-          .attr('y1', (d) => (d.source as Node).y!)
-          .attr('x2', (d) => (d.target as Node).x!)
-          .attr('y2', (d) => (d.target as Node).y!);
-        node.attr('transform', (d) => `translate(${d.x},${d.y})`);
-      }
+        .force('collide', d3.forceCollide<GraphNode>().radius((item) => (item.kind === 'director' ? 94 : 74)))
+        .on('tick', () => {
+          link
+            .attr('x1', (item) => (item.source as GraphNode).x!)
+            .attr('y1', (item) => (item.source as GraphNode).y!)
+            .attr('x2', (item) => (item.target as GraphNode).x!)
+            .attr('y2', (item) => (item.target as GraphNode).y!);
+          node.attr('transform', (item) => `translate(${item.x},${item.y})`);
+        });
 
       node.call(
         d3
-          .drag<SVGGElement, Node>()
-          .on('start', (e, d) => {
-            if (!e.active) sim.alphaTarget(0.3).restart();
-            d.fx = d.x;
-            d.fy = d.y;
+          .drag<SVGGElement, GraphNode>()
+          .on('start', (event, item) => {
+            if (!event.active) simulation.alphaTarget(0.25).restart();
+            item.fx = item.x;
+            item.fy = item.y;
           })
-          .on('drag', (e, d) => {
-            d.fx = e.x;
-            d.fy = e.y;
+          .on('drag', (event, item) => {
+            item.fx = event.x;
+            item.fy = event.y;
           })
-          .on('end', (e, d) => {
-            if (!e.active) sim.alphaTarget(0);
-            d.fx = null;
-            d.fy = null;
+          .on('end', (event, item) => {
+            if (!event.active) simulation.alphaTarget(0);
+            item.fx = null;
+            item.fy = null;
           })
       );
 
+      const activeLayers = new Set(['membership', 'idea']);
       let selected: string | null = null;
+
+      function relatedLinks(id: string) {
+        return links.filter(
+          (item) =>
+            activeLayers.has(item.type) && (idOf(item.source) === id || idOf(item.target) === id)
+        );
+      }
 
       function select(id: string | null) {
         selected = id;
         if (!id) {
-          node.classed('dim', false).classed('active', false);
-          link.classed('dim', false).classed('hot', false);
+          node.classed('is-dim', false).classed('is-active', false);
+          link.classed('is-dim', false).classed('is-hot', false);
           panel.classList.remove('is-filled');
           return;
         }
-        const near = neighbors.get(id)!;
-        node.classed('active', (n) => n.id === id);
-        node.classed('dim', (n) => n.id !== id && !near.has(n.id));
-        link.classed('hot', (l) => idOf(l.source) === id || idOf(l.target) === id);
-        link.classed('dim', (l) => idOf(l.source) !== id && idOf(l.target) !== id);
+        const near = new Set<string>();
+        for (const item of relatedLinks(id)) {
+          near.add(idOf(item.source) === id ? idOf(item.target) : idOf(item.source));
+        }
+        node.classed('is-active', (item) => item.id === id);
+        node.classed('is-dim', (item) => item.id !== id && !near.has(item.id));
+        link.classed(
+          'is-hot',
+          (item) =>
+            activeLayers.has(item.type) && (idOf(item.source) === id || idOf(item.target) === id)
+        );
+        link.classed(
+          'is-dim',
+          (item) =>
+            !activeLayers.has(item.type) || (idOf(item.source) !== id && idOf(item.target) !== id)
+        );
         fillPanel(id);
       }
 
-      function fillPanel(id: string) {
-        const n = nodes.find((x) => x.id === id)!;
-        (document.getElementById('panel-title') as HTMLElement).textContent = n.title;
-        (document.getElementById('panel-meta') as HTMLElement).innerHTML =
-          `${n.year} · <a href="${config.directorsBase}${n.directorSlug}/">${n.director}</a>`;
-        (document.getElementById('panel-desc') as HTMLElement).textContent = `"${n.logline}"`;
-        (document.getElementById('panel-initial') as HTMLElement).textContent = n.title.charAt(0);
-
-        const tagsEl = document.getElementById('panel-tags') as HTMLElement;
-        tagsEl.innerHTML = '';
-        for (const tag of n.tags) {
+      function setTags(tags: string[]) {
+        const tagsEl = document.getElementById('panel-tags')!;
+        tagsEl.replaceChildren();
+        for (const tag of tags) {
           const span = document.createElement('span');
           span.className = 'tag';
           span.textContent = tag;
           tagsEl.appendChild(span);
         }
+      }
 
-        const related = links.filter((l) => idOf(l.source) === id || idOf(l.target) === id);
-        const list = document.getElementById('panel-conns') as HTMLElement;
-        list.innerHTML = '';
-        for (const l of related) {
-          const otherId = idOf(l.source) === id ? idOf(l.target) : idOf(l.source);
-          const other = nodes.find((x) => x.id === otherId)!;
-          const li = document.createElement('li');
-          li.innerHTML = `<a href="${config.filmsBase}${other.id}/"><span>${other.title.charAt(0)}</span><strong>${other.title}</strong></a><em class="${
-            l.type === 'tag' ? 'why faint' : 'why'
-          }">${l.note}</em>`;
-          list.appendChild(li);
-        }
-        if (related.length === 0) {
-          const li = document.createElement('li');
-          li.className = 'empty-relation';
-          li.textContent = config.noRelations;
-          list.appendChild(li);
-        }
+      function addRelation(title: string, detail: string, href: string, className = '') {
+        const li = document.createElement('li');
+        const anchor = document.createElement('a');
+        anchor.href = href;
+        const strong = document.createElement('strong');
+        strong.textContent = title;
+        anchor.appendChild(strong);
+        const note = document.createElement('p');
+        note.className = `why ${className}`.trim();
+        note.textContent = detail;
+        li.append(anchor, note);
+        document.getElementById('panel-conns')!.appendChild(li);
+      }
 
-        (document.getElementById('panel-link') as HTMLAnchorElement).href = `${config.filmsBase}${id}/`;
+      function fillPanel(id: string) {
+        const current = nodes.find((item) => item.id === id)!;
+        const list = document.getElementById('panel-conns')!;
+        const visual = document.getElementById('panel-visual')!;
+        const initial = document.getElementById('panel-initial')!;
+        const linkEl = document.getElementById('panel-link') as HTMLAnchorElement;
+        list.replaceChildren();
+        visual.style.backgroundImage = '';
+        visual.classList.toggle('is-director', current.kind === 'director');
+        initial.textContent = current.title.charAt(0);
+        document.getElementById('panel-title')!.textContent = current.title;
+
+        if (current.kind === 'director') {
+          document.getElementById('panel-kind')!.textContent = config.seeDirector;
+          document.getElementById('panel-kicker')!.textContent = `${current.filmIds.length} ${
+            current.filmIds.length === 1 ? config.filmLabel : config.filmsLabel
+          }`;
+          document.getElementById('panel-desc')!.textContent = `“${current.worldview}”`;
+          setTags(current.obsessions);
+          linkEl.href = `${config.directorsBase}${current.slug}/`;
+          linkEl.textContent = config.seeDirector;
+          for (const filmId of current.filmIds) {
+            const film = nodes.find((item): item is FilmNode => item.id === filmId && item.kind === 'film');
+            if (film) addRelation(film.title, String(film.year), `${config.filmsBase}${film.slug}/`);
+          }
+        } else {
+          document.getElementById('panel-kind')!.textContent = config.filmLabel;
+          document.getElementById('panel-kicker')!.textContent = `${current.year} · ${current.director}`;
+          document.getElementById('panel-desc')!.textContent = `“${current.logline}”`;
+          setTags(current.tags);
+          if (current.frame) visual.style.backgroundImage = `url("${current.frame}")`;
+          linkEl.href = `${config.filmsBase}${current.slug}/`;
+          linkEl.textContent = config.seeFilm;
+          addRelation(
+            current.director,
+            config.seeDirector,
+            `${config.directorsBase}${current.directorSlug}/`
+          );
+          const relations = relatedLinks(current.id).filter((item) => item.type !== 'membership');
+          for (const relation of relations) {
+            const otherId = idOf(relation.source) === current.id ? idOf(relation.target) : idOf(relation.source);
+            const other = nodes.find((item) => item.id === otherId);
+            if (!other) continue;
+            addRelation(
+              other.title,
+              relation.note,
+              other.kind === 'film'
+                ? `${config.filmsBase}${other.slug}/`
+                : `${config.directorsBase}${other.slug}/`,
+              relation.type === 'theme' ? 'is-faint' : ''
+            );
+          }
+        }
         panel.classList.add('is-filled');
       }
 
-      node.on('click', (e, d) => {
-        e.stopPropagation();
-        select(selected === d.id ? null : d.id);
+      document.querySelectorAll<HTMLButtonElement>('[data-layer]').forEach((button) => {
+        button.addEventListener('click', () => {
+          const layer = button.dataset.layer!;
+          const enabled = !activeLayers.has(layer);
+          if (enabled) activeLayers.add(layer);
+          else activeLayers.delete(layer);
+          button.classList.toggle('is-active', enabled);
+          button.setAttribute('aria-pressed', String(enabled));
+          link.filter((item) => item.type === layer).classed('is-hidden', !enabled);
+          if (selected) select(selected);
+        });
+      });
+
+      node.on('click', (event, item) => {
+        event.stopPropagation();
+        select(selected === item.id ? null : item.id);
       });
       svg.on('click', () => select(null));
       document.getElementById('panel-close')!.addEventListener('click', () => select(null));
 
-      if (nodes[0]) select(nodes[0].id);
+      const hashId = decodeURIComponent(window.location.hash.slice(1));
+      const initial = nodes.find((item) => item.id === hashId) ?? nodes.find((item) => item.kind === 'director');
+      if (initial) select(initial.id);
 
       window.addEventListener('resize', () => {
         width = svgEl.clientWidth || width;
-        height = Math.max(560, Math.round(width * 0.62));
+        height = Math.max(650, Math.round(width * 0.68));
         svg.attr('viewBox', `0 0 ${width} ${height}`);
-        sim.force('center', d3.forceCenter(width / 2, height / 2));
-        sim.alpha(0.3).restart();
+        simulation.force('center', d3.forceCenter(width / 2, height / 2));
+        simulation.alpha(0.25).restart();
       });
     }
   </script>
 </BaseLayout>
 
 <style>
-  .map-intro {
-    padding-block: 4rem 2.5rem;
-    text-align: center;
-  }
-
-  .map-intro .eyebrow {
-    margin-inline: auto;
-  }
-
-  .map-intro h1 {
-    max-width: none;
-  }
-
-  .map-intro p:not(.eyebrow) {
-    margin-inline: auto;
-  }
-
-  .map-wrap {
-    padding-bottom: 5rem;
-  }
-
-  .map-shell {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 420px;
-    min-height: 680px;
-    border: 1px solid var(--border);
-    background: var(--surface);
-  }
-
-  .map-stage {
-    position: relative;
-    min-height: 680px;
-    overflow: hidden;
-    background:
-      radial-gradient(circle at 50% 50%, rgba(150, 178, 207, 0.06), transparent 70%),
-      var(--bg);
-  }
-
-  .map-stage::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    opacity: 0.25;
-    background-image:
-      radial-gradient(rgba(227, 227, 222, 0.16) 1px, transparent 1px),
-      linear-gradient(rgba(227, 227, 222, 0.045) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(227, 227, 222, 0.045) 1px, transparent 1px);
-    background-size: 18px 18px, 96px 96px, 96px 96px;
-  }
-
-  #graph {
-    position: relative;
-    z-index: 1;
-    display: block;
-    width: 100%;
-    height: auto;
-    touch-action: none;
-  }
-
-  .map-hints {
-    position: absolute;
-    bottom: 1.5rem;
-    left: 1.5rem;
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-    gap: 0.55rem;
-  }
-
-  .map-hints span {
-    width: fit-content;
-    border: 1px solid var(--border-soft);
-    border-radius: 999px;
-    padding: 0.45rem 0.8rem;
-    background: rgba(30, 32, 29, 0.58);
-    color: var(--text-soft);
-    font-size: 0.58rem;
-    letter-spacing: 0.24em;
-    text-transform: uppercase;
-    backdrop-filter: blur(10px);
-  }
-
-  .map-empty {
-    color: var(--text-faint);
-    text-align: center;
-    padding-block: 3rem;
-  }
-
-  .map-empty code {
-    color: var(--accent);
-    background: var(--surface);
-    padding: 0.1rem 0.4rem;
-    border-radius: 3px;
-  }
-
-  .map-panel {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    min-height: 100%;
-    border-left: 1px solid var(--border);
-    padding: 1.5rem;
-    background: var(--surface);
-    overflow-y: auto;
-  }
-
-  .panel-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 1rem;
-    color: var(--text-faint);
-    font-size: 0.68rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-  }
-
-  .panel-close {
-    border: 0;
-    background: transparent;
-    color: var(--text-faint);
-    font-size: 1.4rem;
-    line-height: 1;
-    cursor: pointer;
-  }
-
-  .panel-close:hover {
-    color: var(--accent);
-  }
-
-  .paper-card {
-    display: flex;
-    flex-direction: column;
-    gap: 1.1rem;
-    clip-path: polygon(0 0, 100% 1%, 99% 99%, 1% 100%);
-    padding: 1.6rem;
-    background:
-      radial-gradient(rgba(40, 46, 54, 0.08) 1px, transparent 1px) 0 0 / 16px 16px,
-      #e7eaee;
-    color: #20262e;
-    box-shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.7);
-    transform: rotate(0.8deg);
-  }
-
-  .paper-frame {
-    display: grid;
-    place-items: center;
-    aspect-ratio: 4 / 3;
-    border: 1px solid rgba(40, 46, 54, 0.16);
-    background:
-      radial-gradient(circle at 50% 40%, rgba(150, 178, 207, 0.22), transparent 55%),
-      #14181d;
-    color: var(--accent);
-    font-family: var(--font-serif);
-    font-size: 4rem;
-  }
-
-  .paper-card h2 {
-    font-family: var(--font-serif);
-    font-size: 2rem;
-    font-weight: 600;
-    line-height: 1.05;
-  }
-
-  .panel-meta {
-    color: rgba(32, 38, 46, 0.72);
-    font-size: 0.82rem;
-    font-style: italic;
-  }
-
-  .panel-meta :global(a) {
-    color: inherit;
-    text-decoration: underline;
-    text-underline-offset: 0.25em;
-  }
-
-  .panel-meta :global(a:hover) {
-    color: #1c2733;
-  }
-
-  .panel-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.45rem;
-  }
-
-  .panel-tags .tag {
-    border-color: rgba(32, 38, 46, 0.24);
-    color: #20262e;
-    font-weight: 700;
-  }
-
-  .panel-observation {
-    border-top: 1px solid rgba(32, 38, 46, 0.1);
-    padding-top: 1rem;
-  }
-
-  .panel-observation span {
-    display: block;
-    margin-bottom: 0.45rem;
-    color: rgba(32, 38, 46, 0.54);
-    font-size: 0.64rem;
-    font-weight: 700;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-  }
-
-  .panel-observation p {
-    color: rgba(32, 38, 46, 0.78);
-    font-family: var(--font-serif);
-    font-size: 1.08rem;
-    font-style: italic;
-    line-height: 1.55;
-  }
-
-  .panel-link {
-    width: fit-content;
-    border: 2px solid #1c2733;
-    padding: 0.55rem 0.9rem;
-    color: #1c2733;
-    font-size: 0.72rem;
-    font-weight: 800;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
-  }
-
-  .panel-link:hover {
-    background: #1c2733;
-    color: var(--accent);
-    transform: rotate(-1deg);
-  }
-
-  .panel-relations h3 {
-    margin-bottom: 0.85rem;
-    padding-inline: 0.4rem;
-    color: var(--text-faint);
-    font-size: 0.68rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-  }
-
-  .panel-conns {
-    display: grid;
-    gap: 0.7rem;
-    list-style: none;
-    padding: 0;
-  }
-
-  .panel-conns li {
-    border: 1px solid var(--border-soft);
-    background: var(--surface-high);
-    padding: 0.8rem;
-  }
-
-  .panel-conns a {
-    display: flex;
-    align-items: center;
-    gap: 0.7rem;
-    color: var(--text);
-  }
-
-  .panel-conns a span {
-    display: grid;
-    place-items: center;
-    width: 2.1rem;
-    height: 2.5rem;
-    border: 4px solid #e3e3de;
-    background: #1f211d;
-    color: var(--accent);
-    font-family: var(--font-serif);
-    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
-  }
-
-  .panel-conns strong {
-    font-size: 0.92rem;
-  }
-
-  .panel-conns .why {
-    display: block;
-    margin-top: 0.35rem;
-    color: var(--text-soft);
-    font-size: 0.78rem;
-    font-style: normal;
-    line-height: 1.45;
-  }
-
-  .panel-conns .why.faint {
-    color: var(--text-faint);
-    font-style: italic;
-  }
-
-  .empty-relation {
-    color: var(--text-faint);
-    font-size: 0.85rem;
-  }
-
-  @media (max-width: 980px) {
-    .map-shell {
-      grid-template-columns: 1fr;
-    }
-
-    .map-panel {
-      border-left: 0;
-      border-top: 1px solid var(--border);
-    }
-  }
-
-  @media (max-width: 680px) {
-    .map-stage,
-    .map-shell {
-      min-height: 520px;
-    }
-
-    .map-hints {
-      display: none;
-    }
-
-    .map-panel {
-      padding: 1rem;
-    }
-  }
+  .map-intro { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(18rem, 0.8fr); gap: clamp(3rem, 8vw, 7rem); align-items: end; padding-block: clamp(4rem, 9vw, 7rem) clamp(3rem, 6vw, 5rem); }
+  .map-intro .eyebrow { margin-bottom: 1.5rem; }
+  .map-intro h1 { max-width: 7ch; font-size: clamp(4rem, 8.5vw, 7.4rem); line-height: 0.82; text-align: left; }
+  .map-intro-copy > p { max-width: 34rem; color: var(--text-soft); font-family: var(--font-serif); font-size: clamp(1.05rem, 1.7vw, 1.3rem); font-style: italic; line-height: 1.65; }
+  .map-stats { display: flex; gap: clamp(1.5rem, 4vw, 2.5rem); margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1.2rem; }
+  .map-stats div { display: flex; flex-direction: column-reverse; gap: 0.25rem; }
+  .map-stats dt { color: var(--text-faint); font-family: var(--font-mono); font-size: 0.55rem; letter-spacing: 0.14em; text-transform: uppercase; }
+  .map-stats dd { color: var(--accent); font-family: var(--font-serif); font-size: 2.2rem; font-weight: 700; line-height: 1; }
+  .map-wrap { padding-bottom: 5rem; }
+  .map-toolbar { display: flex; align-items: stretch; justify-content: space-between; gap: 2rem; border: 1px solid var(--border); border-bottom: 0; background: var(--bg-soft); }
+  .map-toolbar-copy { display: flex; align-items: center; gap: 1rem; padding: 1rem 1.2rem; }
+  .map-toolbar-copy > div { display: grid; gap: 0.1rem; }
+  .map-toolbar-index { color: var(--text-faint); font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.15em; }
+  .map-toolbar-copy strong { color: var(--text); font-family: var(--font-serif); font-size: 1.05rem; }
+  .map-toolbar-copy div > span { color: var(--text-faint); font-size: 0.7rem; }
+  .layer-controls { display: flex; }
+  .layer-button { display: grid; grid-template-columns: auto 1fr auto; gap: 0.65rem; align-items: center; min-width: 12rem; border: 0; border-left: 1px solid var(--border); padding: 0.8rem 1rem; background: transparent; color: var(--text-faint); font: inherit; font-family: var(--font-mono); font-size: 0.58rem; letter-spacing: 0.1em; text-align: left; text-transform: uppercase; cursor: pointer; transition: background 0.2s ease, color 0.2s ease; }
+  .layer-button b { color: var(--text-faint); font-size: 0.54rem; font-weight: 400; }
+  .layer-button.is-active { color: var(--text); background: var(--surface-high); }
+  .layer-button.is-active b { color: var(--accent); }
+  .legend-line { display: block; width: 1.5rem; height: 1px; background: var(--accent); }
+  .legend-line.theme { background: repeating-linear-gradient(90deg, var(--text-faint) 0 3px, transparent 3px 6px); }
+  .map-shell { display: grid; grid-template-columns: minmax(0, 1fr) 370px; min-height: 760px; border: 1px solid var(--border); background: var(--surface); }
+  .map-stage { position: relative; min-height: 760px; overflow: hidden; background: radial-gradient(circle at 45% 48%, rgba(255, 255, 255, 0.07), transparent 54%), var(--bg); }
+  .map-stage::before { content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0.2; background-image: linear-gradient(rgba(227, 227, 222, 0.045) 1px, transparent 1px), linear-gradient(90deg, rgba(227, 227, 222, 0.045) 1px, transparent 1px); background-size: 72px 72px; mask-image: radial-gradient(circle at center, #000 20%, transparent 86%); }
+  #graph { position: relative; z-index: 1; display: block; width: 100%; height: auto; touch-action: none; }
+  .map-stage-label { position: absolute; top: 1.25rem; left: 1.25rem; z-index: 2; display: grid; gap: 0.2rem; color: var(--text-faint); font-family: var(--font-mono); font-size: 0.54rem; letter-spacing: 0.18em; text-transform: uppercase; }
+  .map-stage-label b { color: var(--text); font-family: var(--font-serif); font-size: 1.6rem; letter-spacing: 0; line-height: 1; }
+  .map-hints { position: absolute; bottom: 1.2rem; left: 1.2rem; z-index: 2; display: flex; gap: 0.5rem; }
+  .map-hints span { border: 1px solid var(--border); padding: 0.35rem 0.65rem; background: rgba(0, 0, 0, 0.72); color: var(--text-faint); font-family: var(--font-mono); font-size: 0.52rem; letter-spacing: 0.14em; text-transform: uppercase; backdrop-filter: blur(10px); }
+  .map-panel { display: flex; flex-direction: column; gap: 1.1rem; min-height: 100%; border-left: 1px solid var(--border); padding: 1.5rem; background: var(--bg-soft); overflow-y: auto; }
+  .panel-head { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 0.9rem; color: var(--text-faint); font-family: var(--font-mono); font-size: 0.58rem; letter-spacing: 0.16em; text-transform: uppercase; }
+  .panel-close { border: 0; background: transparent; color: var(--text-faint); font-size: 1.4rem; cursor: pointer; }
+  .panel-visual { display: grid; place-items: center; aspect-ratio: 16 / 9; border: 1px solid var(--border); background: radial-gradient(circle, rgba(255, 255, 255, 0.13), transparent 56%), #111 center / cover; color: var(--accent); font-family: var(--font-serif); font-size: 4rem; filter: grayscale(1) contrast(1.08); }
+  .panel-visual.is-director { aspect-ratio: 16 / 7; background: radial-gradient(circle, rgba(255, 255, 255, 0.1), transparent 62%), var(--bg); }
+  .panel-kicker { color: var(--accent); font-family: var(--font-mono); font-size: 0.58rem; letter-spacing: 0.16em; text-transform: uppercase; }
+  .map-panel h2 { margin: 0; font-family: var(--font-serif); font-size: clamp(2rem, 3vw, 2.7rem); line-height: 0.98; }
+  .panel-desc { border-top: 1px solid var(--border); padding-top: 1rem; color: var(--text-soft); font-family: var(--font-serif); font-size: 1rem; font-style: italic; line-height: 1.6; }
+  .panel-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .panel-tags .tag { border-color: var(--border); color: var(--text-soft); }
+  .panel-link { width: 100%; border: 1px solid var(--accent); padding: 0.7rem 0.85rem; color: var(--accent); font-family: var(--font-mono); font-size: 0.6rem; font-weight: 700; letter-spacing: 0.12em; text-align: center; text-transform: uppercase; }
+  .panel-link:hover { background: var(--accent); color: var(--bg); }
+  .panel-relations { margin-top: 0.5rem; border-top: 1px solid var(--border); padding-top: 1rem; }
+  .panel-relations h3 { margin-bottom: 0.8rem; color: var(--text-faint); font-size: 0.62rem; letter-spacing: 0.16em; text-transform: uppercase; }
+  .panel-conns { display: grid; gap: 0.55rem; list-style: none; padding: 0; }
+  .panel-conns li { border-bottom: 1px solid var(--border); padding: 0.2rem 0 0.8rem; }
+  .panel-conns a { color: var(--text); }
+  .panel-conns strong { font-family: var(--font-serif); font-size: 1rem; }
+  .panel-conns .why { margin-top: 0.3rem; color: var(--text-soft); font-size: 0.76rem; line-height: 1.45; }
+  .panel-conns .why.is-faint, .empty-relation { color: var(--text-faint); font-style: italic; }
+  @media (max-width: 980px) { .map-intro { grid-template-columns: 1fr; gap: 2rem; } .map-shell { grid-template-columns: 1fr; } .map-panel { border-top: 1px solid var(--border); border-left: 0; } }
+  @media (max-width: 760px) { .map-intro h1 { font-size: clamp(3.5rem, 18vw, 5.2rem); } .map-toolbar { align-items: stretch; flex-direction: column; gap: 0; } .map-toolbar-copy { border-bottom: 1px solid var(--border); } .layer-controls { display: grid; grid-template-columns: 1fr 1fr; } .layer-button { min-width: 0; border-left: 0; } .layer-button + .layer-button { border-left: 1px solid var(--border); } .map-shell, .map-stage { min-height: 580px; } .map-hints { display: none; } .map-panel { padding: 1rem; } }
 </style>
 
 <style is:global>
-  #graph .edge {
-    stroke-width: 1.5;
-    transition: opacity 0.2s ease, stroke-width 0.2s ease;
-  }
-
-  #graph .edge-explicit {
-    stroke: var(--accent-strong);
-    stroke-dasharray: 4 2;
-    stroke-opacity: 0.7;
-    filter: drop-shadow(0 0 3px rgba(150, 178, 207, 0.28));
-    animation: map-dash 30s linear infinite;
-  }
-
-  #graph .edge-director {
-    stroke: var(--accent);
-    stroke-opacity: 0.55;
-  }
-
-  #graph .edge-tag {
-    stroke: var(--border);
-    stroke-dasharray: 2 5;
-    stroke-opacity: 0.42;
-  }
-
-  #graph .edge.hot {
-    stroke-opacity: 1;
-    stroke-width: 2.4;
-  }
-
-  #graph .edge.dim {
-    opacity: 0.08;
-  }
-
-  #graph .node {
-    transition: opacity 0.2s ease;
-  }
-
-  #graph .node .slide-shadow {
-    fill: rgba(0, 0, 0, 0.34);
-    filter: blur(2px);
-  }
-
-  #graph .node .slide-frame {
-    fill: #e3e3de;
-    stroke: #c8c6c5;
-    stroke-width: 1;
-    transition: fill 0.25s ease, filter 0.25s ease, transform 0.25s ease;
-  }
-
-  #graph .node .slide-window {
-    fill: #1c1f1a;
-    stroke: rgba(32, 38, 46, 0.18);
-    stroke-width: 1;
-  }
-
-  #graph .node .slide-initial {
-    fill: var(--accent);
-    font-family: var(--font-serif);
-    font-size: 34px;
-    font-weight: 600;
-    text-anchor: middle;
-    dominant-baseline: middle;
-  }
-
-  #graph .node .slide-code {
-    fill: #20262e;
-    font-family: var(--font-sans);
-    font-size: 8px;
-    font-style: italic;
-    opacity: 0.66;
-    text-anchor: middle;
-  }
-
-  #graph .node .slide-title {
-    fill: var(--text-soft);
-    font-family: var(--font-sans);
-    font-size: 12px;
-    font-style: italic;
-    paint-order: stroke;
-    stroke: var(--bg);
-    stroke-linejoin: round;
-    stroke-width: 4px;
-    text-anchor: middle;
-  }
-
-  #graph .node.active .slide-frame {
-    fill: var(--accent);
-    filter: drop-shadow(0 18px 22px rgba(150, 178, 207, 0.26));
-  }
-
-  #graph .node.active .slide-window {
-    fill: #151710;
-  }
-
-  #graph .node.active .slide-title {
-    fill: var(--accent);
-    font-weight: 700;
-  }
-
-  #graph .node.dim {
-    opacity: 0.23;
-  }
-
-  @keyframes map-dash {
-    to {
-      stroke-dashoffset: -100;
-    }
-  }
+  #graph .edge { transition: opacity 0.2s ease, stroke-width 0.2s ease; }
+  #graph .edge-membership { stroke: var(--accent); stroke-width: 1.2; stroke-opacity: 0.42; }
+  #graph .edge-idea { stroke: var(--accent-strong); stroke-width: 2; stroke-dasharray: 6 3; stroke-opacity: 0.82; }
+  #graph .edge-theme { stroke: var(--text-faint); stroke-width: 1; stroke-dasharray: 2 6; stroke-opacity: 0.32; }
+  #graph .edge.is-hidden { opacity: 0; pointer-events: none; }
+  #graph .edge.is-hot { stroke-opacity: 1; stroke-width: 3; }
+  #graph .edge.is-dim { opacity: 0.04; }
+  #graph .node { transition: opacity 0.2s ease; }
+  #graph .node.is-dim { opacity: 0.15; }
+  #graph .director-halo { fill: rgba(150, 178, 207, 0.035); stroke: rgba(150, 178, 207, 0.22); stroke-dasharray: 3 5; }
+  #graph .director-core { fill: #171a1d; stroke: var(--accent); stroke-width: 1.5; filter: drop-shadow(0 14px 22px rgba(0, 0, 0, 0.45)); }
+  #graph .director-name { fill: var(--text); font-family: var(--font-serif); font-size: 15px; font-weight: 700; text-anchor: middle; text-transform: uppercase; }
+  #graph .director-count { fill: var(--accent); font-family: var(--font-mono); font-size: 7px; letter-spacing: 0.08em; text-anchor: middle; text-transform: uppercase; }
+  #graph .film-shadow { fill: rgba(0, 0, 0, 0.38); filter: blur(2px); }
+  #graph .film-card { fill: #deded8; stroke: #aaa; stroke-width: 1; }
+  #graph .film-image { opacity: 0; filter: grayscale(1) contrast(1.1); }
+  #graph .film-image.has-image { opacity: 0.82; }
+  #graph .film-initial { fill: var(--accent); font-family: var(--font-serif); font-size: 28px; text-anchor: middle; }
+  #graph .film-image.has-image + .film-initial { opacity: 0; }
+  #graph .film-title { fill: #20262e; font-family: var(--font-sans); font-size: 9px; font-weight: 700; text-anchor: middle; }
+  #graph .film-year { fill: var(--text-faint); font-family: var(--font-mono); font-size: 8px; text-anchor: middle; }
+  #graph .node.is-active .director-core, #graph .node.is-active .film-card { stroke: var(--accent); stroke-width: 3; filter: drop-shadow(0 14px 22px rgba(150, 178, 207, 0.25)); }
+  #graph .node.is-active .director-halo { fill: rgba(150, 178, 207, 0.09); stroke-opacity: 0.9; }
 </style>

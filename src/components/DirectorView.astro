@@ -60,6 +60,10 @@ const description = entry?.data.worldview ?? `${director.name} — ${t('director
         }
       </div>
 
+      <a class="director-map-link" href={`${localizePath('/map', lang)}#director:${director.slug}`}>
+        <span aria-hidden="true">◎</span> {t('director.openMap')}
+      </a>
+
       {
         entry ? (
           <blockquote class="film-logline">"{entry.data.worldview}"</blockquote>
@@ -185,6 +189,25 @@ const description = entry?.data.worldview ?? `${director.name} — ${t('director
     font-size: clamp(1.3rem, 2.6vw, 1.7rem);
     font-style: italic;
     line-height: 1.45;
+  }
+
+  .director-map-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    margin-bottom: 1.8rem;
+    border: 1px solid var(--border);
+    padding: 0.55rem 0.8rem;
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .director-map-link:hover {
+    border-color: var(--accent);
+    background: rgba(150, 178, 207, 0.07);
   }
 
   .essay-pending {

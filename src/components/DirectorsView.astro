@@ -12,13 +12,28 @@ interface Props {
 const { lang } = Astro.props;
 const t = useTranslations(lang);
 const directors = await getDirectors(lang);
+const filmCount = directors.reduce((total, director) => total + director.films.length, 0);
 ---
 
 <BaseLayout title={`${t('directors.title')} — ${t('brand')}`} description={t('meta.directors')} lang={lang}>
-  <section class="wrap intro directors-intro">
-    <p class="eyebrow">{t('directors.eyebrow')}</p>
-    <h1>{t('directors.title')}</h1>
-    <p>{t('directors.intro')}</p>
+  <section class="wrap directors-intro">
+    <div class="directors-heading">
+      <p class="eyebrow">{t('directors.eyebrow')}</p>
+      <h1>{t('directors.title')}</h1>
+    </div>
+    <div class="directors-intro-copy">
+      <p>{t('directors.intro')}</p>
+      <dl class="directors-stats" aria-label={t('directors.summary')}>
+        <div>
+          <dt>{t('directors.viewpoints')}</dt>
+          <dd>{String(directors.length).padStart(2, '0')}</dd>
+        </div>
+        <div>
+          <dt>{t('directors.films')}</dt>
+          <dd>{String(filmCount).padStart(2, '0')}</dd>
+        </div>
+      </dl>
+    </div>
   </section>
 
   <section class="wrap directors-list" aria-label={t('directors.title')}>
@@ -27,34 +42,39 @@ const directors = await getDirectors(lang);
         const countLabel =
           director.films.length === 1 ? t('director.study') : t('director.studies');
         return (
-          <a class="director-row" href={localizePath(`/directors/${director.slug}/`, lang)}>
-            <div class="director-row-head">
-              <span class="director-row-no">{String(i + 1).padStart(2, '0')}</span>
-              <div>
-                <h2>{director.name}</h2>
-                <p class="director-row-meta">
-                  {director.films.length} {countLabel} ·{' '}
-                  {director.films.map((f) => f.data.title).join(' · ')}
-                </p>
-                {director.entry && (
-                  <p class="director-row-worldview">"{director.entry.data.worldview}"</p>
-                )}
-              </div>
-            </div>
-            <div class="director-row-frames" aria-hidden="true">
+          <a class="director-card" href={localizePath(`/directors/${director.slug}/`, lang)}>
+            <div class={`director-card-frames frames-${Math.min(director.films.length, 3)}`} aria-hidden="true">
               {director.films.slice(0, 3).map((film) => (
-                <div class="director-row-frame is-frame">
+                <div class="director-card-frame is-frame">
                   <Frame
                     src={film.data.frame}
                     alt=""
                     title={film.data.title}
                     code={runtimeTimecode(film.data.runtime)}
                     noFrameLabel={t('frame.noFrame')}
-                    width={300}
-                    height={169}
+                    width={720}
+                    height={405}
                   />
                 </div>
               ))}
+            </div>
+            <div class="director-card-body">
+              <div class="director-card-kicker">
+                <span>{String(i + 1).padStart(2, '0')}</span>
+                <span>{director.films.length} {countLabel}</span>
+              </div>
+              <h2>{director.name}</h2>
+              {director.entry ? (
+                <p class="director-card-worldview">“{director.entry.data.worldview}”</p>
+              ) : (
+                <p class="director-card-worldview is-pending">{t('director.essayPending')}</p>
+              )}
+              <div class="director-card-footer">
+                <ul class="director-film-list" aria-label={t('director.filmography')}>
+                  {director.films.map((film) => <li>{film.data.title}</li>)}
+                </ul>
+                <span class="director-card-action">{t('directors.open')} <i aria-hidden="true">↗</i></span>
+              </div>
             </div>
           </a>
         );
@@ -65,112 +85,254 @@ const directors = await getDirectors(lang);
 
 <style>
   .directors-intro {
-    padding-block: 4rem 2.5rem;
-    text-align: center;
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(18rem, 0.8fr);
+    gap: clamp(3rem, 8vw, 7rem);
+    align-items: end;
+    padding-block: clamp(4rem, 9vw, 7rem) clamp(3rem, 6vw, 5rem);
   }
 
   .directors-intro .eyebrow {
-    margin-inline: auto;
+    margin-bottom: 1.5rem;
   }
 
   .directors-intro h1 {
-    max-width: none;
+    max-width: 8ch;
+    font-size: clamp(4rem, 8.5vw, 7.4rem);
+    line-height: 0.82;
+    text-align: left;
   }
 
-  .directors-intro p:not(.eyebrow) {
-    margin-inline: auto;
+  .directors-intro-copy > p {
+    max-width: 34rem;
+    color: var(--text-soft);
+    font-family: var(--font-serif);
+    font-size: clamp(1.05rem, 1.7vw, 1.3rem);
+    font-style: italic;
+    line-height: 1.65;
+  }
+
+  .directors-stats {
+    display: flex;
+    gap: 2.5rem;
+    margin-top: 2rem;
+    border-top: 1px solid var(--border);
+    padding-top: 1.2rem;
+  }
+
+  .directors-stats div {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 0.25rem;
+  }
+
+  .directors-stats dt {
+    color: var(--text-faint);
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .directors-stats dd {
+    color: var(--accent);
+    font-family: var(--font-serif);
+    font-size: 2.2rem;
+    font-weight: 700;
+    line-height: 1;
   }
 
   .directors-list {
     display: grid;
-    gap: 0;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1px;
+    border: 1px solid var(--border);
+    background: var(--border);
     padding-bottom: 5rem;
   }
 
-  .director-row {
-    display: grid;
-    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-    gap: 2rem;
-    align-items: center;
-    border-top: 1px solid var(--border);
-    padding-block: 2.2rem;
+  .director-card {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    background: var(--bg-soft);
     color: var(--text);
+    transition: background 0.3s ease;
   }
 
-  .director-row:last-child {
-    border-bottom: 1px solid var(--border);
-  }
-
-  .director-row-head {
-    display: flex;
-    gap: 1.4rem;
-    align-items: baseline;
-  }
-
-  .director-row-no {
-    color: var(--text-faint);
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    letter-spacing: 0.18em;
-  }
-
-  .director-row h2 {
-    margin: 0 0 0.4rem;
-    font-size: clamp(1.7rem, 3.6vw, 2.6rem);
-    font-weight: 700;
-    transition: color 0.2s ease;
-  }
-
-  .director-row:hover h2 {
-    color: var(--accent);
-  }
-
-  .director-row-meta {
-    color: var(--text-soft);
-    font-size: 0.84rem;
-    letter-spacing: 0.03em;
-  }
-
-  .director-row-worldview {
-    margin-top: 0.7rem;
-    max-width: 46rem;
-    color: var(--text-soft);
-    font-family: var(--font-serif);
-    font-size: 1.02rem;
-    font-style: italic;
-    line-height: 1.5;
-  }
-
-  .director-row-frames {
-    display: flex;
-    gap: 0.8rem;
-    justify-content: flex-end;
-  }
-
-  .director-row-frame {
-    width: clamp(90px, 11vw, 150px);
-    aspect-ratio: 16 / 9;
-    border: 1px solid var(--border);
+  .director-card:hover {
     background: var(--surface-high);
   }
 
-  .director-row-frame :global(.frame-img) {
-    opacity: 0.7;
-    transition: opacity 0.35s ease;
+  .director-card-frames {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    height: clamp(13rem, 22vw, 18rem);
+    overflow: hidden;
+    background: var(--surface);
   }
 
-  .director-row:hover .director-row-frame :global(.frame-img) {
-    opacity: 1;
+  .director-card-frames.frames-1 {
+    grid-template-columns: 1fr;
+  }
+
+  .director-card-frames.frames-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .director-card-frame {
+    min-width: 0;
+    height: 100%;
+    overflow: hidden;
+    border-right: 1px solid var(--border);
+  }
+
+  .director-card-frame:last-child {
+    border-right: 0;
+  }
+
+  .director-card-frame :global(.frame-img),
+  .director-card-frame :global(.frame-gen) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(1) contrast(1.1) brightness(0.72);
+    transition: filter 0.45s ease, transform 0.65s ease;
+  }
+
+  .director-card:hover .director-card-frame :global(.frame-img),
+  .director-card:hover .director-card-frame :global(.frame-gen) {
+    filter: grayscale(0.7) contrast(1.14) brightness(0.92);
+    transform: scale(1.025);
+  }
+
+  .director-card-body {
+    display: flex;
+    min-height: 21rem;
+    flex: 1;
+    flex-direction: column;
+    padding: clamp(1.5rem, 3vw, 2.2rem);
+  }
+
+  .director-card-kicker {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1.3rem;
+    color: var(--text-faint);
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.17em;
+    text-transform: uppercase;
+  }
+
+  .director-card h2 {
+    margin-bottom: 1rem;
+    font-size: clamp(2rem, 3.5vw, 3.25rem);
+    line-height: 1;
+    transition: color 0.2s ease;
+  }
+
+  .director-card:hover h2 {
+    color: var(--accent);
+  }
+
+  .director-card-worldview {
+    display: -webkit-box;
+    overflow: hidden;
+    color: var(--text-soft);
+    font-family: var(--font-serif);
+    font-size: 1rem;
+    font-style: italic;
+    line-height: 1.6;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+  }
+
+  .director-card-worldview.is-pending {
+    color: var(--text-faint);
+  }
+
+  .director-card-footer {
+    display: flex;
+    gap: 1rem;
+    align-items: end;
+    justify-content: space-between;
+    margin-top: auto;
+    border-top: 1px solid var(--border);
+    padding-top: 1.25rem;
+  }
+
+  .director-film-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.9rem;
+    max-width: 70%;
+    list-style: none;
+    padding: 0;
+  }
+
+  .director-film-list li {
+    color: var(--text-soft);
+    font-size: 0.78rem;
+  }
+
+  .director-film-list li::before {
+    content: '— ';
+    color: var(--text-faint);
+  }
+
+  .director-card-action {
+    flex: none;
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .director-card-action i {
+    display: inline-block;
+    margin-left: 0.25rem;
+    font-style: normal;
+    transition: transform 0.2s ease;
+  }
+
+  .director-card:hover .director-card-action i {
+    transform: translate(3px, -3px);
+  }
+
+  @media (max-width: 900px) {
+    .directors-intro {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    .directors-list {
+      grid-template-columns: 1fr;
+    }
+
+    .director-card-frames {
+      height: clamp(14rem, 48vw, 22rem);
+    }
   }
 
   @media (max-width: 760px) {
-    .director-row {
-      grid-template-columns: 1fr;
-      gap: 1.2rem;
+    .directors-intro h1 {
+      font-size: clamp(3.5rem, 18vw, 5.2rem);
     }
 
-    .director-row-frames {
-      justify-content: flex-start;
+    .director-card-body {
+      min-height: 0;
+    }
+
+    .director-card-footer {
+      align-items: flex-start;
+      flex-direction: column;
+      margin-top: 2rem;
+    }
+
+    .director-film-list {
+      max-width: none;
     }
   }
 </style>

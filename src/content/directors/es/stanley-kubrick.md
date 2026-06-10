@@ -31,6 +31,7 @@ derrotado más del noir: es el primer hombre kubrickiano que ve el tamaño del t
 
 ## Por dónde seguir
 
-*El resplandor* o *2001*: quiero ver si el tema que ya está entero a sus veintisiete años
-—el sistema impecable deshecho por lo humano o por lo cósmico— cambia de escala cuando el
-plan deja de ser un atraco y pasa a ser un hotel, una inteligencia o la especie entera.
+*2001* confirmó la sospecha: el tema que ya estaba entero a sus veintisiete años —el sistema
+impecable deshecho por la parte humana— no cambió entre el hipódromo y Júpiter; cambió la
+escala. Próxima parada: *El resplandor*, para ver qué pasa cuando el sistema que falla no es
+un plan ni una computadora sino una familia adentro de un hotel vacío.

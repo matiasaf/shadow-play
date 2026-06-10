@@ -31,6 +31,7 @@ loser: he's the first Kubrickian man to see the true size of the board.
 
 ## Where to go next
 
-*The Shining* or *2001*: I want to see whether the theme that's already fully formed at
-twenty-seven —the impeccable system undone by the human or the cosmic— changes scale once
-the plan stops being a heist and becomes a hotel, an intelligence, or the species itself.
+*2001* confirmed the suspicion: the theme already fully formed at twenty-seven —the
+impeccable system undone by its human part— didn't change between the racetrack and Jupiter;
+the scale did. Next stop: *The Shining*, to see what happens when the failing system is
+neither a plan nor a computer but a family inside an empty hotel.
