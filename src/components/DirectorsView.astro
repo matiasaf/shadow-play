@@ -1,0 +1,176 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Frame from './Frame.astro';
+import { useTranslations, localizePath, type Lang } from '../i18n/ui';
+import { getDirectors } from '../lib/directors';
+import { runtimeTimecode } from '../lib/format';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const directors = await getDirectors(lang);
+---
+
+<BaseLayout title={`${t('directors.title')} — ${t('brand')}`} description={t('meta.directors')} lang={lang}>
+  <section class="wrap intro directors-intro">
+    <p class="eyebrow">{t('directors.eyebrow')}</p>
+    <h1>{t('directors.title')}</h1>
+    <p>{t('directors.intro')}</p>
+  </section>
+
+  <section class="wrap directors-list" aria-label={t('directors.title')}>
+    {
+      directors.map((director, i) => {
+        const countLabel =
+          director.films.length === 1 ? t('director.study') : t('director.studies');
+        return (
+          <a class="director-row" href={localizePath(`/directors/${director.slug}/`, lang)}>
+            <div class="director-row-head">
+              <span class="director-row-no">{String(i + 1).padStart(2, '0')}</span>
+              <div>
+                <h2>{director.name}</h2>
+                <p class="director-row-meta">
+                  {director.films.length} {countLabel} ·{' '}
+                  {director.films.map((f) => f.data.title).join(' · ')}
+                </p>
+                {director.entry && (
+                  <p class="director-row-worldview">"{director.entry.data.worldview}"</p>
+                )}
+              </div>
+            </div>
+            <div class="director-row-frames" aria-hidden="true">
+              {director.films.slice(0, 3).map((film) => (
+                <div class="director-row-frame is-frame">
+                  <Frame
+                    src={film.data.frame}
+                    alt=""
+                    title={film.data.title}
+                    code={runtimeTimecode(film.data.runtime)}
+                    noFrameLabel={t('frame.noFrame')}
+                    width={300}
+                    height={169}
+                  />
+                </div>
+              ))}
+            </div>
+          </a>
+        );
+      })
+    }
+  </section>
+</BaseLayout>
+
+<style>
+  .directors-intro {
+    padding-block: 4rem 2.5rem;
+    text-align: center;
+  }
+
+  .directors-intro .eyebrow {
+    margin-inline: auto;
+  }
+
+  .directors-intro h1 {
+    max-width: none;
+  }
+
+  .directors-intro p:not(.eyebrow) {
+    margin-inline: auto;
+  }
+
+  .directors-list {
+    display: grid;
+    gap: 0;
+    padding-bottom: 5rem;
+  }
+
+  .director-row {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: 2rem;
+    align-items: center;
+    border-top: 1px solid var(--border);
+    padding-block: 2.2rem;
+    color: var(--text);
+  }
+
+  .director-row:last-child {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .director-row-head {
+    display: flex;
+    gap: 1.4rem;
+    align-items: baseline;
+  }
+
+  .director-row-no {
+    color: var(--text-faint);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+  }
+
+  .director-row h2 {
+    margin: 0 0 0.4rem;
+    font-size: clamp(1.7rem, 3.6vw, 2.6rem);
+    font-weight: 700;
+    transition: color 0.2s ease;
+  }
+
+  .director-row:hover h2 {
+    color: var(--accent);
+  }
+
+  .director-row-meta {
+    color: var(--text-soft);
+    font-size: 0.84rem;
+    letter-spacing: 0.03em;
+  }
+
+  .director-row-worldview {
+    margin-top: 0.7rem;
+    max-width: 46rem;
+    color: var(--text-soft);
+    font-family: var(--font-serif);
+    font-size: 1.02rem;
+    font-style: italic;
+    line-height: 1.5;
+  }
+
+  .director-row-frames {
+    display: flex;
+    gap: 0.8rem;
+    justify-content: flex-end;
+  }
+
+  .director-row-frame {
+    width: clamp(90px, 11vw, 150px);
+    aspect-ratio: 16 / 9;
+    border: 1px solid var(--border);
+    background: var(--surface-high);
+  }
+
+  .director-row-frame :global(.frame-img) {
+    opacity: 0.7;
+    transition: opacity 0.35s ease;
+  }
+
+  .director-row:hover .director-row-frame :global(.frame-img) {
+    opacity: 1;
+  }
+
+  @media (max-width: 760px) {
+    .director-row {
+      grid-template-columns: 1fr;
+      gap: 1.2rem;
+    }
+
+    .director-row-frames {
+      justify-content: flex-start;
+    }
+  }
+</style>

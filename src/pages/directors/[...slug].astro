@@ -1,0 +1,18 @@
+---
+import DirectorView from '../../components/DirectorView.astro';
+import { getDirectors } from '../../lib/directors';
+import { getMovies } from '../../lib/movies';
+
+export async function getStaticPaths() {
+  const directors = await getDirectors('en');
+  const all = await getMovies('en');
+  return directors.map((director) => ({
+    params: { slug: director.slug },
+    props: { director, all },
+  }));
+}
+
+const { director, all } = Astro.props;
+---
+
+<DirectorView lang="en" director={director} all={all} />

@@ -13,14 +13,18 @@ export const ui = {
   en: {
     'brand': 'Shadowplay',
     'nav.films': 'Films',
+    'nav.directors': 'Directors',
     'nav.map': 'The Map',
     'nav.about': 'About',
     'footer.tagline': 'Handwritten, one film at a time',
     'footer.archive': 'Archive',
+    'footer.directors': 'Directors',
     'footer.map': 'Map',
     'footer.manifesto': 'Manifesto',
     'meta.home': 'Shadowplay — a film study journal: I study the films I watch.',
     'meta.map': 'How the films I watch connect to each other: themes, motifs and links.',
+    'meta.directors':
+      'The directors behind the archive: each one a way of seeing the world, studied film by film.',
 
     'home.eyebrow': 'The study of the seventh art',
     'home.title.a': "I don't review films.",
@@ -35,12 +39,28 @@ export const ui = {
       "In this journal I'm not trying to close a film with a score. I'm trying to understand why a scene comes back days later: the composition, the rhythm, the silences and the connections that surface once the archive starts talking to itself.",
     'home.summaryLabel': 'Archive summary',
     'home.stat.studies': 'Studies published',
+    'home.stat.directors': 'Directors studied',
     'home.stat.countries': 'Countries logged',
 
     'card.category.fallback': 'Study note',
     'card.framePending': 'Frame pending',
 
     'frame.noFrame': 'No frame',
+
+    'directors.title': 'The Directors',
+    'directors.eyebrow': 'Ways of seeing',
+    'directors.intro':
+      'The archive is organized around the people behind the camera. Each director is a way of seeing the world; each film, one more session studying that gaze.',
+    'director.study': 'study',
+    'director.studies': 'studies',
+    'director.worldview': 'Worldview',
+    'director.obsessions': 'Obsessions',
+    'director.filmography': 'Studied filmography',
+    'director.back': 'All directors',
+    'director.essayPending':
+      'Director study pending. For now, the films speak for themselves.',
+    'director.dossier': 'Director file',
+    'director.born': 'b.',
 
     'film.back': 'Back to the archive',
     'film.studyFile': 'Study file',
@@ -67,6 +87,7 @@ export const ui = {
     'map.related': 'Related correlations',
     'map.noRelations': 'No correlations yet.',
     'map.shareNote': 'Shares',
+    'map.sameDirector': 'Same director',
     'map.empty':
       'No connections yet. Add tags or connections in your studies and they will show up here.',
     'map.emptyTags': 'tags',
@@ -75,15 +96,19 @@ export const ui = {
   es: {
     'brand': 'Shadowplay',
     'nav.films': 'Películas',
+    'nav.directors': 'Directores',
     'nav.map': 'El mapa',
     'nav.about': 'Sobre el cuaderno',
     'footer.tagline': 'Escrito a mano, una película a la vez',
     'footer.archive': 'Archivo',
+    'footer.directors': 'Directores',
     'footer.map': 'Mapa',
     'footer.manifesto': 'Manifiesto',
     'meta.home': 'Shadowplay — un cuaderno de cine: estudio las películas que voy viendo.',
     'meta.map':
       'Cómo se conectan entre sí las películas que voy viendo: temas, motivos y vínculos.',
+    'meta.directors':
+      'Los directores detrás del archivo: cada uno una forma de ver el mundo, estudiada película a película.',
 
     'home.eyebrow': 'Estudio del séptimo arte',
     'home.title.a': 'No reseño películas.',
@@ -98,12 +123,28 @@ export const ui = {
       'En este cuaderno no busco cerrar una película con un puntaje. Busco entender por qué una escena vuelve días después: la composición, el ritmo, los silencios y las conexiones que aparecen cuando el archivo empieza a hablar entre sí.',
     'home.summaryLabel': 'Resumen del archivo',
     'home.stat.studies': 'Estudios publicados',
+    'home.stat.directors': 'Directores estudiados',
     'home.stat.countries': 'Países registrados',
 
     'card.category.fallback': 'Ficha de estudio',
     'card.framePending': 'Fotograma pendiente',
 
     'frame.noFrame': 'Sin fotograma',
+
+    'directors.title': 'Los directores',
+    'directors.eyebrow': 'Formas de mirar',
+    'directors.intro':
+      'El archivo se organiza alrededor de quienes están detrás de cámara. Cada director es una forma de ver el mundo; cada película, una sesión más estudiando esa mirada.',
+    'director.study': 'estudio',
+    'director.studies': 'estudios',
+    'director.worldview': 'Su mirada',
+    'director.obsessions': 'Obsesiones',
+    'director.filmography': 'Filmografía estudiada',
+    'director.back': 'Todos los directores',
+    'director.essayPending':
+      'Ficha del director pendiente. Por ahora, hablan sus películas.',
+    'director.dossier': 'Legajo de director',
+    'director.born': 'n.',
 
     'film.back': 'Volver al archivo',
     'film.studyFile': 'Ficha de estudio',
@@ -131,6 +172,7 @@ export const ui = {
     'map.related': 'Correlaciones relacionadas',
     'map.noRelations': 'Sin correlaciones todavía.',
     'map.shareNote': 'Comparten',
+    'map.sameDirector': 'Mismo director',
     'map.empty':
       'Todavía no hay conexiones. Agregá tags o connections en tus fichas y van a aparecer acá.',
     'map.emptyTags': 'tags',

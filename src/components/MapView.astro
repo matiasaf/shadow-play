@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { useTranslations, localizePath, type Lang } from '../i18n/ui';
 import { getMovies, slugOf } from '../lib/movies';
+import { directorSlug } from '../lib/directors';
 
 interface Props {
   lang: Lang;
@@ -17,6 +18,7 @@ const nodes = movies.map((m) => ({
   id: slugOf(m),
   title: m.data.title,
   director: m.data.director,
+  directorSlug: directorSlug(m.data.director),
   year: m.data.year,
   logline: m.data.logline,
   tags: m.data.tags,
@@ -26,7 +28,7 @@ const ids = new Set(nodes.map((n) => n.id));
 const keyFor = (a: string, b: string) => [a, b].sort().join('__');
 const edges = new Map<
   string,
-  { source: string; target: string; type: 'explicit' | 'tag'; note: string }
+  { source: string; target: string; type: 'explicit' | 'director' | 'tag'; note: string }
 >();
 
 for (const m of movies) {
@@ -38,6 +40,24 @@ for (const m of movies) {
       target: c.slug,
       type: 'explicit',
       note: c.note,
+    });
+  }
+}
+
+// Films by the same director cluster together: an automatic visible link,
+// stronger than tag links but never overriding a handwritten connection.
+for (let i = 0; i < movies.length; i++) {
+  for (let j = i + 1; j < movies.length; j++) {
+    const a = movies[i]!;
+    const b = movies[j]!;
+    if (directorSlug(a.data.director) !== directorSlug(b.data.director)) continue;
+    const key = keyFor(slugOf(a), slugOf(b));
+    if (edges.has(key)) continue;
+    edges.set(key, {
+      source: slugOf(a),
+      target: slugOf(b),
+      type: 'director',
+      note: `${t('map.sameDirector')}: ${a.data.director}`,
     });
   }
 }
@@ -73,6 +93,7 @@ const graph = {
 
 const config = {
   filmsBase: localizePath('/films/', lang),
+  directorsBase: localizePath('/directors/', lang),
   noRelations: t('map.noRelations'),
 };
 ---
@@ -136,6 +157,7 @@ const config = {
       id: string;
       title: string;
       director: string;
+      directorSlug: string;
       year: number;
       logline: string;
       tags: string[];
@@ -148,7 +170,7 @@ const config = {
     type Link = {
       source: string | Node;
       target: string | Node;
-      type: 'explicit' | 'tag';
+      type: 'explicit' | 'director' | 'tag';
       note: string;
     };
 
@@ -158,6 +180,7 @@ const config = {
       const graph = JSON.parse(dataEl.textContent || '{}') as { nodes: Node[]; links: Link[] };
       const config = JSON.parse(configEl?.textContent || '{}') as {
         filmsBase: string;
+        directorsBase: string;
         noRelations: string;
       };
       const nodes = graph.nodes;
@@ -253,8 +276,8 @@ const config = {
           d3
             .forceLink<Node, Link>(links)
             .id((d) => d.id)
-            .distance((l) => (l.type === 'explicit' ? 170 : 230))
-            .strength((l) => (l.type === 'explicit' ? 0.5 : 0.2))
+            .distance((l) => (l.type === 'explicit' ? 170 : l.type === 'director' ? 150 : 230))
+            .strength((l) => (l.type === 'explicit' ? 0.5 : l.type === 'director' ? 0.6 : 0.2))
         )
         .force('charge', d3.forceManyBody().strength(-520))
         .force('center', d3.forceCenter(width / 2, height / 2))
@@ -313,7 +336,8 @@ const config = {
       function fillPanel(id: string) {
         const n = nodes.find((x) => x.id === id)!;
         (document.getElementById('panel-title') as HTMLElement).textContent = n.title;
-        (document.getElementById('panel-meta') as HTMLElement).textContent = `${n.year} · ${n.director}`;
+        (document.getElementById('panel-meta') as HTMLElement).innerHTML =
+          `${n.year} · <a href="${config.directorsBase}${n.directorSlug}/">${n.director}</a>`;
         (document.getElementById('panel-desc') as HTMLElement).textContent = `"${n.logline}"`;
         (document.getElementById('panel-initial') as HTMLElement).textContent = n.title.charAt(0);
 
@@ -334,7 +358,7 @@ const config = {
           const other = nodes.find((x) => x.id === otherId)!;
           const li = document.createElement('li');
           li.innerHTML = `<a href="${config.filmsBase}${other.id}/"><span>${other.title.charAt(0)}</span><strong>${other.title}</strong></a><em class="${
-            l.type === 'explicit' ? 'why' : 'why faint'
+            l.type === 'tag' ? 'why faint' : 'why'
           }">${l.note}</em>`;
           list.appendChild(li);
         }
@@ -542,6 +566,16 @@ const config = {
     font-style: italic;
   }
 
+  .panel-meta :global(a) {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+  }
+
+  .panel-meta :global(a:hover) {
+    color: #1c2733;
+  }
+
   .panel-tags {
     display: flex;
     flex-wrap: wrap;
@@ -698,6 +732,11 @@ const config = {
     stroke-opacity: 0.7;
     filter: drop-shadow(0 0 3px rgba(150, 178, 207, 0.28));
     animation: map-dash 30s linear infinite;
+  }
+
+  #graph .edge-director {
+    stroke: var(--accent);
+    stroke-opacity: 0.55;
   }
 
   #graph .edge-tag {

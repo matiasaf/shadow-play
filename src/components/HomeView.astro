@@ -1,8 +1,9 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import MovieCard from './MovieCard.astro';
-import { useTranslations, type Lang } from '../i18n/ui';
+import { useTranslations, localizePath, type Lang } from '../i18n/ui';
 import { getMovies } from '../lib/movies';
+import { getDirectors } from '../lib/directors';
 import { caseNo } from '../lib/format';
 
 interface Props {
@@ -12,7 +13,12 @@ interface Props {
 const { lang } = Astro.props;
 const t = useTranslations(lang);
 const movies = await getMovies(lang);
+const directors = await getDirectors(lang);
 const countries = new Set(movies.map((movie) => movie.data.country).filter(Boolean));
+
+// Case numbers stay global and chronological (newest = highest), even though
+// the archive is laid out by director.
+const caseIndexById = new Map(movies.map((m, i) => [m.id, movies.length - i]));
 ---
 
 <BaseLayout title={t('brand')} description={t('meta.home')} lang={lang}>
@@ -37,13 +43,32 @@ const countries = new Set(movies.map((movie) => movie.data.country).filter(Boole
   </section>
 
   <section class="wrap archive-section" aria-label={t('home.archiveLabel')}>
-    <div class="movie-grid">
-      {
-        movies.map((movie, index) => (
-          <MovieCard movie={movie} index={movies.length - index} lang={lang} />
-        ))
-      }
-    </div>
+    {
+      directors.map((director) => {
+        const countLabel =
+          director.films.length === 1 ? t('director.study') : t('director.studies');
+        return (
+          <div class="director-block">
+            <header class="director-block-head">
+              <a href={localizePath(`/directors/${director.slug}/`, lang)}>
+                <h2>{director.name}</h2>
+              </a>
+              <span class="director-block-count">
+                {director.films.length} {countLabel}
+              </span>
+              {director.entry && (
+                <p class="director-block-worldview">"{director.entry.data.worldview}"</p>
+              )}
+            </header>
+            <div class="movie-grid">
+              {director.films.map((movie) => (
+                <MovieCard movie={movie} index={caseIndexById.get(movie.id)} lang={lang} />
+              ))}
+            </div>
+          </div>
+        );
+      })
+    }
   </section>
 
   <section class="wrap editorial-note">
@@ -57,11 +82,69 @@ const countries = new Set(movies.map((movie) => movie.data.country).filter(Boole
         <span>{t('home.stat.studies')}</span>
       </div>
       <div>
+        <strong>{directors.length}</strong>
+        <span>{t('home.stat.directors')}</span>
+      </div>
+      <div>
         <strong>{countries.size}</strong>
         <span>{t('home.stat.countries')}</span>
       </div>
     </div>
   </section>
+
+  <style>
+    .director-block {
+      margin-bottom: 4rem;
+    }
+
+    .director-block:last-child {
+      margin-bottom: 0;
+    }
+
+    .director-block-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 1rem;
+      border-top: 1px solid var(--border);
+      margin-bottom: 1.8rem;
+      padding-top: 1.6rem;
+    }
+
+    .director-block-head a {
+      color: var(--text);
+    }
+
+    .director-block-head h2 {
+      margin: 0;
+      font-size: clamp(1.5rem, 3vw, 2.1rem);
+      font-weight: 700;
+      transition: color 0.2s ease;
+    }
+
+    .director-block-head a:hover h2 {
+      color: var(--accent);
+    }
+
+    .director-block-count {
+      color: var(--text-faint);
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    .director-block-worldview {
+      flex-basis: 100%;
+      max-width: 52rem;
+      margin: 0.2rem 0 0;
+      color: var(--text-soft);
+      font-family: var(--font-serif);
+      font-size: 1rem;
+      font-style: italic;
+      line-height: 1.5;
+    }
+  </style>
 
   <script>
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;

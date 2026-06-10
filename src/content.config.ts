@@ -40,4 +40,20 @@ const movies = defineCollection({
     }),
 });
 
-export const collections = { movies };
+// Each director is a Markdown file under src/content/directors/<lang>/<slug>.md.
+// The filename must be the slug derived from the director's name (see
+// directorSlug() in src/lib/directors.ts). The body holds the essay on how
+// they see the world. Director pages exist even without this file — it only
+// adds the essay layer on top of the auto-generated filmography.
+const directors = defineCollection({
+  loader: glob({ pattern: '**/[^_]*.md', base: './src/content/directors' }),
+  schema: z.object({
+    name: z.string(), // must match the `director` field of their films exactly
+    worldview: z.string(), // their way of seeing the world, in one sentence
+    born: z.number().optional(),
+    country: z.string().optional(),
+    draft: z.boolean().default(false),
+  }),
+});
+
+export const collections = { movies, directors };

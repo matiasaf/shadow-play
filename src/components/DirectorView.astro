@@ -1,0 +1,248 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import MovieCard from './MovieCard.astro';
+import { useTranslations, localizePath, type Lang } from '../i18n/ui';
+import { obsessionsOf, type DirectorGroup } from '../lib/directors';
+import type { MovieEntry } from '../lib/movies';
+
+interface Props {
+  lang: Lang;
+  director: DirectorGroup;
+  all: MovieEntry[];
+}
+
+const { lang, director, all } = Astro.props;
+const t = useTranslations(lang);
+const entry = director.entry;
+const Content = entry ? (await render(entry)).Content : null;
+const obsessions = obsessionsOf(director);
+
+const countLabel =
+  director.films.length === 1 ? t('director.study') : t('director.studies');
+
+const metaParts = [
+  entry?.data.born ? `${t('director.born')} ${entry.data.born}` : null,
+  entry?.data.country,
+  `${director.films.length} ${countLabel}`,
+].filter(Boolean);
+
+// Archive case number = global chronological position (newest = highest).
+const caseIndexOf = (m: MovieEntry) => all.length - all.findIndex((x) => x.id === m.id);
+
+const description = entry?.data.worldview ?? `${director.name} — ${t('director.dossier')}`;
+---
+
+<BaseLayout title={`${director.name} — ${t('brand')}`} description={description} lang={lang}>
+  <article class="director-page">
+    <div class="wrap film-backbar">
+      <a href={localizePath('/directors/', lang)} class="back-link"
+        ><span aria-hidden="true">←</span> {t('director.back')}</a
+      >
+    </div>
+
+    <header class="wrap director-hero">
+      <div class="film-overline" aria-hidden="true">
+        <span>{t('director.dossier')}</span>
+        <span class="film-overline-sep"></span>
+        <span>{director.films.length} {countLabel}</span>
+      </div>
+      <h1>{director.name}</h1>
+
+      <div class="film-meta director-meta">
+        {
+          metaParts.map((part, i) => (
+            <>
+              {i > 0 && <span class="sep"></span>}
+              <span>{part}</span>
+            </>
+          ))
+        }
+      </div>
+
+      {
+        entry ? (
+          <blockquote class="film-logline">"{entry.data.worldview}"</blockquote>
+        ) : (
+          <p class="essay-pending">{t('director.essayPending')}</p>
+        )
+      }
+    </header>
+
+    {
+      Content && (
+        <div class="wrap">
+          <div class="prose director-prose">
+            <Content />
+          </div>
+        </div>
+      )
+    }
+
+    {
+      obsessions.length > 0 && (
+        <section class="wrap director-obsessions">
+          <h2>{t('director.obsessions')}</h2>
+          <div class="tag-row">
+            {obsessions.map((tag) => (
+              <span class="tag">{tag}</span>
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    <section class="wrap director-films">
+      <h2>{t('director.filmography')}</h2>
+      <div class="movie-grid">
+        {
+          director.films.map((movie) => (
+            <MovieCard movie={movie} index={caseIndexOf(movie)} lang={lang} />
+          ))
+        }
+      </div>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .director-page {
+    padding-block: 3rem 4rem;
+  }
+
+  .film-backbar {
+    margin-bottom: 3rem;
+  }
+
+  .film-backbar .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    color: var(--text-soft);
+    font-size: 0.86rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+
+  .film-backbar .back-link:hover {
+    color: var(--accent);
+  }
+
+  .director-hero {
+    padding-block: 0 3.5rem;
+  }
+
+  .film-overline {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    margin-bottom: 1.3rem;
+    color: var(--text-faint);
+    font-family: var(--font-mono);
+    font-size: 0.64rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  .film-overline-sep {
+    width: 0.9rem;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .director-hero h1 {
+    margin: 0 0 0.9rem;
+    font-size: clamp(2.6rem, 7vw, 4.8rem);
+    font-weight: 700;
+    letter-spacing: 0;
+  }
+
+  .director-meta {
+    margin-top: 0;
+    margin-bottom: 1.6rem;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--text-soft);
+    font-size: 0.88rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+
+  .director-meta .sep {
+    width: 0.25rem;
+    height: 0.25rem;
+    border-radius: 999px;
+    background: var(--border);
+  }
+
+  .director-hero .film-logline {
+    max-width: 40rem;
+    margin: 0;
+    border-left: 2px solid var(--accent-strong);
+    padding-left: 1.6rem;
+    color: var(--text);
+    font-family: var(--font-serif);
+    font-size: clamp(1.3rem, 2.6vw, 1.7rem);
+    font-style: italic;
+    line-height: 1.45;
+  }
+
+  .essay-pending {
+    max-width: 40rem;
+    color: var(--text-faint);
+    font-family: var(--font-serif);
+    font-size: 1.05rem;
+    font-style: italic;
+  }
+
+  .director-prose {
+    max-width: 65ch;
+    border-top: 1px solid var(--border);
+    padding-top: 3rem;
+    padding-bottom: 1rem;
+  }
+
+  .director-prose :global(h2) {
+    margin-bottom: 1.4rem;
+    font-size: 2rem;
+  }
+
+  .director-prose :global(p),
+  .director-prose :global(li) {
+    font-size: 1.08rem;
+    line-height: 1.8;
+  }
+
+  .director-obsessions {
+    padding-block: 2.5rem 0;
+  }
+
+  .director-obsessions h2,
+  .director-films h2 {
+    margin-bottom: 1.6rem;
+    color: var(--accent);
+    font-family: var(--font-sans);
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .director-films {
+    padding-top: 3.5rem;
+  }
+
+  @media (max-width: 760px) {
+    .director-page {
+      padding-block-start: 2rem;
+    }
+
+    .film-backbar {
+      margin-bottom: 2rem;
+    }
+
+    .director-hero .film-logline {
+      padding-left: 1rem;
+    }
+  }
+</style>

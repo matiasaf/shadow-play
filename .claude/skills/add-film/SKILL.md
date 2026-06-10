@@ -30,6 +30,9 @@ resumen final. `watchedOn` por defecto = hoy (ordena el archivo: más reciente p
 
    Frontmatter (schema en `src/content.config.ts`):
    - Requeridos: `title`, `director`, `year`, `watchedOn` (`YYYY-MM-DD`), `logline`.
+   - **`director` es la clave de agrupación del archivo**: escribilo exactamente igual que en
+     las demás películas del mismo director (mismas mayúsculas, iniciales y acentos). De ese
+     string se deriva el slug de su página (`/directors/<slug>`) y el cluster del mapa.
    - Recomendados: `originalTitle`, `country`, `runtime`, `rating` (1–5), `tags`, `frameCaption`.
    - `connections`: lista de `{ slug, note }` hacia otras películas del archivo. El mapa une el
      par en ambos sentidos automáticamente, así que alcanza con declararlo en una; pero la
@@ -57,7 +60,14 @@ resumen final. `watchedOn` por defecto = hoy (ordena el archivo: más reciente p
    errores de schema. Si aparece WARN de "Duplicate id", limpiá cache y rebuildeá:
    `rm -rf .astro/data-store.json dist && npm run build`.
 
-7. **Cerrá** con un resumen al usuario: datos usados, conexiones agregadas, y ofrecé (a) levantar
+7. **La ficha del director (opcional pero recomendado):** la página del director se genera
+   sola con sus películas; el ensayo sobre su mirada sale de
+   `src/content/directors/<lang>/<slug-del-director>.md` (plantilla en
+   `src/content/directors/_template.md`). Si el director es nuevo en el archivo y no tiene
+   ficha, ofrecé crearla (en + es, mismo slug derivado del nombre). Mientras no exista, su
+   página muestra "ficha pendiente" + filmografía.
+
+8. **Cerrá** con un resumen al usuario: datos usados, conexiones agregadas, y ofrecé (a) levantar
    `npm run dev` para verla, y (b) agregar `connections` recíprocas en las películas vinculadas
    si querés que el enlace aparezca también en sus páginas individuales.
 
