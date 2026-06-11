@@ -44,9 +44,21 @@ resumen final. `watchedOn` por defecto = hoy (ordena el archivo: más reciente p
    - EN: `## The central idea` · `## Themes and ideas` · `## Screenplay and narrative` · `## The scene` · `## What I take`
    - ES: `## La idea central` · `## Temas e ideas` · `## Guion y narrativa` · `## La escena` · `## Me llevo`
 
-   Podés sumar secciones extra (ej. `## Puesta en escena`, `## Notas filosóficas`) si la
-   película lo amerita. El español es rioplatense ("vos", "mirá", "acá"); el inglés, neutro.
-   Las dos versiones deben decir lo mismo, no ser traducción literal palabra por palabra.
+   Podés sumar secciones extra (ej. `## Puesta en escena`) si la película lo amerita. El
+   español es rioplatense ("vos", "mirá", "acá"); el inglés, neutro. Las dos versiones deben
+   decir lo mismo, no ser traducción literal palabra por palabra.
+
+   **Notas de pensadores (recomendado cuando la trama lo pide):** una sección que conecte la
+   película con filósofos, escritores o pensadores en general —clásicos o contemporáneos—,
+   citando obras concretas (título y año) y explicando qué ilumina cada uno de la trama, no
+   solo name-dropping. Formato: bullets de `**Pensador y concepto.**` + desarrollo.
+   - Nombre por defecto: `## Notas filosóficas` / `## Philosophical notes` (ejemplo:
+     `12-angry-men` — Sócrates, Arendt, Mill, Levinas). Va después de `## La escena` y antes
+     de `## Me llevo`.
+   - Si la ficha gira alrededor de un solo autor, la sección puede llevar su nombre (ejemplo:
+     `## Borges y el laberinto` en `moebius`).
+   - Opcional: cerrar la ficha con `## Para seguir leyendo` / `## Further reading` listando
+     las obras citadas (ejemplo: `moebius`).
 
 5. **El frame (fotograma destacado):**
    - Si el usuario da una URL de imagen, descargala:
