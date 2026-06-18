@@ -10,7 +10,7 @@ frame: '../../../assets/frames/double-indemnity.jpg'
 frameCaption: 'Phyllis y Walter en la penumbra rayada por las persianas: la luz que entra cortada es la cárcel que ya se cierra sobre los dos. Wilder pinta toda la película con esa reja de sombras.'
 logline: 'Un vendedor de seguros y una mujer fatal traman el asesinato perfecto por una póliza, y el plan se deshace bajo la mirada del único hombre que de verdad lo entiende.'
 rating: 5
-tags: ['cine negro', 'femme fatale', 'fatalismo', 'claroscuro', 'codicia', 'voz en off']
+tags: ['cine negro', 'femme fatale', 'fatalismo', 'claroscuro', 'codicia', 'voz en off', 'el doble']
 connections:
   - slug: 'heat'
     note: 'Dos relatos de crimen construidos como un espejo entre el que delinque y el que investiga; en ambos, el oficio y el deseo arrastran al protagonista a su perdición anunciada.'

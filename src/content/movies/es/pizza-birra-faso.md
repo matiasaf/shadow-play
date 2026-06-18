@@ -1,13 +1,13 @@
 ---
 title: 'Pizza, birra, faso'
 originalTitle: 'Pizza, birra, faso'
-director: 'Adrián Caetano & Bruno Stagnaro'
+director: 'Bruno Stagnaro'
 year: 1998
 country: 'Argentina'
 runtime: 92
 watchedOn: 2026-06-11
-# frame: '../../../assets/frames/pizza-birra-faso.jpg'   # pendiente
-frameCaption: 'El Cordobés y Pablo asomados a las ventanitas del Obelisco, mirando la ciudad desde adentro del monumento: los pibes que Buenos Aires no quiere ver, parados por una vez en el centro exacto de su símbolo.'
+frame: '../../../assets/frames/pizza-birra-faso.jpg'
+frameCaption: 'El Cordobés fumando y Pablo comiendo una porción contra el mostrador de la pizzería: el título entero en un solo plano. No es un descanso entre robos —es el premio, todo lo que el botín alcanza a comprar.'
 logline: 'Una banda de pibes que sobrevive de rebusques y robos chicos en la Buenos Aires de los noventa intenta un último golpe para escaparse en barco, y descubre que la ciudad que los excluyó tampoco les deja la salida.'
 rating: 4
 tags:
@@ -32,7 +32,7 @@ draft: false
 
 Que la supervivencia también tiene su economía mínima: pizza, birra, faso. El título no es
 color local, es un programa —lo que estos pibes pueden desear sin que el deseo los aplaste—.
-Caetano y Stagnaro filman la Buenos Aires menemista desde la vereda de los que quedaron
+Stagnaro filma la Buenos Aires menemista desde la vereda de los que quedaron
 afuera del modelo, sin denuncia explícita y sin lástima: la exclusión no se explica, se
 habita. La película funda el Nuevo Cine Argentino con un gesto simple y brutal: dejar que
 los márgenes hablen en su propio idioma, con sus propias caras, a la altura de sus propios
@@ -94,7 +94,7 @@ ofrece entera, y es prestada.
   vidriera vista desde afuera, reducida a sus tres artículos alcanzables.
 - **Pasolini y la marginalidad sagrada.** *Accattone* (1961) y los *ragazzi di vita* son los
   abuelos directos de estos pibes: la cámara que ama los cuerpos y las caras del lumpen sin
-  redimirlos ni condenarlos. Caetano y Stagnaro heredan ese pacto: mirar de frente, sin
+  redimirlos ni condenarlos. Stagnaro hereda ese pacto: mirar de frente, sin
   moraleja.
 
 ## Me llevo

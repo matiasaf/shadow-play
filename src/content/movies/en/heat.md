@@ -10,7 +10,7 @@ frame: '../../../assets/frames/heat.jpg'
 frameCaption: "The coffee between Hanna and McCauley: two men, one table, the first time they look each other in the eye. Mann shoots the whole film in that shot/reverse-shot."
 logline: 'A detective and a professional thief, mirror images of each other, hunt one another across a nocturnal Los Angeles where the craft devours any possible life.'
 rating: 5
-tags: ['duality', 'craft', 'loneliness', 'nocturnal city', 'masculinity', 'time']
+tags: ['duality', 'craft', 'loneliness', 'nocturnal city', 'masculinity', 'time', 'the double']
 connections:
   - slug: 'double-indemnity'
     note: 'Two crime stories where the criminal and the man of the law recognize each other as mirrors: craft and desire drive the protagonists to their own undoing.'

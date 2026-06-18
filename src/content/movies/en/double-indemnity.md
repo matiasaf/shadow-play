@@ -10,7 +10,7 @@ frame: '../../../assets/frames/double-indemnity.jpg'
 frameCaption: "Phyllis and Walter in the gloom striped by the blinds: the light that enters in slats is the cage already closing on them both. Wilder paints the whole film with that lattice of shadow."
 logline: 'An insurance salesman and a femme fatale plot the perfect murder for a payout, and the scheme unravels under the eye of the one man who truly understands him.'
 rating: 5
-tags: ['film noir', 'femme fatale', 'fatalism', 'chiaroscuro', 'greed', 'voice-over']
+tags: ['film noir', 'femme fatale', 'fatalism', 'chiaroscuro', 'greed', 'voice-over', 'the double']
 connections:
   - slug: 'heat'
     note: 'Two crime stories built as a mirror between the one who breaks the law and the one who investigates; in both, craft and desire drag the protagonist to a foretold ruin.'

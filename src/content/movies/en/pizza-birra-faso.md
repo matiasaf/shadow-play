@@ -1,13 +1,13 @@
 ---
 title: 'Pizza, Birra, Faso'
 originalTitle: 'Pizza, birra, faso'
-director: 'Adrián Caetano & Bruno Stagnaro'
+director: 'Bruno Stagnaro'
 year: 1998
 country: 'Argentina'
 runtime: 92
 watchedOn: 2026-06-11
-# frame: '../../../assets/frames/pizza-birra-faso.jpg'   # pending
-frameCaption: 'Cordobés and Pablo peering out of the little windows at the top of the Obelisk, looking at the city from inside the monument: the kids Buenos Aires refuses to see, standing for once at the exact center of its symbol.'
+frame: '../../../assets/frames/pizza-birra-faso.jpg'
+frameCaption: 'Cordobés smoking and Pablo eating a slice against the pizzería counter: the whole title in a single shot. It is not a break between robberies —it is the prize, everything the loot can actually buy.'
 logline: 'A crew of kids surviving on hustles and petty theft in 1990s Buenos Aires attempts one last job to escape by boat, and discovers the city that shut them out has also locked the exit.'
 rating: 4
 tags:
@@ -31,8 +31,8 @@ draft: false
 ## The central idea
 
 That survival has its own minimal economy: pizza, beer, cigarettes. The title isn't local
-color, it's a program —what these kids can desire without the desire crushing them. Caetano
-and Stagnaro film the Buenos Aires of the neoliberal nineties from the sidewalk of those
+color, it's a program —what these kids can desire without the desire crushing them. Stagnaro
+films the Buenos Aires of the neoliberal nineties from the sidewalk of those
 left out of the model, with no explicit denunciation and no pity: exclusion isn't explained,
 it's inhabited. The film founds New Argentine Cinema with one simple, brutal gesture:
 letting the margins speak in their own language, with their own faces, at the height of
@@ -97,7 +97,7 @@ whole, and it's borrowed.
   the expelled: the shop window seen from outside, reduced to its three affordable items.
 - **Pasolini and sacred marginality.** *Accattone* (1961) and the *ragazzi di vita* are the
   direct grandparents of these kids: a camera that loves the bodies and faces of the
-  lumpen without redeeming or condemning them. Caetano and Stagnaro inherit that pact: look
+  lumpen without redeeming or condemning them. Stagnaro inherits that pact: look
   straight at them, no moral attached.
 
 ## What I take

@@ -10,7 +10,7 @@ frame: '../../../assets/frames/heat.jpg'
 frameCaption: 'El café entre Hanna y McCauley: dos hombres, una mesa, la primera vez que se miran a los ojos. Mann filma la película entera en ese plano-contraplano.'
 logline: 'Un detective y un ladrón profesional, espejos uno del otro, se persiguen en una Los Ángeles nocturna donde el oficio devora cualquier vida posible.'
 rating: 5
-tags: ['dualidad', 'oficio', 'soledad', 'ciudad nocturna', 'masculinidad', 'tiempo']
+tags: ['dualidad', 'oficio', 'soledad', 'ciudad nocturna', 'masculinidad', 'tiempo', 'el doble']
 connections:
   - slug: 'double-indemnity'
     note: 'Dos relatos de crimen donde el delincuente y el hombre de la ley se reconocen como espejo: el oficio y el deseo empujan a los protagonistas hacia su propia perdición.'
