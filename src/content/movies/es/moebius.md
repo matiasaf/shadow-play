@@ -23,6 +23,8 @@ tags:
 connections:
   - slug: 'the-killing'
     note: 'Dos películas que convierten una estructura abstracta en el verdadero protagonista —Kubrick el mecanismo cronometrado de un atraco, Mosquera la topología de un subte—. En ambas, el sistema es una máquina que excede a los hombres que la habitan.'
+  - slug: 'barton-fink'
+    note: 'Dos laberintos que pliegan la ficción sobre la realidad: el subte curvado en una cinta de Möbius y el Hotel Earle como un pasillo sin salida, donde un cuadro termina saliéndose del marco. Las dos hacen de una topología del encierro el verdadero tema.'
 draft: false
 ---
 

@@ -23,6 +23,8 @@ tags:
 connections:
   - slug: 'the-killing'
     note: 'Two films that turn an abstract structure into the real protagonist —Kubrick the timed mechanism of a heist, Mosquera the topology of a subway. In both, the system is a machine that exceeds the men inside it.'
+  - slug: 'barton-fink'
+    note: "Two labyrinths that fold fiction back onto reality: the subway curled into a Möbius strip and the Hotel Earle as a corridor with no exit, where a painting finally steps out of its frame. Both films make a topology of entrapment the true subject."
 draft: false
 ---
 

@@ -16,6 +16,8 @@ connections:
     note: "Two perfect-crime pacts where murder is a contract between two people: Bruno offers the criss-cross, Phyllis and Walter swear to go 'straight down the line'. Both films separate the deed from the desire and reveal that the desire was the real crime."
   - slug: 'heat'
     note: 'The double pushed from morality into profession: where Bruno is Guy''s forbidden half, Hanna and McCauley are two faces of one craft. The mirror that accuses here only hunts there.'
+  - slug: 'barton-fink'
+    note: "The same trap of the genial stranger who turns out to be a killer: Charlie Meadows offers Barton warmth and an unspoken pact, exactly as Bruno does Guy. Both heroes are too wrapped up in themselves to see the monster beside them —only in Barton Fink the deafness is the whole indictment."
 draft: false
 ---
 

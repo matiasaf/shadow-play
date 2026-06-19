@@ -16,6 +16,8 @@ connections:
     note: 'Dos pactos de crimen perfecto donde el asesinato es un contrato entre dos personas: Bruno ofrece el cruce, Phyllis y Walter juran ir "derecho hasta el final". Las dos películas separan el acto del deseo y revelan que el deseo era el verdadero crimen.'
   - slug: 'heat'
     note: 'El doble llevado de la moral al oficio: donde Bruno es la mitad prohibida de Guy, Hanna y McCauley son dos caras de un mismo trabajo. El espejo que acá acusa, allá solo persigue.'
+  - slug: 'barton-fink'
+    note: 'La misma trampa del desconocido afable que resulta ser un asesino: Charlie Meadows le ofrece a Barton calidez y un pacto no dicho, igual que Bruno a Guy. Los dos protagonistas están demasiado metidos en sí mismos para ver al monstruo que tienen al lado —solo que en Barton Fink esa sordera es toda la acusación.'
 draft: false
 ---
 
