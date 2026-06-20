@@ -16,6 +16,15 @@ connections:
     note: "La película siguiente de los Coen, y su espejo en miniatura —John Turturro hace acá al hombre que ruega por su vida (Bernie: '¡Mirá en tu corazón!') y allá al que no escucha a nadie (Barton). Las dos enfrentan una cabeza contra un corazón y dejan que la cabeza parezca ganar a un precio terrible: Miller's Crossing toda superficie y estrategia, Barton Fink todo interior y ruido."
   - slug: 'double-indemnity'
     note: "Dos noirs sobre un operador filoso que cree que puede ganarle a todos por los ángulos y termina deshecho por un afecto que no quiere nombrar —Walter por deseo, Tom por lealtad. Las dos viven dentro de un hombre que trata a la gente como movidas en un tablero, hasta que una de ellas deja de ser una movida."
+externalComments:
+  - source: 'FilmAffinity'
+    title: "Comentario sobre Miller's Crossing"
+    quote: "Una lectura que sitúa la película como recreación contemporánea del noir clásico, cruzada por Hammett, la Ley Seca y la violencia moral del crimen organizado. Destaca la precisión visual de Barry Sonnenfeld, el simbolismo del sombrero de Tom y la banda sonora de Carter Burwell como parte central de su atmósfera fatalista."
+    url: 'https://www.filmaffinity.com/es/user/rating/178257/374677.html'
+  - source: 'FilmAffinity'
+    title: 'Resucitando al hampa'
+    quote: 'Una defensa entusiasta de la película como homenaje honesto al cine negro clásico: no copia su espíritu, lo revive con devoción, humor Coen, diálogos afilados y una puesta en escena pictórica. Subraya especialmente el tiroteo de Leo en su casa como una secuencia de acción mayor.'
+    url: 'https://www.filmaffinity.com/es/user/rating/223042/374677.html'
 draft: false
 ---
 

@@ -58,7 +58,16 @@ Each film has one Markdown file **per language** under `src/content/movies/<lang
 | `rating`        | no       | Your 1–5 score                                          |
 | `tags`          | no       | Themes and motifs (feed the connection map)             |
 | `connections`   | no       | Links to other films + why they connect                 |
+| `externalComments` | no    | Curated external comments, with source, quote and URL    |
+| `videos`        | no       | Curated videos, usually YouTube links                    |
 | `draft`         | no       | `true` = not published yet                              |
+
+`externalComments` is meant for short curated excerpts or notes, not wholesale
+republication. Each item needs a `quote` and `url`; `source`, `author`, `title` and
+`note` are optional helpers for display.
+
+`videos` renders as linked video cards by default. Set `embed: true` on a YouTube item
+only when you want the player embedded directly in the film page.
 
 ## Ideas to grow
 

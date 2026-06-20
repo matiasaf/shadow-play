@@ -15,6 +15,20 @@ tags: ['tema-1', 'tema-2', 'motivo-visual']
 connections:
   - slug: 'otra-pelicula'
     note: 'Por qué las conectás.'
+externalComments:
+  - source: 'FilmAffinity'
+    author: 'usuario'
+    title: 'Título opcional del comentario'
+    quote: 'Fragmento breve o comentario curado.'
+    url: 'https://www.filmaffinity.com/'
+    note: 'Por qué lo guardaste, opcional.'
+videos:
+  - platform: 'youtube'
+    title: 'Título del video'
+    url: 'https://www.youtube.com/watch?v='
+    channel: 'Canal'
+    note: 'Por qué acompaña esta ficha, opcional.'
+    embed: false
 draft: true
 ---
 

@@ -39,6 +39,32 @@ const metaParts = [
   data.country,
   data.runtime ? `${data.runtime} min` : null,
 ].filter(Boolean);
+
+function youtubeIdFromUrl(url: string): string | null {
+  try {
+    const parsed = new URL(url);
+    if (parsed.hostname === 'youtu.be') return parsed.pathname.slice(1) || null;
+    if (parsed.hostname.endsWith('youtube.com')) {
+      if (parsed.pathname.startsWith('/embed/')) return parsed.pathname.split('/')[2] || null;
+      if (parsed.pathname.startsWith('/shorts/')) return parsed.pathname.split('/')[2] || null;
+      return parsed.searchParams.get('v');
+    }
+  } catch {
+    return null;
+  }
+
+  return null;
+}
+
+function youtubeThumbnail(url: string): string | null {
+  const id = youtubeIdFromUrl(url);
+  return id ? `https://img.youtube.com/vi/${id}/hqdefault.jpg` : null;
+}
+
+function youtubeEmbedUrl(url: string): string | null {
+  const id = youtubeIdFromUrl(url);
+  return id ? `https://www.youtube-nocookie.com/embed/${id}` : null;
+}
 ---
 
 <BaseLayout title={`${data.title} — ${t('brand')}`} description={data.logline} lang={lang}>
@@ -110,6 +136,69 @@ const metaParts = [
       <div class="prose film-prose">
         <Content />
       </div>
+
+      {
+        data.externalComments.length > 0 && (
+          <section class="external-section selected-external-comments">
+            <h2>{t('film.externalComments')}</h2>
+            <div class="external-grid comments-grid">
+              {data.externalComments.map((comment) => (
+                <a class="external-card comment-card" href={comment.url} target="_blank" rel="noreferrer">
+                  <div class="external-card-kicker">
+                    <span>{comment.source}</span>
+                    {comment.author && <span>{comment.author}</span>}
+                  </div>
+                  {comment.title && <h3>{comment.title}</h3>}
+                  <blockquote>{comment.quote}</blockquote>
+                  {comment.note && <p class="external-note">{comment.note}</p>}
+                  <span class="external-link">{t('film.openExternal')}</span>
+                </a>
+              ))}
+            </div>
+          </section>
+        )
+      }
+
+      {
+        data.videos.length > 0 && (
+          <section class="external-section selected-videos">
+            <h2>{t('film.videos')}</h2>
+            <div class="external-grid video-grid">
+              {data.videos.map((video) => {
+                const thumbnail = youtubeThumbnail(video.url);
+                const embedUrl = video.embed ? youtubeEmbedUrl(video.url) : null;
+                return (
+                  <article class="external-card video-card">
+                    {embedUrl ? (
+                      <iframe
+                        src={embedUrl}
+                        title={video.title}
+                        loading="lazy"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowfullscreen
+                      />
+                    ) : (
+                      <a class="video-thumb" href={video.url} target="_blank" rel="noreferrer">
+                        {thumbnail ? <img src={thumbnail} alt="" loading="lazy" /> : <span>{t('film.videoFallback')}</span>}
+                      </a>
+                    )}
+                    <div class="video-copy">
+                      <div class="external-card-kicker">
+                        <span>{video.platform}</span>
+                        {video.channel && <span>{video.channel}</span>}
+                      </div>
+                      <h3>
+                        <a href={video.url} target="_blank" rel="noreferrer">{video.title}</a>
+                      </h3>
+                      {video.note && <p class="external-note">{video.note}</p>}
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          </section>
+        )
+      }
 
       {
         data.connections.length > 0 && (
@@ -319,6 +408,151 @@ const metaParts = [
     border-left: 0;
     padding: 2rem 1rem;
     text-align: center;
+  }
+
+  .external-section {
+    margin-top: 5rem;
+    padding-top: 3.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .external-section h2 {
+    margin-bottom: 2rem;
+    color: var(--accent);
+    font-family: var(--font-sans);
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .external-grid {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .comments-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+
+  .video-grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+
+  .external-card {
+    display: block;
+    border: 1px solid var(--border);
+    padding: 1.25rem;
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .comment-card {
+    color: inherit;
+    transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+  }
+
+  .comment-card:hover {
+    border-color: var(--accent-strong);
+    background: rgba(255, 255, 255, 0.035);
+    transform: translateY(-2px);
+  }
+
+  .external-card-kicker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    margin-bottom: 0.9rem;
+    color: var(--text-faint);
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .external-card-kicker span + span::before {
+    content: '/';
+    margin-right: 0.55rem;
+    color: var(--border);
+  }
+
+  .external-card h3 {
+    margin: 0 0 0.75rem;
+    color: var(--text);
+    font-size: 1.15rem;
+    line-height: 1.25;
+  }
+
+  .external-card h3 a {
+    color: inherit;
+  }
+
+  .external-card h3 a:hover {
+    color: var(--accent);
+  }
+
+  .comment-card blockquote {
+    margin: 0;
+    border-left: 2px solid var(--border);
+    padding-left: 1rem;
+    color: var(--text);
+    font-family: var(--font-serif);
+    font-size: 1.06rem;
+    font-style: italic;
+    line-height: 1.6;
+  }
+
+  .external-note {
+    margin: 1rem 0 0;
+    color: var(--text-soft);
+    font-size: 0.86rem;
+    line-height: 1.55;
+  }
+
+  .external-link {
+    display: inline-block;
+    margin-top: 1rem;
+    color: var(--accent-strong);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .video-card {
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .video-thumb,
+  .video-card iframe {
+    display: grid;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    place-items: center;
+    border: 0;
+    background: var(--surface-high);
+    color: var(--text-faint);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .video-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(0.25) contrast(1.05);
+    transition: filter 0.2s ease, transform 0.2s ease;
+  }
+
+  .video-thumb:hover img {
+    filter: grayscale(0) contrast(1.08);
+    transform: scale(1.03);
+  }
+
+  .video-copy {
+    padding: 1.25rem;
   }
 
   .selected-connections {

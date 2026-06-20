@@ -36,6 +36,32 @@ const movies = defineCollection({
         )
         .default([]),
 
+      // --- Material externo curado ---
+      externalComments: z
+        .array(
+          z.object({
+            source: z.string().default('FilmAffinity'),
+            author: z.string().optional(),
+            title: z.string().optional(),
+            quote: z.string(),
+            url: z.string().url(),
+            note: z.string().optional(),
+          })
+        )
+        .default([]),
+      videos: z
+        .array(
+          z.object({
+            platform: z.string().default('youtube'),
+            title: z.string(),
+            url: z.string().url(),
+            channel: z.string().optional(),
+            note: z.string().optional(),
+            embed: z.boolean().default(false),
+          })
+        )
+        .default([]),
+
       draft: z.boolean().default(false),
     }),
 });
