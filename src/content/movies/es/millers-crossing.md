@@ -19,11 +19,18 @@ connections:
 externalComments:
   - source: 'FilmAffinity'
     title: "Comentario sobre Miller's Crossing"
-    quote: "Una lectura que sitúa la película como recreación contemporánea del noir clásico, cruzada por Hammett, la Ley Seca y la violencia moral del crimen organizado. Destaca la precisión visual de Barry Sonnenfeld, el simbolismo del sombrero de Tom y la banda sonora de Carter Burwell como parte central de su atmósfera fatalista."
+    summary: "Una lectura que sitúa la película como recreación contemporánea del noir clásico, cruzada por Hammett, la Ley Seca y la violencia moral del crimen organizado."
+    body: "Una lectura que sitúa la película como recreación contemporánea del noir clásico, cruzada por Hammett, la Ley Seca y la violencia moral del crimen organizado. Destaca la precisión visual de Barry Sonnenfeld, el simbolismo del sombrero de Tom y la banda sonora de Carter Burwell como parte central de su atmósfera fatalista."
     url: 'https://www.filmaffinity.com/es/user/rating/178257/374677.html'
   - source: 'FilmAffinity'
     title: 'Resucitando al hampa'
-    quote: 'Una defensa entusiasta de la película como homenaje honesto al cine negro clásico: no copia su espíritu, lo revive con devoción, humor Coen, diálogos afilados y una puesta en escena pictórica. Subraya especialmente el tiroteo de Leo en su casa como una secuencia de acción mayor.'
+    summary: 'Una defensa entusiasta de la película como homenaje honesto al cine negro clásico, con foco en el humor Coen, los diálogos afilados y el tiroteo de Leo.'
+    body: |-
+      “Muerte entre las flores” es una peli jodidamente bien hecha.
+
+      Pese a que una pulcra y concienzuda puesta en escena lidera holgadamente el amplio repertorio de virtudes de esta peli, el verdadero secreto del éxito de la obra de los Coen radica en su honestidad. "Miller’s Crossing" jamás pretende plagiar el espíritu original del cine negro. Se limita a recrearlo, eso sí, con un respeto y devoción encomiables. Coen resucita durante dos horas a Bogart, Bacall, Cagney, Robinson y Lorre orquestando un homenaje al género absolutamente magistral.
+
+      Podría destacar el particular toque humorístico Coen, los diálogos cincelados en oro puro o ese sentido pictórico que los hermanísimos se preocupan por infundir en cada fotograma, pero esta vez me apetece distinguir por encima de todo una secuencia de acción en estado puro. El tiroteo entre Leo y los secuaces de Johnny en la casa del irlandés mientras esta se consume pasto de las llamas, con sintonía clásica incluída, merece indefectiblemente un laureado puesto de honor entre las mejores secuencias de la historia del séptimo arte.
     url: 'https://www.filmaffinity.com/es/user/rating/223042/374677.html'
 draft: false
 ---

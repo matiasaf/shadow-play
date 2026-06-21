@@ -19,7 +19,11 @@ externalComments:
   - source: 'FilmAffinity'
     author: 'usuario'
     title: 'Título opcional del comentario'
-    quote: 'Fragmento breve o comentario curado.'
+    summary: 'Resumen breve para mostrar en la card.'
+    body: |-
+      Comentario completo para mostrar en el modal.
+
+      Puede tener varios párrafos.
     url: 'https://www.filmaffinity.com/'
     note: 'Por qué lo guardaste, opcional.'
 videos:

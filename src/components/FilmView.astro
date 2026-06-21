@@ -40,6 +40,13 @@ const metaParts = [
   data.runtime ? `${data.runtime} min` : null,
 ].filter(Boolean);
 
+const externalComments = data.externalComments.map((comment, index) => ({
+  ...comment,
+  id: `external-comment-${slugOf(movie)}-${index}`,
+  summary: comment.summary ?? comment.quote ?? comment.body ?? '',
+  body: comment.body ?? comment.quote ?? comment.summary ?? '',
+}));
+
 function youtubeIdFromUrl(url: string): string | null {
   try {
     const parsed = new URL(url);
@@ -138,21 +145,51 @@ function youtubeEmbedUrl(url: string): string | null {
       </div>
 
       {
-        data.externalComments.length > 0 && (
+        externalComments.length > 0 && (
           <section class="external-section selected-external-comments">
             <h2>{t('film.externalComments')}</h2>
             <div class="external-grid comments-grid">
-              {data.externalComments.map((comment) => (
-                <a class="external-card comment-card" href={comment.url} target="_blank" rel="noreferrer">
-                  <div class="external-card-kicker">
-                    <span>{comment.source}</span>
-                    {comment.author && <span>{comment.author}</span>}
-                  </div>
-                  {comment.title && <h3>{comment.title}</h3>}
-                  <blockquote>{comment.quote}</blockquote>
-                  {comment.note && <p class="external-note">{comment.note}</p>}
-                  <span class="external-link">{t('film.openExternal')}</span>
-                </a>
+              {externalComments.map((comment) => (
+                <article class="external-card comment-card">
+                  <button class="comment-card-button" type="button" data-comment-open={comment.id}>
+                    <div class="external-card-kicker">
+                      <span>{comment.source}</span>
+                      {comment.author && <span>{comment.author}</span>}
+                    </div>
+                    {comment.title && <h3>{comment.title}</h3>}
+                    <p class="comment-summary">{comment.summary}</p>
+                    {comment.note && <p class="external-note">{comment.note}</p>}
+                    <span class="external-link">{t('film.readComment')}</span>
+                  </button>
+                  <a class="comment-original-link" href={comment.url} target="_blank" rel="noreferrer">
+                    {t('film.openExternal')}
+                  </a>
+                  <dialog class="comment-modal" id={comment.id} aria-labelledby={`${comment.id}-title`}>
+                    <div class="comment-modal-panel">
+                      <div class="comment-modal-head">
+                        <div>
+                          <div class="external-card-kicker">
+                            <span>{comment.source}</span>
+                            {comment.author && <span>{comment.author}</span>}
+                          </div>
+                          <h3 id={`${comment.id}-title`}>{comment.title ?? t('film.externalComment')}</h3>
+                        </div>
+                        <button class="comment-modal-close" type="button" data-comment-close aria-label={t('film.closeModal')}>
+                          ×
+                        </button>
+                      </div>
+                      <div class="comment-modal-body">
+                        {comment.body.split('\n').map((paragraph) =>
+                          paragraph.trim() ? <p>{paragraph}</p> : null
+                        )}
+                      </div>
+                      <div class="comment-modal-actions">
+                        <a href={comment.url} target="_blank" rel="noreferrer">{t('film.openExternal')}</a>
+                        <button type="button" data-comment-close>{t('film.closeModal')}</button>
+                      </div>
+                    </div>
+                  </dialog>
+                </article>
               ))}
             </div>
           </section>
@@ -241,6 +278,32 @@ function youtubeEmbedUrl(url: string): string | null {
     </div>
   </article>
 </BaseLayout>
+
+<script>
+  const openButtons = document.querySelectorAll<HTMLButtonElement>('[data-comment-open]');
+  const closeButtons = document.querySelectorAll<HTMLButtonElement>('[data-comment-close]');
+
+  openButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const modalId = button.dataset.commentOpen;
+      const modal = modalId ? document.getElementById(modalId) : null;
+      if (modal instanceof HTMLDialogElement) modal.showModal();
+    });
+  });
+
+  closeButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const modal = button.closest('dialog');
+      if (modal instanceof HTMLDialogElement) modal.close();
+    });
+  });
+
+  document.querySelectorAll<HTMLDialogElement>('.comment-modal').forEach((modal) => {
+    modal.addEventListener('click', (event) => {
+      if (event.target === modal) modal.close();
+    });
+  });
+</script>
 
 <style>
   .film-page {
@@ -447,6 +510,7 @@ function youtubeEmbedUrl(url: string): string | null {
   }
 
   .comment-card {
+    padding: 0;
     color: inherit;
     transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
   }
@@ -455,6 +519,27 @@ function youtubeEmbedUrl(url: string): string | null {
     border-color: var(--accent-strong);
     background: rgba(255, 255, 255, 0.035);
     transform: translateY(-2px);
+  }
+
+  .comment-card-button {
+    display: block;
+    width: 100%;
+    border: 0;
+    padding: 1.25rem 1.25rem 0;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    font: inherit;
+    text-align: left;
+  }
+
+  .comment-card-button:focus-visible,
+  .comment-original-link:focus-visible,
+  .comment-modal-close:focus-visible,
+  .comment-modal-actions a:focus-visible,
+  .comment-modal-actions button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
   }
 
   .external-card-kicker {
@@ -490,15 +575,34 @@ function youtubeEmbedUrl(url: string): string | null {
     color: var(--accent);
   }
 
-  .comment-card blockquote {
+  .comment-summary {
+    display: -webkit-box;
     margin: 0;
     border-left: 2px solid var(--border);
     padding-left: 1rem;
+    overflow: hidden;
     color: var(--text);
     font-family: var(--font-serif);
     font-size: 1.06rem;
     font-style: italic;
     line-height: 1.6;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+  }
+
+  .comment-original-link {
+    display: inline-block;
+    margin: 1rem 1.25rem 1.25rem;
+    color: var(--text-faint);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .comment-original-link:hover {
+    color: var(--accent);
   }
 
   .external-note {
@@ -516,6 +620,108 @@ function youtubeEmbedUrl(url: string): string | null {
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
+  }
+
+  .comment-modal {
+    /* Re-center: the global `* { margin: 0 }` reset overrides the UA's
+       `margin: auto` that centers a :modal dialog, pinning it top-left. */
+    margin: auto;
+    width: min(760px, calc(100vw - 2rem));
+    max-height: min(780px, calc(100vh - 2rem));
+    border: 1px solid var(--border);
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+  }
+
+  .comment-modal::backdrop {
+    background: rgba(0, 0, 0, 0.72);
+    backdrop-filter: blur(2px);
+  }
+
+  .comment-modal-panel {
+    display: grid;
+    max-height: inherit;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+  }
+
+  .comment-modal-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.5rem;
+    border-bottom: 1px solid var(--border);
+    padding: 1.4rem 1.5rem 1.1rem;
+  }
+
+  .comment-modal-head h3 {
+    margin: 0;
+    font-size: 1.45rem;
+  }
+
+  .comment-modal-close {
+    display: inline-grid;
+    width: 2rem;
+    height: 2rem;
+    flex: 0 0 auto;
+    place-items: center;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-soft);
+    cursor: pointer;
+    font-size: 1.2rem;
+    line-height: 1;
+  }
+
+  .comment-modal-close:hover {
+    color: var(--accent);
+  }
+
+  .comment-modal-body {
+    overflow: auto;
+    padding: 1.5rem;
+  }
+
+  .comment-modal-body p {
+    max-width: 68ch;
+    margin: 0 0 1rem;
+    color: var(--text);
+    font-family: var(--font-serif);
+    font-size: 1.08rem;
+    line-height: 1.75;
+  }
+
+  .comment-modal-body p:last-child {
+    margin-bottom: 0;
+  }
+
+  .comment-modal-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    border-top: 1px solid var(--border);
+    padding: 1rem 1.5rem;
+  }
+
+  .comment-modal-actions a,
+  .comment-modal-actions button {
+    border: 1px solid var(--border);
+    padding: 0.7rem 0.9rem;
+    background: transparent;
+    color: var(--text-soft);
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .comment-modal-actions a:hover,
+  .comment-modal-actions button:hover {
+    border-color: var(--accent-strong);
+    color: var(--accent);
   }
 
   .video-card {
@@ -636,6 +842,27 @@ function youtubeEmbedUrl(url: string): string | null {
 
     .selected-film-hero .film-logline {
       padding-left: 1rem;
+    }
+
+    .comment-modal {
+      width: calc(100vw - 1rem);
+      max-height: calc(100vh - 1rem);
+    }
+
+    .comment-modal-head,
+    .comment-modal-body,
+    .comment-modal-actions {
+      padding-inline: 1rem;
+    }
+
+    .comment-modal-actions {
+      justify-content: stretch;
+    }
+
+    .comment-modal-actions a,
+    .comment-modal-actions button {
+      flex: 1 1 auto;
+      text-align: center;
     }
   }
 </style>

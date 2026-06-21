@@ -39,14 +39,20 @@ const movies = defineCollection({
       // --- Material externo curado ---
       externalComments: z
         .array(
-          z.object({
-            source: z.string().default('FilmAffinity'),
-            author: z.string().optional(),
-            title: z.string().optional(),
-            quote: z.string(),
-            url: z.string().url(),
-            note: z.string().optional(),
-          })
+          z
+            .object({
+              source: z.string().default('FilmAffinity'),
+              author: z.string().optional(),
+              title: z.string().optional(),
+              summary: z.string().optional(),
+              body: z.string().optional(),
+              quote: z.string().optional(), // legacy: use summary + body for new entries
+              url: z.string().url(),
+              note: z.string().optional(),
+            })
+            .refine((comment) => comment.summary || comment.body || comment.quote, {
+              message: 'External comments need at least summary, body or quote.',
+            })
         )
         .default([]),
       videos: z

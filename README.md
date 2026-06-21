@@ -62,9 +62,11 @@ Each film has one Markdown file **per language** under `src/content/movies/<lang
 | `videos`        | no       | Curated videos, usually YouTube links                    |
 | `draft`         | no       | `true` = not published yet                              |
 
-`externalComments` is meant for short curated excerpts or notes, not wholesale
-republication. Each item needs a `quote` and `url`; `source`, `author`, `title` and
-`note` are optional helpers for display.
+`externalComments` is meant for curated external readings. Use `summary` for the
+short card text and `body` for the full modal text; legacy `quote` is still accepted
+as a fallback. Each item needs a `url`; `source`, `author`, `title` and `note` are
+optional helpers for display. The original link is kept visible from the card and
+from the modal.
 
 `videos` renders as linked video cards by default. Set `embed: true` on a YouTube item
 only when you want the player embedded directly in the film page.
