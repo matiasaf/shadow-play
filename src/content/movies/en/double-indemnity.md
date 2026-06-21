@@ -16,6 +16,8 @@ connections:
     note: 'Two crime stories built as a mirror between the one who breaks the law and the one who investigates; in both, craft and desire drag the protagonist to a foretold ruin.'
   - slug: 'millers-crossing'
     note: "A later noir that springs the same trap from a colder angle: a sharp operator who thinks he can play every angle, undone by an attachment he won't name —Walter by desire, Tom Reagan by loyalty. Wilder's man confesses everything into a dictaphone; the Coens let theirs confess nothing at all."
+  - slug: 'vertigo'
+    note: "Both films know the femme fatale is a fabrication of male desire —but Wilder lets Phyllis build herself, while Hitchcock shows the man doing the building, dressing and dyeing Judy back into the dead Madeleine. Sculptor and clay where here there is only seductress and victim."
 draft: false
 ---
 

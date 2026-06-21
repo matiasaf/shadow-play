@@ -18,6 +18,8 @@ connections:
     note: 'El doble llevado de la moral al oficio: donde Bruno es la mitad prohibida de Guy, Hanna y McCauley son dos caras de un mismo trabajo. El espejo que acá acusa, allá solo persigue.'
   - slug: 'barton-fink'
     note: 'La misma trampa del desconocido afable que resulta ser un asesino: Charlie Meadows le ofrece a Barton calidez y un pacto no dicho, igual que Bruno a Guy. Los dos protagonistas están demasiado metidos en sí mismos para ver al monstruo que tienen al lado —solo que en Barton Fink esa sordera es toda la acusación.'
+  - slug: 'vertigo'
+    note: 'La rima que cierra el ciclo, mismo director: otra vez el doble, pero ahora hacia adentro. Donde Bruno es otro hombre que ejecuta el deseo de Guy, en Vértigo el doble es una mujer muerta que Scottie trata de resucitar rehaciendo a una viva. Los dos héroes son culpables sin que sus manos hagan nada —Guy por deseo, Scottie por el miedo que lo paraliza en la torre.'
 draft: false
 ---
 

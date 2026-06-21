@@ -18,6 +18,8 @@ connections:
     note: 'The double pushed from morality into profession: where Bruno is Guy''s forbidden half, Hanna and McCauley are two faces of one craft. The mirror that accuses here only hunts there.'
   - slug: 'barton-fink'
     note: "The same trap of the genial stranger who turns out to be a killer: Charlie Meadows offers Barton warmth and an unspoken pact, exactly as Bruno does Guy. Both heroes are too wrapped up in themselves to see the monster beside them —only in Barton Fink the deafness is the whole indictment."
+  - slug: 'vertigo'
+    note: "The cycle's closing rhyme, same director: the double again, but turned inward. Where Bruno is another man who acts out Guy's wish, in Vertigo the double is a dead woman Scottie tries to resurrect by remaking a living one. Both heroes are guilty without their hands doing the deed —Guy by desire, Scottie by the fear that paralyzes him on the tower."
 draft: false
 ---
 
