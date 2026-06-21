@@ -16,6 +16,8 @@ connections:
     note: "Both turn on a genial stranger who attaches himself to the hero and turns out to be a killer. Charlie Meadows, like Bruno, offers warmth and an unspoken pact; and like Guy, Barton is too wrapped up in himself to see what the other man really is —except here the blindness is the whole indictment."
   - slug: 'moebius'
     note: "Two labyrinths that fold fiction back onto reality. The Hotel Earle is a corridor with no exit, and the picture of the woman on the beach finally steps out of its frame into the world —a Möbius seam where the story the artist couldn't write becomes the place he ends up living."
+  - slug: 'millers-crossing'
+    note: "The Coens' previous film, its mirror in a gangster key —John Turturro plays the man begging for his life there (Bernie: 'Look into your heart!') and the deaf intellectual here (Barton). One is all surface and strategy, the other all interior and noise; both pit a head against a heart and watch the head fail."
 draft: false
 ---
 

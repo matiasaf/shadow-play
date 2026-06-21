@@ -16,6 +16,8 @@ connections:
     note: 'Las dos giran sobre un desconocido afable que se pega al protagonista y resulta ser un asesino. Charlie Meadows, como Bruno, ofrece calidez y un pacto no dicho; y como Guy, Barton está demasiado metido en sí mismo para ver qué es realmente el otro —solo que acá esa ceguera es toda la acusación.'
   - slug: 'moebius'
     note: 'Dos laberintos que pliegan la ficción sobre la realidad. El Hotel Earle es un pasillo sin salida, y el cuadro de la mujer en la playa termina saliéndose de su marco hacia el mundo —una costura de Moebius donde la historia que el artista no pudo escribir se vuelve el lugar donde termina viviendo.'
+  - slug: 'millers-crossing'
+    note: "La película anterior de los Coen, su espejo en clave gánster —John Turturro hace allá al hombre que ruega por su vida (Bernie: '¡Mirá en tu corazón!') y acá al intelectual sordo (Barton). Una es toda superficie y estrategia, la otra todo interior y ruido; las dos enfrentan una cabeza contra un corazón y miran cómo la cabeza fracasa."
 videos:
   - platform: 'youtube'
     title: 'Análisis de Barton Fink'

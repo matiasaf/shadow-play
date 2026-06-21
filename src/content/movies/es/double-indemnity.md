@@ -14,6 +14,8 @@ tags: ['cine negro', 'femme fatale', 'fatalismo', 'claroscuro', 'codicia', 'voz 
 connections:
   - slug: 'heat'
     note: 'Dos relatos de crimen construidos como un espejo entre el que delinque y el que investiga; en ambos, el oficio y el deseo arrastran al protagonista a su perdición anunciada.'
+  - slug: 'millers-crossing'
+    note: "Un noir posterior que arma la misma trampa desde un ángulo más frío: un operador filoso que cree que puede jugar todos los ángulos y termina deshecho por un afecto que no quiere nombrar —Walter por deseo, Tom Reagan por lealtad. El hombre de Wilder confiesa todo en un dictáfono; los Coen no dejan que el suyo confiese nada."
 draft: false
 ---
 
