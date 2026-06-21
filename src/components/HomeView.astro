@@ -2,8 +2,8 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import MovieCard from './MovieCard.astro';
 import { useTranslations, localizePath, type Lang } from '../i18n/ui';
-import { getMovies } from '../lib/movies';
-import { getDirectors } from '../lib/directors';
+import { getMovies, slugOf, type MovieEntry } from '../lib/movies';
+import { getDirectors, type DirectorGroup } from '../lib/directors';
 import { caseNo } from '../lib/format';
 
 interface Props {
@@ -15,10 +15,150 @@ const t = useTranslations(lang);
 const movies = await getMovies(lang);
 const directors = await getDirectors(lang);
 const countries = new Set(movies.map((movie) => movie.data.country).filter(Boolean));
+const countryOptions = [...countries].sort((a, b) => String(a).localeCompare(String(b)));
 
 // Case numbers stay global and chronological (newest = highest), even though
 // the archive is laid out by director.
 const caseIndexById = new Map(movies.map((m, i) => [m.id, movies.length - i]));
+
+type DashboardGroup = {
+  id: string;
+  title: string;
+  href?: string;
+  meta: string;
+  note?: string;
+  films: MovieEntry[];
+  sortAlpha: string;
+  sortCount: number;
+  sortRecency: number;
+};
+
+const dateFormatter = new Intl.DateTimeFormat(lang === 'es' ? 'es-AR' : 'en', {
+  month: 'long',
+  year: 'numeric',
+});
+
+function newestTimestamp(films: MovieEntry[]): number {
+  return Math.max(...films.map((film) => film.data.watchedOn.valueOf()));
+}
+
+function groupMeta(films: MovieEntry[]): string {
+  const countLabel = films.length === 1 ? t('director.study') : t('director.studies');
+  return `${films.length} ${countLabel}`;
+}
+
+function movieAttrs(movie: MovieEntry) {
+  return {
+    'data-director': movie.data.director,
+    'data-tags': movie.data.tags.join('|'),
+    'data-country': movie.data.country ?? '',
+    'data-year': String(movie.data.year),
+  };
+}
+
+const directorGroups: DashboardGroup[] = directors.map((director: DirectorGroup) => ({
+  id: director.slug,
+  title: director.name,
+  href: localizePath(`/directors/${director.slug}/`, lang),
+  meta: groupMeta(director.films),
+  note: director.entry?.data.worldview,
+  films: director.films,
+  sortAlpha: director.name,
+  sortCount: director.films.length,
+  sortRecency: newestTimestamp(director.films),
+}));
+
+const tagMap = new Map<string, MovieEntry[]>();
+for (const movie of movies) {
+  for (const tag of movie.data.tags) {
+    const films = tagMap.get(tag) ?? [];
+    films.push(movie);
+    tagMap.set(tag, films);
+  }
+}
+const themeGroups: DashboardGroup[] = [...tagMap.entries()]
+  .map(([tag, films]) => ({
+    id: tag,
+    title: tag,
+    meta: groupMeta(films),
+    films,
+    sortAlpha: tag,
+    sortCount: films.length,
+    sortRecency: newestTimestamp(films),
+  }))
+  .sort((a, b) => b.sortCount - a.sortCount || a.sortAlpha.localeCompare(b.sortAlpha));
+const themeOptions = themeGroups.map((group) => group.title);
+
+const journalMap = new Map<string, MovieEntry[]>();
+for (const movie of movies) {
+  const key = `${movie.data.watchedOn.getFullYear()}-${String(
+    movie.data.watchedOn.getMonth() + 1
+  ).padStart(2, '0')}`;
+  const films = journalMap.get(key) ?? [];
+  films.push(movie);
+  journalMap.set(key, films);
+}
+const journalGroups: DashboardGroup[] = [...journalMap.entries()]
+  .map(([key, films]) => ({
+    id: key,
+    title: dateFormatter.format(films[0]!.data.watchedOn),
+    meta: groupMeta(films),
+    films,
+    sortAlpha: key,
+    sortCount: films.length,
+    sortRecency: newestTimestamp(films),
+  }))
+  .sort((a, b) => b.sortRecency - a.sortRecency);
+
+function decadeLabel(year: number): string {
+  const decade = Math.floor(year / 10) * 10;
+  return lang === 'es' ? `Años ${decade}` : `${decade}s`;
+}
+
+const timelineMap = new Map<string, MovieEntry[]>();
+for (const movie of [...movies].sort((a, b) => b.data.year - a.data.year)) {
+  const key = String(Math.floor(movie.data.year / 10) * 10);
+  const films = timelineMap.get(key) ?? [];
+  films.push(movie);
+  timelineMap.set(key, films);
+}
+const timelineGroups: DashboardGroup[] = [...timelineMap.entries()]
+  .map(([key, films]) => ({
+    id: key,
+    title: decadeLabel(Number(key)),
+    meta: groupMeta(films),
+    films,
+    sortAlpha: key,
+    sortCount: films.length,
+    sortRecency: Number(key),
+  }))
+  .sort((a, b) => b.sortRecency - a.sortRecency);
+
+const connectionGroups: DashboardGroup[] = movies
+  .filter((movie) => movie.data.connections.length > 0)
+  .map((movie) => ({
+    id: slugOf(movie),
+    title: movie.data.title,
+    href: localizePath(`/films/${slugOf(movie)}/`, lang),
+    meta: `${movie.data.connections.length} ${
+      movie.data.connections.length === 1
+        ? t('dashboard.connection')
+        : t('dashboard.connections')
+    }`,
+    note: movie.data.connections.map((connection) => connection.note).join(' '),
+    films: [movie],
+    sortAlpha: movie.data.title,
+    sortCount: movie.data.connections.length,
+    sortRecency: movie.data.watchedOn.valueOf(),
+  }));
+
+const dashboardViews = [
+  { id: 'directors', label: t('dashboard.view.directors'), groups: directorGroups },
+  { id: 'themes', label: t('dashboard.view.themes'), groups: themeGroups },
+  { id: 'journal', label: t('dashboard.view.journal'), groups: journalGroups },
+  { id: 'timeline', label: t('dashboard.view.timeline'), groups: timelineGroups },
+  { id: 'connections', label: t('dashboard.view.connections'), groups: connectionGroups },
+];
 ---
 
 <BaseLayout title={t('brand')} description={t('meta.home')} lang={lang}>
@@ -42,32 +182,105 @@ const caseIndexById = new Map(movies.map((m, i) => [m.id, movies.length - i]));
     </div>
   </section>
 
-  <section class="wrap archive-section" aria-label={t('home.archiveLabel')}>
+  <section class="wrap archive-section dashboard" aria-label={t('home.archiveLabel')}>
+    <header class="dashboard-head">
+      <p class="eyebrow">{t('dashboard.eyebrow')}</p>
+      <h2>{t('dashboard.title')}</h2>
+      <p>{t('dashboard.intro')}</p>
+    </header>
+
+    <div class="dashboard-controls" aria-label={t('dashboard.controls')}>
+      <div class="view-switcher" role="tablist" aria-label={t('dashboard.viewLabel')}>
+        {
+          dashboardViews.map((view, index) => (
+            <button
+              type="button"
+              class="view-button"
+              data-view-button={view.id}
+              role="tab"
+              aria-selected={index === 0 ? 'true' : 'false'}
+              aria-controls={`dashboard-${view.id}`}
+            >
+              {view.label}
+            </button>
+          ))
+        }
+      </div>
+
+      <div class="dashboard-filters">
+        <label>
+          <span>{t('dashboard.filter.director')}</span>
+          <select data-dashboard-filter="director">
+            <option value="">{t('dashboard.all')}</option>
+            {directors.map((director) => <option value={director.name}>{director.name}</option>)}
+          </select>
+        </label>
+        <label>
+          <span>{t('dashboard.filter.theme')}</span>
+          <select data-dashboard-filter="theme">
+            <option value="">{t('dashboard.all')}</option>
+            {themeOptions.map((tag) => <option value={tag}>{tag}</option>)}
+          </select>
+        </label>
+        <label>
+          <span>{t('dashboard.filter.country')}</span>
+          <select data-dashboard-filter="country">
+            <option value="">{t('dashboard.all')}</option>
+            {countryOptions.map((country) => <option value={country}>{country}</option>)}
+          </select>
+        </label>
+        <label>
+          <span>{t('dashboard.sort')}</span>
+          <select data-dashboard-sort>
+            <option value="recency">{t('dashboard.sort.recency')}</option>
+            <option value="count">{t('dashboard.sort.count')}</option>
+            <option value="alpha">{t('dashboard.sort.alpha')}</option>
+          </select>
+        </label>
+      </div>
+    </div>
+
+    <div class="dashboard-empty" data-dashboard-empty hidden>{t('dashboard.empty')}</div>
+
     {
-      directors.map((director) => {
-        const countLabel =
-          director.films.length === 1 ? t('director.study') : t('director.studies');
-        return (
-          <div class="director-block">
-            <header class="director-block-head">
-              <a href={localizePath(`/directors/${director.slug}/`, lang)}>
-                <h2>{director.name}</h2>
-              </a>
-              <span class="director-block-count">
-                {director.films.length} {countLabel}
-              </span>
-              {director.entry && (
-                <p class="director-block-worldview">"{director.entry.data.worldview}"</p>
-              )}
-            </header>
-            <div class="movie-grid">
-              {director.films.map((movie) => (
-                <MovieCard movie={movie} index={caseIndexById.get(movie.id)} lang={lang} />
-              ))}
-            </div>
-          </div>
-        );
-      })
+      dashboardViews.map((view, index) => (
+        <div
+          class="dashboard-panel"
+          id={`dashboard-${view.id}`}
+          data-dashboard-panel={view.id}
+          role="tabpanel"
+          hidden={index !== 0}
+        >
+          {view.groups.map((group) => (
+            <section
+              class="dashboard-group"
+              data-dashboard-group
+              data-sort-alpha={group.sortAlpha.toLocaleLowerCase()}
+              data-sort-count={group.sortCount}
+              data-sort-recency={group.sortRecency}
+            >
+              <header class="dashboard-group-head">
+                {group.href ? (
+                  <a href={group.href}>
+                    <h3>{group.title}</h3>
+                  </a>
+                ) : (
+                  <h3>{group.title}</h3>
+                )}
+                <span>{group.meta}</span>
+                {group.note && <p>"{group.note}"</p>}
+              </header>
+              <div class="movie-grid dashboard-grid">
+                {group.films.map((movie) => (
+                  <div class="dashboard-card" {...movieAttrs(movie)}>
+                    <MovieCard movie={movie} index={caseIndexById.get(movie.id)} lang={lang} />
+                  </div>
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
+      ))
     }
   </section>
 
@@ -93,15 +306,109 @@ const caseIndexById = new Map(movies.map((m, i) => [m.id, movies.length - i]));
   </section>
 
   <style>
-    .director-block {
+    .dashboard-head {
+      max-width: 68ch;
+      margin-bottom: 2rem;
+    }
+
+    .dashboard-head .eyebrow {
+      margin-bottom: 1.2rem;
+    }
+
+    .dashboard-head h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(2.4rem, 5vw, 4rem);
+      font-weight: 900;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .dashboard-head p:not(.eyebrow) {
+      margin-top: 1rem;
+      color: var(--text-soft);
+      font-size: 1.06rem;
+      font-style: italic;
+      line-height: 1.75;
+    }
+
+    .dashboard-controls {
+      position: sticky;
+      top: 5.4rem;
+      z-index: 10;
+      margin-bottom: 3rem;
+      border-block: 1px solid var(--border);
+      padding-block: 1rem;
+      background: rgba(0, 0, 0, 0.94);
+      backdrop-filter: blur(12px);
+    }
+
+    .view-switcher {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+      margin-bottom: 1rem;
+    }
+
+    .view-button,
+    .dashboard-filters select {
+      border: 1px solid var(--border);
+      border-radius: 0;
+      background: var(--bg);
+      color: var(--text-soft);
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .view-button {
+      cursor: pointer;
+      padding: 0.62rem 0.85rem;
+      transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+    }
+
+    .view-button:hover,
+    .view-button[aria-selected='true'] {
+      border-color: var(--accent);
+      background: var(--surface-high);
+      color: var(--text);
+    }
+
+    .dashboard-filters {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.8rem;
+    }
+
+    .dashboard-filters label {
+      display: grid;
+      gap: 0.35rem;
+      min-width: 0;
+    }
+
+    .dashboard-filters span {
+      color: var(--text-faint);
+      font-family: var(--font-mono);
+      font-size: 0.56rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .dashboard-filters select {
+      width: 100%;
+      min-width: 0;
+      padding: 0.65rem 0.7rem;
+    }
+
+    .dashboard-group {
       margin-bottom: 4rem;
     }
 
-    .director-block:last-child {
+    .dashboard-group:last-child {
       margin-bottom: 0;
     }
 
-    .director-block-head {
+    .dashboard-group-head {
       display: flex;
       flex-wrap: wrap;
       align-items: baseline;
@@ -111,22 +418,22 @@ const caseIndexById = new Map(movies.map((m, i) => [m.id, movies.length - i]));
       padding-top: 1.6rem;
     }
 
-    .director-block-head a {
+    .dashboard-group-head a {
       color: var(--text);
     }
 
-    .director-block-head h2 {
+    .dashboard-group-head h3 {
       margin: 0;
       font-size: clamp(1.5rem, 3vw, 2.1rem);
       font-weight: 700;
       transition: color 0.2s ease;
     }
 
-    .director-block-head a:hover h2 {
+    .dashboard-group-head a:hover h3 {
       color: var(--accent);
     }
 
-    .director-block-count {
+    .dashboard-group-head span {
       color: var(--text-faint);
       font-family: var(--font-mono);
       font-size: 0.66rem;
@@ -134,7 +441,7 @@ const caseIndexById = new Map(movies.map((m, i) => [m.id, movies.length - i]));
       text-transform: uppercase;
     }
 
-    .director-block-worldview {
+    .dashboard-group-head p {
       flex-basis: 100%;
       max-width: 52rem;
       margin: 0.2rem 0 0;
@@ -144,9 +451,113 @@ const caseIndexById = new Map(movies.map((m, i) => [m.id, movies.length - i]));
       font-style: italic;
       line-height: 1.5;
     }
+
+    .dashboard-card {
+      display: flex;
+      min-width: 0;
+    }
+
+    .dashboard-card[hidden],
+    .dashboard-group[hidden],
+    .dashboard-panel[hidden] {
+      display: none;
+    }
+
+    .dashboard-empty {
+      border: 1px solid var(--border);
+      padding: 1.2rem;
+      color: var(--text-soft);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 820px) {
+      .dashboard-controls {
+        position: static;
+      }
+
+      .dashboard-filters {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 560px) {
+      .dashboard-filters {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 
   <script>
+    const viewButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-view-button]'));
+    const panels = Array.from(document.querySelectorAll<HTMLElement>('[data-dashboard-panel]'));
+    const filters = {
+      director: document.querySelector<HTMLSelectElement>('[data-dashboard-filter="director"]'),
+      theme: document.querySelector<HTMLSelectElement>('[data-dashboard-filter="theme"]'),
+      country: document.querySelector<HTMLSelectElement>('[data-dashboard-filter="country"]'),
+    };
+    const sortSelect = document.querySelector<HTMLSelectElement>('[data-dashboard-sort]');
+    const emptyState = document.querySelector<HTMLElement>('[data-dashboard-empty]');
+
+    function activePanel() {
+      return panels.find((panel) => !panel.hidden);
+    }
+
+    function applyDashboard() {
+      const panel = activePanel();
+      if (!panel) return;
+
+      const groups = Array.from(panel.querySelectorAll<HTMLElement>('[data-dashboard-group]'));
+      const sort = sortSelect?.value ?? 'recency';
+      groups
+        .sort((a, b) => {
+          if (sort === 'alpha') {
+            return (a.dataset.sortAlpha ?? '').localeCompare(b.dataset.sortAlpha ?? '');
+          }
+          const key = sort === 'count' ? 'sortCount' : 'sortRecency';
+          return Number(b.dataset[key] ?? 0) - Number(a.dataset[key] ?? 0);
+        })
+        .forEach((group) => panel.appendChild(group));
+
+      let visibleGroups = 0;
+      for (const group of groups) {
+        let visibleCards = 0;
+        const cards = Array.from(group.querySelectorAll<HTMLElement>('.dashboard-card'));
+        for (const card of cards) {
+          const tags = (card.dataset.tags ?? '').split('|');
+          const visible =
+            (!filters.director?.value || card.dataset.director === filters.director.value) &&
+            (!filters.theme?.value || tags.includes(filters.theme.value)) &&
+            (!filters.country?.value || card.dataset.country === filters.country.value);
+          card.hidden = !visible;
+          if (visible) visibleCards += 1;
+        }
+        group.hidden = visibleCards === 0;
+        if (visibleCards > 0) visibleGroups += 1;
+      }
+
+      if (emptyState) emptyState.hidden = visibleGroups > 0;
+    }
+
+    for (const button of viewButtons) {
+      button.addEventListener('click', () => {
+        const nextView = button.dataset.viewButton;
+        for (const candidate of viewButtons) {
+          candidate.setAttribute('aria-selected', String(candidate === button));
+        }
+        for (const panel of panels) {
+          panel.hidden = panel.dataset.dashboardPanel !== nextView;
+        }
+        applyDashboard();
+      });
+    }
+
+    Object.values(filters).forEach((filter) => filter?.addEventListener('change', applyDashboard));
+    sortSelect?.addEventListener('change', applyDashboard);
+    applyDashboard();
+
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (!reduce) {
       document.documentElement.classList.add('js-anim');
