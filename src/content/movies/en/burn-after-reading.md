@@ -6,7 +6,7 @@ year: 2008
 country: 'United States'
 runtime: 96
 watchedOn: 2026-06-20
-# frame: '../../../assets/frames/burn-after-reading.jpg'
+frame: '../../../assets/frames/burn-after-reading.jpg'
 frameCaption: "The two CIA officers behind a desk, trying to summarize a body count they can't explain. They have every surveillance tool there is and understand less than anyone —the indifferent universe of the film reduced to a shrug and a question no one can answer."
 logline: "When a disc holding an ex-CIA analyst's rambling memoir turns up on a gym floor, two dim fitness instructors mistake it for priceless intelligence —and a chain of vanity, paranoia and stupidity spirals into real corpses while the actual CIA watches, baffled."
 rating: 4

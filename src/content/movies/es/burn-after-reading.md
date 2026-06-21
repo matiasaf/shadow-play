@@ -6,7 +6,7 @@ year: 2008
 country: 'Estados Unidos'
 runtime: 96
 watchedOn: 2026-06-20
-# frame: '../../../assets/frames/burn-after-reading.jpg'
+frame: '../../../assets/frames/burn-after-reading.jpg'
 frameCaption: "Los dos oficiales de la CIA detrás de un escritorio, tratando de resumir una pila de cadáveres que no pueden explicar. Tienen todas las herramientas de vigilancia que existen y entienden menos que nadie —el universo indiferente de la película reducido a un encogimiento de hombros y una pregunta que nadie sabe contestar."
 logline: "Cuando un disco con las memorias deslavazadas de un ex analista de la CIA aparece en el piso de un gimnasio, dos instructores de fitness cortitos lo confunden con inteligencia valiosísima —y una cadena de vanidad, paranoia e idiotez se desmadra en cadáveres reales mientras la verdadera CIA mira, sin entender nada."
 rating: 4
