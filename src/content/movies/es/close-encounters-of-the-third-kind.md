@@ -6,8 +6,8 @@ year: 1977
 country: 'Estados Unidos'
 runtime: 135
 watchedOn: 2026-06-10
-# frame: '../../../assets/frames/close-encounters-of-the-third-kind.jpg'
-frameCaption: 'Barry abre la puerta de la casa y queda recortado, chiquito, contra la luz naranja que inunda todo: el plano que resume la apuesta de Spielberg —donde el cine de invasiones ponía terror, él pone un nene que mira.'
+frame: '../../../assets/frames/close-encounters-of-the-third-kind.jpg'
+frameCaption: 'Roy, el teléfono al oído, junto a la montaña de barro y basura que levantó en su propio living, mientras la tele detrás muestra en las noticias la Devils Tower real: el instante en que la obsesión privada resulta ser un hecho público. Spielberg encuadra a un hombre que destruyó su casa para esculpir una forma que no sabía nombrar —y recién ahora le dicen que existe.'
 logline: 'Un electricista de Indiana ve una luz en la ruta y queda marcado por una visión que no entiende; la sigue hasta una montaña, contra su familia y contra el Estado, y descubre que el llamado era real —y que atenderlo cuesta todo lo demás.'
 rating: 4
 tags: ['ciencia ficción', 'asombro', 'obsesión', 'fe', 'familia', 'comunicación']

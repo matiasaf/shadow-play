@@ -16,6 +16,8 @@ connections:
     note: "Another Coen portrait of a self-important man laboring over a masterwork nobody wants —Osbourne Cox dictating his 'mem-wahr' is Barton's blank page replayed as farce. Both films watch a writer's vanity collide with a world that simply isn't listening, and let the collision turn lethal."
   - slug: 'millers-crossing'
     note: "Two Coen crime plots that are each other's inverse. In Miller's Crossing one mind reads the whole board and plays every angle; in Burn After Reading nobody reads anything —the disc literally goes unread and the CIA 'learns' nothing. A film about a genius of intelligence and a film about its total absence."
+  - slug: 'a-serious-man'
+    note: "The Coen film made right after it, and its theological twin: both stage a universe that withholds meaning. Here the silence is farce —a CIA shrug over a pile of corpses— and in A Serious Man it's the Book of Job, a good man begging God for a reason and getting a cut to black. Same indifferent cosmos, once as a joke and once dead serious."
 draft: false
 ---
 

@@ -6,8 +6,8 @@ year: 1977
 country: 'United States'
 runtime: 135
 watchedOn: 2026-06-10
-# frame: '../../../assets/frames/close-encounters-of-the-third-kind.jpg'
-frameCaption: 'Barry opens the front door and stands, tiny, against the orange light flooding everything: the shot that sums up Spielberg''s wager —where invasion cinema put terror, he puts a child who looks.'
+frame: '../../../assets/frames/close-encounters-of-the-third-kind.jpg'
+frameCaption: 'Roy, phone to his ear, beside the mountain of mud and trash he has built in his own living room, while the TV behind it shows the real Devils Tower on the news: the instant the private obsession turns out to be a public fact. Spielberg frames a man who has wrecked his home to sculpt a shape he could not name —and is only now told it exists.'
 logline: 'An Indiana electrician sees a light on the road and is branded with a vision he doesn''t understand; he follows it to a mountain, against his family and against the State, and discovers the call was real —and that answering it costs everything else.'
 rating: 4
 tags: ['science fiction', 'wonder', 'obsession', 'faith', 'family', 'communication']

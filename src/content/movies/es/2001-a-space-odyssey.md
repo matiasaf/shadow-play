@@ -6,8 +6,8 @@ year: 1968
 country: 'Reino Unido / Estados Unidos'
 runtime: 149
 watchedOn: 2026-06-10
-# frame: '../../../assets/frames/2001-a-space-odyssey.jpg'
-frameCaption: 'El hueso lanzado al aire que corta a la nave en órbita: cuatro millones de años de herramienta resueltos en un solo corte, la elipsis más grande de la historia del cine.'
+frame: '../../../assets/frames/2001-a-space-odyssey.jpg'
+frameCaption: 'El monolito negro parado entre los homínidos al amanecer, un rectángulo perfecto caído en un mundo que nunca conoció una línea recta: el primer encuentro con la inteligencia como una forma tan ajena que solo se la puede tocar. Kubrick hace que el salto de la especie empiece con asombro, no con comprensión.'
 logline: 'Un monolito negro empuja a la especie de la herramienta al espacio, donde su creación más perfecta —una computadora incapaz de equivocarse— comete el error más humano de todos.'
 rating: 5
 tags:

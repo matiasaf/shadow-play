@@ -18,6 +18,8 @@ connections:
     note: "Two labyrinths that fold fiction back onto reality. The Hotel Earle is a corridor with no exit, and the picture of the woman on the beach finally steps out of its frame into the world —a Möbius seam where the story the artist couldn't write becomes the place he ends up living."
   - slug: 'millers-crossing'
     note: "The Coens' previous film, its mirror in a gangster key —John Turturro plays the man begging for his life there (Bernie: 'Look into your heart!') and the deaf intellectual here (Barton). One is all surface and strategy, the other all interior and noise; both pit a head against a heart and watch the head fail."
+  - slug: 'a-serious-man'
+    note: "Two Coen portraits of a Jewish intellectual trapped inside forces that won't speak to him. Barton pleads 'I'll show you the life of the mind' to a world on fire; Larry pleads 'I didn't do anything' to a God who answers with a tornado. Both seal a thinking man into a closed nightmare and refuse him the explanation he's sure he's owed."
 draft: false
 ---
 

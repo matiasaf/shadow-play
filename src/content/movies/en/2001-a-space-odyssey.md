@@ -6,8 +6,8 @@ year: 1968
 country: 'United Kingdom / United States'
 runtime: 149
 watchedOn: 2026-06-10
-# frame: '../../../assets/frames/2001-a-space-odyssey.jpg'
-frameCaption: 'The bone tossed into the air that cuts to the orbiting ship: four million years of tools resolved in a single cut, the largest ellipsis in the history of cinema.'
+frame: '../../../assets/frames/2001-a-space-odyssey.jpg'
+frameCaption: 'The black monolith standing among the apes at dawn, a perfect rectangle dropped into a world that has never known a straight line: the first encounter with intelligence as a shape so alien it can only be reached for. Kubrick makes the leap of the species begin with awe, not understanding.'
 logline: 'A black monolith pushes the species from tool to spaceflight, where its most perfect creation —a computer incapable of error— commits the most human mistake of all.'
 rating: 5
 tags:

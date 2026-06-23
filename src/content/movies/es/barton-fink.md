@@ -18,6 +18,8 @@ connections:
     note: 'Dos laberintos que pliegan la ficción sobre la realidad. El Hotel Earle es un pasillo sin salida, y el cuadro de la mujer en la playa termina saliéndose de su marco hacia el mundo —una costura de Moebius donde la historia que el artista no pudo escribir se vuelve el lugar donde termina viviendo.'
   - slug: 'millers-crossing'
     note: "La película anterior de los Coen, su espejo en clave gánster —John Turturro hace allá al hombre que ruega por su vida (Bernie: '¡Mirá en tu corazón!') y acá al intelectual sordo (Barton). Una es toda superficie y estrategia, la otra todo interior y ruido; las dos enfrentan una cabeza contra un corazón y miran cómo la cabeza fracasa."
+  - slug: 'a-serious-man'
+    note: "Dos retratos Coen de un intelectual judío atrapado dentro de fuerzas que no le hablan. Barton ruega 'te voy a mostrar la vida de la mente' a un mundo en llamas; Larry ruega 'yo no hice nada' a un Dios que le contesta con un tornado. Las dos encierran a un hombre que piensa en una pesadilla cerrada y le niegan la explicación que está seguro de que le deben."
 videos:
   - platform: 'youtube'
     title: 'Análisis de Barton Fink'

@@ -16,6 +16,8 @@ connections:
     note: "Otro retrato Coen de un hombre que se cree importante sudando una obra maestra que nadie quiere —Osbourne Cox dictando sus 'memuás' es la página en blanco de Barton repetida como farsa. Las dos películas miran la vanidad de un escritor chocar con un mundo que simplemente no lo escucha, y dejan que el choque se vuelva mortal."
   - slug: 'millers-crossing'
     note: "Dos tramas criminales de los Coen que son inversas una de la otra. En Miller's Crossing una mente lee el tablero entero y juega todos los ángulos; en Quemar después de leer nadie lee nada —el disco literalmente queda sin leer y la CIA no 'aprende' nada. Una película sobre un genio de la inteligencia y otra sobre su ausencia total."
+  - slug: 'a-serious-man'
+    note: "La película que los Coen hicieron justo después, y su gemela teológica: las dos montan un universo que niega el sentido. Acá el silencio es farsa —un encogimiento de hombros de la CIA sobre una pila de cadáveres— y en Un hombre serio es el Libro de Job, un buen hombre rogándole a Dios una razón y recibiendo un corte a negro. El mismo cosmos indiferente, una vez como chiste y otra completamente en serio."
 draft: false
 ---
 
