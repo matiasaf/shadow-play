@@ -16,6 +16,24 @@ connections:
     note: "The Coen film made right before it, and its comic twin: both stage a universe that withholds meaning. Burn After Reading plays the silence as farce —a CIA shrug over a pile of corpses— while A Serious Man plays it as theology, a good man begging God for a reason. Same indifferent cosmos, once as a joke and once as the Book of Job."
   - slug: 'barton-fink'
     note: "Two Coen portraits of a Jewish intellectual trapped inside forces that won't speak to him. Barton pleads 'I'll show you the life of the mind' to a world on fire; Larry pleads 'I didn't do anything' to a God who answers with a tornado. Both films seal a thinking man into a closed nightmare and refuse him the explanation he's sure he's owed."
+externalComments:
+  - source: 'FilmAffinity'
+    title: 'Los Coen, las bromas y la sobreinterpretación'
+    summary: "A Spanish-language reading of the film as a Coen joke about interpretation itself: Larry's passivity, the rabbis' empty answers, and the temptation to turn every absurd sign into theology."
+    body: "A Spanish-language reading of the film as a Coen joke about interpretation itself. The comment links A Serious Man back to Barton Fink through two opposite Jewish intellectual figures: Barton wants to rise above ordinary people, while Larry belongs to that ordinary world and barely knows how to act inside it. Its central claim is that the film turns humor, exasperation and exaggeration into a trap for the viewer: either we overinterpret every sign, or we miss that the joke is also carrying real weight. The final reading is especially useful for this fiche: Larry's decision to change the student's grade may look like the moment when God finally punishes him, but the comment argues the opposite possibility, that the ending rewards action over paralysis. The point is not to solve the film, but to show how the Coens make every answer unstable."
+    url: 'https://www.filmaffinity.com/es/user/rating/341533/497394.html'
+    note: 'Contains spoilers for the ending.'
+videos:
+  - platform: 'youtube'
+    title: 'A Serious Man: Can Life Be Understood?'
+    url: 'https://youtu.be/3vDmWFTvzto'
+    channel: 'Nerdwriter1'
+    note: 'Video essay curated to accompany the study of the film.'
+  - platform: 'youtube'
+    title: 'Video Essay: "The Man Who Knew Too Much"'
+    url: 'https://youtu.be/LoTVoW247pk'
+    channel: 'MUBI'
+    note: "Video essay on Larry's impossible demand to know what the film keeps withholding."
 draft: false
 ---
 
