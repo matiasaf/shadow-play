@@ -16,6 +16,7 @@ const description = Astro.props.description ?? t('meta.home');
 const home = localizePath('/', lang);
 const directors = localizePath('/directors', lang);
 const map = localizePath('/map', lang);
+const upnext = localizePath('/up-next', lang);
 const about = `${home === '/' ? '' : home}/#about`.replace('//', '/');
 ---
 
@@ -47,7 +48,7 @@ const about = `${home === '/' ? '' : home}/#about`.replace('//', '/');
             <a href={home}>{t('nav.films')}</a>
             <a href={directors}>{t('nav.directors')}</a>
             <a href={map}>{t('nav.map')}</a>
-            <a href={about}>{t('nav.about')}</a>
+            <a href={upnext}>{t('nav.upnext')}</a>
           </nav>
           <LanguageSwitcher />
         </div>
@@ -68,6 +69,7 @@ const about = `${home === '/' ? '' : home}/#about`.replace('//', '/');
           <a href={home}>{t('footer.archive')}</a>
           <a href={directors}>{t('footer.directors')}</a>
           <a href={map}>{t('footer.map')}</a>
+          <a href={upnext}>{t('footer.upnext')}</a>
           <a href={about}>{t('footer.manifesto')}</a>
         </nav>
       </div>

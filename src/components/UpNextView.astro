@@ -1,0 +1,398 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { useTranslations, localizePath, type Lang } from '../i18n/ui';
+import { getWatchlist, groupByThread, watchSlugOf } from '../lib/watchlist';
+import { getMovies, slugOf } from '../lib/movies';
+import { runtimeTimecode } from '../lib/format';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const entries = await getWatchlist(lang);
+const threads = groupByThread(entries);
+
+// Resolve `seeds` (neutral slugs) against the studied archive so each entry can
+// link back to the films that put it on the list, in this language.
+const movies = await getMovies(lang);
+const seenBySlug = new Map(
+  movies.map((m) => [slugOf(m), { title: m.data.title, href: localizePath(`/films/${slugOf(m)}/`, lang) }])
+);
+
+let counter = 0;
+---
+
+<BaseLayout title={`${t('upnext.title')} — ${t('brand')}`} description={t('meta.upnext')} lang={lang}>
+  <section class="wrap upnext-intro">
+    <div class="upnext-heading">
+      <p class="eyebrow">{t('upnext.eyebrow')}</p>
+      <h1>{t('upnext.title')}</h1>
+    </div>
+    <div class="upnext-intro-copy">
+      <p>{t('upnext.intro')}</p>
+      <dl class="upnext-stats" aria-label={t('upnext.summaryLabel')}>
+        <div>
+          <dt>{t('upnext.films')}</dt>
+          <dd>{String(entries.length).padStart(2, '0')}</dd>
+        </div>
+        <div>
+          <dt>{t('upnext.threads')}</dt>
+          <dd>{String(threads.length).padStart(2, '0')}</dd>
+        </div>
+      </dl>
+      <span class="upnext-badge">{t('upnext.spoilerFree')}</span>
+    </div>
+  </section>
+
+  {
+    threads.map((thread) => (
+      <section class="wrap upnext-thread" aria-label={thread.name}>
+        <header class="upnext-thread-head">
+          <span class="upnext-thread-rule" aria-hidden="true" />
+          <h2>{thread.name}</h2>
+          <span class="upnext-thread-count">{String(thread.entries.length).padStart(2, '0')}</span>
+        </header>
+
+        <ol class="upnext-list">
+          {thread.entries.map((entry) => {
+            counter += 1;
+            const d = entry.data;
+            const meta = [d.year, d.country, d.runtime ? runtimeTimecode(d.runtime) : null].filter(Boolean);
+            const seeds = d.seeds.map((slug) => seenBySlug.get(slug) ?? { title: slug, href: null });
+            return (
+              <li class="upnext-card" id={watchSlugOf(entry)}>
+                <div class="upnext-card-kicker">
+                  <span>{String(counter).padStart(2, '0')}</span>
+                  <span>{meta.join(' · ')}</span>
+                </div>
+                <h3>
+                  {d.title}
+                  {d.originalTitle && d.originalTitle !== d.title && (
+                    <span class="upnext-original"> · {d.originalTitle}</span>
+                  )}
+                </h3>
+                <p class="upnext-director">{d.director}</p>
+
+                <p class="upnext-why">{d.why}</p>
+
+                {d.tips.length > 0 && (
+                  <div class="upnext-block">
+                    <p class="upnext-label">{t('upnext.tips')}</p>
+                    <ul class="upnext-tips">
+                      {d.tips.map((tip) => (
+                        <li>{tip}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {seeds.length > 0 && (
+                  <div class="upnext-block">
+                    <p class="upnext-label">{t('upnext.seeds')}</p>
+                    <ul class="upnext-seeds">
+                      {seeds.map((seed) => (
+                        <li>
+                          {seed.href ? (
+                            <a href={seed.href}>{seed.title}</a>
+                          ) : (
+                            <span class="upnext-seed-untracked">{seed.title}</span>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {d.tags.length > 0 && (
+                  <ul class="upnext-tags" aria-hidden="true">
+                    {d.tags.map((tag) => (
+                      <li>{tag}</li>
+                    ))}
+                  </ul>
+                )}
+              </li>
+            );
+          })}
+        </ol>
+      </section>
+    ))
+  }
+</BaseLayout>
+
+<style>
+  .upnext-intro {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(18rem, 0.8fr);
+    gap: clamp(3rem, 8vw, 7rem);
+    align-items: end;
+    padding-block: clamp(4rem, 9vw, 7rem) clamp(2.5rem, 5vw, 4rem);
+  }
+
+  .upnext-heading .eyebrow {
+    margin-bottom: 1.5rem;
+  }
+
+  .upnext-heading h1 {
+    max-width: 9ch;
+    font-size: clamp(3.6rem, 8vw, 7rem);
+    line-height: 0.82;
+    text-align: left;
+  }
+
+  .upnext-intro-copy > p {
+    max-width: 36rem;
+    color: var(--text-soft);
+    font-family: var(--font-serif);
+    font-size: clamp(1.05rem, 1.7vw, 1.25rem);
+    font-style: italic;
+    line-height: 1.65;
+  }
+
+  .upnext-stats {
+    display: flex;
+    gap: 2.5rem;
+    margin-top: 2rem;
+    border-top: 1px solid var(--border);
+    padding-top: 1.2rem;
+  }
+
+  .upnext-stats div {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 0.25rem;
+  }
+
+  .upnext-stats dt {
+    color: var(--text-faint);
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .upnext-stats dd {
+    color: var(--accent);
+    font-family: var(--font-serif);
+    font-size: 2.2rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .upnext-badge {
+    display: inline-block;
+    margin-top: 1.4rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.35rem 0.9rem;
+    color: var(--text-faint);
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .upnext-thread {
+    padding-bottom: clamp(3rem, 7vw, 5rem);
+  }
+
+  .upnext-thread-head {
+    display: flex;
+    align-items: baseline;
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+  }
+
+  .upnext-thread-head h2 {
+    flex: none;
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    line-height: 1;
+  }
+
+  .upnext-thread-rule {
+    order: 3;
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .upnext-thread-count {
+    order: 4;
+    flex: none;
+    color: var(--text-faint);
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.16em;
+  }
+
+  .upnext-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1px;
+    border: 1px solid var(--border);
+    background: var(--border);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .upnext-card {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 0.5rem;
+    background: var(--bg-soft);
+    padding: clamp(1.5rem, 3vw, 2.2rem);
+  }
+
+  .upnext-card-kicker {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.4rem;
+    color: var(--text-faint);
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .upnext-card h3 {
+    font-size: clamp(1.6rem, 2.6vw, 2.3rem);
+    line-height: 1.02;
+  }
+
+  .upnext-original {
+    color: var(--text-faint);
+    font-family: var(--font-serif);
+    font-size: 0.95rem;
+    font-style: italic;
+    font-weight: 400;
+  }
+
+  .upnext-director {
+    color: var(--text-soft);
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .upnext-why {
+    margin-top: 0.6rem;
+    color: var(--text-soft);
+    font-family: var(--font-serif);
+    font-size: 1.02rem;
+    font-style: italic;
+    line-height: 1.6;
+  }
+
+  .upnext-block {
+    margin-top: 1rem;
+  }
+
+  .upnext-label {
+    margin-bottom: 0.5rem;
+    color: var(--text-faint);
+    font-family: var(--font-mono);
+    font-size: 0.56rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .upnext-tips {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .upnext-tips li {
+    position: relative;
+    padding-left: 1.1rem;
+    color: var(--text);
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+
+  .upnext-tips li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+  }
+
+  .upnext-seeds {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 0.9rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .upnext-seeds li {
+    font-size: 0.8rem;
+  }
+
+  .upnext-seeds li::before {
+    content: '— ';
+    color: var(--text-faint);
+  }
+
+  .upnext-seeds a {
+    color: var(--text-soft);
+    text-decoration: none;
+    border-bottom: 1px solid var(--border);
+    transition: color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .upnext-seeds a:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .upnext-seed-untracked {
+    color: var(--text-faint);
+  }
+
+  .upnext-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: auto;
+    padding: 1rem 0 0;
+    list-style: none;
+  }
+
+  .upnext-tags li {
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.2rem 0.6rem;
+    color: var(--text-faint);
+    font-family: var(--font-mono);
+    font-size: 0.56rem;
+    letter-spacing: 0.08em;
+  }
+
+  @media (max-width: 900px) {
+    .upnext-intro {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    .upnext-list {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .upnext-heading h1 {
+      font-size: clamp(3rem, 16vw, 4.6rem);
+    }
+  }
+</style>

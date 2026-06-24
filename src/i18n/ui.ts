@@ -15,16 +15,19 @@ export const ui = {
     'nav.films': 'Films',
     'nav.directors': 'Directors',
     'nav.map': 'The Map',
-    'nav.about': 'About',
+    'nav.upnext': 'Up Next',
     'footer.tagline': 'Handwritten, one film at a time',
     'footer.archive': 'Archive',
     'footer.directors': 'Directors',
     'footer.map': 'Map',
+    'footer.upnext': 'Up Next',
     'footer.manifesto': 'Manifesto',
     'meta.home': 'Shadowplay — a film study journal: I study the films I watch.',
     'meta.map': 'How the films I watch connect to each other: themes, motifs and links.',
     'meta.directors':
       'The directors behind the archive: each one a way of seeing the world, studied film by film.',
+    'meta.upnext':
+      'Up Next: the films still on the table, chosen out of the obsessions the archive keeps circling — each with why to watch it and spoiler-free viewing keys.',
 
     'home.eyebrow': 'The study of the seventh art',
     'home.title.a': "I don't review films.",
@@ -143,23 +146,39 @@ export const ui = {
     'map.linksCount': 'Written links',
     'map.fieldLabel': 'Memory field',
     'director.openMap': 'See on the map',
+
+    'upnext.eyebrow': "What's still on the table",
+    'upnext.title': 'Up Next',
+    'upnext.intro':
+      "Not studies yet — a watchlist. These are films I haven't seen, chosen mostly out of the obsessions this archive keeps circling: the double, noir and fatalism, craft, the silence of God, the films from down here. Each one comes with why it's worth watching and a few keys for how to look at it. No spoilers.",
+    'upnext.summaryLabel': 'Watchlist summary',
+    'upnext.films': 'Films queued',
+    'upnext.threads': 'Threads',
+    'upnext.spoilerFree': 'Spoiler-free',
+    'upnext.why': 'Why watch it',
+    'upnext.tips': 'Viewing keys',
+    'upnext.seeds': 'On the list because of',
+    'upnext.untracked': 'in the archive',
   },
   es: {
     'brand': 'Shadowplay',
     'nav.films': 'Películas',
     'nav.directors': 'Directores',
     'nav.map': 'El mapa',
-    'nav.about': 'Sobre el cuaderno',
+    'nav.upnext': 'Próximas sesiones',
     'footer.tagline': 'Escrito a mano, una película a la vez',
     'footer.archive': 'Archivo',
     'footer.directors': 'Directores',
     'footer.map': 'Mapa',
+    'footer.upnext': 'Próximas sesiones',
     'footer.manifesto': 'Manifiesto',
     'meta.home': 'Shadowplay — un cuaderno de cine: estudio las películas que voy viendo.',
     'meta.map':
       'Cómo se conectan entre sí las películas que voy viendo: temas, motivos y vínculos.',
     'meta.directors':
       'Los directores detrás del archivo: cada uno una forma de ver el mundo, estudiada película a película.',
+    'meta.upnext':
+      'Próximas sesiones: las películas que todavía están sobre la mesa, elegidas a partir de las obsesiones que el archivo no deja de rondar, cada una con su por qué verla y claves de visionado sin spoilers.',
 
     'home.eyebrow': 'Estudio del séptimo arte',
     'home.title.a': 'No reseño películas.',
@@ -279,6 +298,19 @@ export const ui = {
     'map.linksCount': 'Vínculos escritos',
     'map.fieldLabel': 'Campo de memoria',
     'director.openMap': 'Ver en el mapa',
+
+    'upnext.eyebrow': 'Lo que sigue sobre la mesa',
+    'upnext.title': 'Próximas sesiones',
+    'upnext.intro':
+      'Todavía no son fichas: es una lista de pendientes. Películas que no vi, elegidas sobre todo a partir de las obsesiones que este archivo no deja de rondar: el doble, el noir y el fatalismo, el oficio, el silencio de Dios, el cine de acá. Cada una viene con por qué verla y un par de claves para mirarla. Sin spoilers.',
+    'upnext.summaryLabel': 'Resumen de pendientes',
+    'upnext.films': 'Películas en cola',
+    'upnext.threads': 'Hilos',
+    'upnext.spoilerFree': 'Sin spoilers',
+    'upnext.why': 'Por qué verla',
+    'upnext.tips': 'Claves para verla',
+    'upnext.seeds': 'En la lista por',
+    'upnext.untracked': 'en el archivo',
   },
 } as const;
 
