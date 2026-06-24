@@ -16,6 +16,8 @@ connections:
     note: "La otra anatomía del doble de Hitchcock, y el cierre del ciclo: en Extraños el doble es otro hombre que ejecuta tu deseo; en Vértigo el doble es una mujer muerta que tratás de resucitar rehaciendo a una viva. Las dos vuelven culpable al héroe sin que sus manos hagan nada —Guy por deseo, Scottie por el miedo que lo paraliza en la cornisa y en la torre."
   - slug: 'double-indemnity'
     note: "Las dos películas saben que la mujer es una construcción del deseo masculino —pero Wilder deja que Phyllis se construya sola, y Vértigo muestra al hombre construyéndola, vistiendo a Judy y tiñéndola para meterla adentro de la fantasía. La femme fatale y su víctima, por fin revelados como escultor y arcilla."
+  - slug: 'oldboy'
+    note: "Park Chan-wook repite el diseño de Hitchcock desde el lado del titiritero. Scottie rehace a una mujer viva para convertirla en una fantasía muerta; Lee Woo-jin fabrica el amor y la rabia enteros de Oh Dae-su como un relojero. Las dos terminan en el mismo horror —descubrir que tu sentimiento más íntimo lo escribió otro—, pero Vértigo llora al obsesionado y Oldboy deja que el arquitecto mire."
 externalComments:
   - source: 'FilmAffinity'
     title: 'La cámara lasciva'

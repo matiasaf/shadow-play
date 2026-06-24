@@ -20,6 +20,8 @@ connections:
     note: "The same trap of the genial stranger who turns out to be a killer: Charlie Meadows offers Barton warmth and an unspoken pact, exactly as Bruno does Guy. Both heroes are too wrapped up in themselves to see the monster beside them —only in Barton Fink the deafness is the whole indictment."
   - slug: 'vertigo'
     note: "The cycle's closing rhyme, same director: the double again, but turned inward. Where Bruno is another man who acts out Guy's wish, in Vertigo the double is a dead woman Scottie tries to resurrect by remaking a living one. Both heroes are guilty without their hands doing the deed —Guy by desire, Scottie by the fear that paralyzes him on the tower."
+  - slug: 'oldboy'
+    note: "Vengeance as a contract that contaminates both parties. Bruno proposes the criss-cross so neither man has a motive; Lee Woo-jin engineers a revenge that makes Oh Dae-su complicit in his own damnation. In both, guilt is not paid off but transferred, and the avenger ends up fused with the thing he hunted —only Park lets the wound be incest and the pact run for fifteen years."
 draft: false
 ---
 

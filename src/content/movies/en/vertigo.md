@@ -16,6 +16,8 @@ connections:
     note: "Hitchcock's other anatomy of the double, and the bookend of the cycle: in Strangers the double is another man who carries out your wish; in Vertigo the double is a dead woman you try to raise by remaking a living one. Both make the hero guilty without his hands ever doing the deed —Guy by desire, Scottie by the fear that freezes him on the rooftop and the tower."
   - slug: 'double-indemnity'
     note: "Both films know the woman is a construction of male desire —but Wilder lets Phyllis build herself, while Vertigo shows the man doing the building, dressing Judy and dyeing her hair into the fantasy. The femme fatale and her victim, finally revealed as sculptor and clay."
+  - slug: 'oldboy'
+    note: "Park Chan-wook reruns Hitchcock's design from the puppeteer's side. Scottie remakes a living woman into a dead fantasy; Lee Woo-jin engineers Oh Dae-su's whole love and rage like a clockmaker. Both films end on the same horror —discovering that your most intimate feeling was authored by someone else— but Vertigo grieves the obsessed, while Oldboy lets the architect watch."
 externalComments:
   - source: 'FilmAffinity'
     title: 'La cámara lasciva'
