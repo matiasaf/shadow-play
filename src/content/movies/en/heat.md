@@ -14,6 +14,8 @@ tags: ['duality', 'craft', 'loneliness', 'nocturnal city', 'masculinity', 'time'
 connections:
   - slug: 'double-indemnity'
     note: 'Two crime stories where the criminal and the man of the law recognize each other as mirrors: craft and desire drive the protagonists to their own undoing.'
+  - slug: 'no-country-for-old-men'
+    note: "Both build their architecture around the pursuit —hunter and hunted as structural mirror— but land at opposite conclusions. Hanna and McCauley are near-equals who respect each other's craft across the divide; Bell and Chigurh never share a frame. Heat is a world where violence has a grammar two professionals can agree on; No Country is one where it doesn't —and the cop who can't read it retires in bewilderment."
 draft: false
 ---
 

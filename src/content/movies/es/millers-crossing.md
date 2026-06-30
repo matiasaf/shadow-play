@@ -16,6 +16,8 @@ connections:
     note: "La película siguiente de los Coen, y su espejo en miniatura —John Turturro hace acá al hombre que ruega por su vida (Bernie: '¡Mirá en tu corazón!') y allá al que no escucha a nadie (Barton). Las dos enfrentan una cabeza contra un corazón y dejan que la cabeza parezca ganar a un precio terrible: Miller's Crossing toda superficie y estrategia, Barton Fink todo interior y ruido."
   - slug: 'double-indemnity'
     note: "Dos noirs sobre un operador filoso que cree que puede ganarle a todos por los ángulos y termina deshecho por un afecto que no quiere nombrar —Walter por deseo, Tom por lealtad. Las dos viven dentro de un hombre que trata a la gente como movidas en un tablero, hasta que una de ellas deja de ser una movida."
+  - slug: 'no-country-for-old-men'
+    note: "Dos visiones Coen de un hombre que intenta controlar la violencia. Tom Reagan juega todos los ángulos y, por un rato, le sale; Llewelyn Moss intenta lo mismo y se equivoca desde el primer paso. La diferencia es Chigurh: no hay ángulo que lo contemple. Miller's Crossing cree que un hombre lo suficientemente listo puede doblar el destino; No Country es sobre un destino que no tiene doblez."
 externalComments:
   - source: 'FilmAffinity'
     title: "Comentario sobre Miller's Crossing"

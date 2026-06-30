@@ -14,6 +14,8 @@ tags: ['dualidad', 'oficio', 'soledad', 'ciudad nocturna', 'masculinidad', 'tiem
 connections:
   - slug: 'double-indemnity'
     note: 'Dos relatos de crimen donde el delincuente y el hombre de la ley se reconocen como espejo: el oficio y el deseo empujan a los protagonistas hacia su propia perdición.'
+  - slug: 'no-country-for-old-men'
+    note: 'Las dos construyen su arquitectura alrededor de la persecución —cazador y cazado como espejo—, pero llegan a conclusiones opuestas. Hanna y McCauley son casi pares que se respetan el oficio a través de la línea; Bell y Chigurh nunca comparten un encuadre. Heat es un mundo donde la violencia tiene gramática que dos profesionales pueden acordar; No Country, uno donde no la tiene —y el policía que no puede leerla se retira en desconcierto.'
 draft: false
 ---
 

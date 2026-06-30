@@ -16,6 +16,8 @@ connections:
     note: "The Coens' very next film, and its mirror in miniature —John Turturro plays the man begging for his life here (Bernie: 'Look into your heart!') and the man who can't hear anyone there (Barton). Both set a head against a heart and let the head appear to win at a terrible cost: Miller's Crossing all surface and strategy, Barton Fink all interior and noise."
   - slug: 'double-indemnity'
     note: "Two noirs about a sharp operator who believes he can out-angle everyone and is undone by an attachment he won't name —Walter by desire, Tom by loyalty. Both live inside a man who treats people as moves on a board until one of them stops being a move."
+  - slug: 'no-country-for-old-men'
+    note: "Two Coen visions of a man trying to control violence. Tom Reagan plays every angle and, for a while, he can; Llewelyn Moss tries the same and is wrong from the first step. The difference is Chigurh: there's no angle that accounts for him. Miller's Crossing believes a clever enough man can bend fate; No Country is about a fate that has no bend."
 draft: false
 ---
 
