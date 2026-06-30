@@ -16,6 +16,22 @@ connections:
     note: "Dos visiones Coen del control bajo la violencia. Tom Reagan juega todos los ángulos y, por un rato, le sale; Llewelyn Moss intenta lo mismo y se equivoca desde el primer paso. La diferencia es Chigurh: no hay ángulo que lo contemple. Miller's Crossing es sobre un hombre que dobla el destino; No Country, sobre un destino que no tiene doblez."
   - slug: 'heat'
     note: 'Las dos películas construyen su arquitectura alrededor de la persecución —cazador y cazado como espejo—, pero leen distinto la posición del detective. Hanna y McCauley son casi pares, profesionales que se respetan a través de la línea; Bell y Chigurh nunca comparten un encuadre. Hanna entiende lo que persigue; Bell no puede. La distancia entre los dos sheriffs es la distancia entre un mundo donde la violencia tiene gramática y uno donde no.'
+videos:
+  - platform: 'youtube'
+    title: 'No Country for Old Men Explained'
+    url: 'https://youtu.be/xKyp9rGzZ20'
+    channel: 'Logos Made Flesh'
+    note: 'Lectura de los dos sueños de Bell y del sentido que la película insiste en negar en el final.'
+  - platform: 'youtube'
+    title: 'The Philosophy of NO COUNTRY FOR OLD MEN – Wisecrack Edition'
+    url: 'https://youtu.be/cQEAZlNQbxY'
+    channel: 'Wisecrack'
+    note: 'Análisis de la filosofía de Chigurh y de lo que la película dice sobre el destino y el mal.'
+  - platform: 'youtube'
+    title: 'California Secreta #29: No Country for Old Men'
+    url: 'https://youtu.be/rCPhfgCKjEA'
+    channel: 'Vorterix'
+    note: 'Programa de California Secreta (Vorterix) que charla la película en profundidad.'
 draft: false
 ---
 

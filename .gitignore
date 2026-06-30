@@ -4,6 +4,9 @@ dist/
 node_modules/
 # generated types
 .astro/
+# test artifacts
+playwright-report/
+test-results/
 # environment variables
 .env
 .env.production

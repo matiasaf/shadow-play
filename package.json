@@ -7,6 +7,8 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
     "astro": "astro"
   },
   "dependencies": {
@@ -14,6 +16,7 @@
     "d3": "^7.9.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.61.1",
     "@types/d3": "^7.4.3"
   }
 }
