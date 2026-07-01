@@ -39,6 +39,7 @@ const metaParts = [
   data.country,
   data.runtime ? `${data.runtime} min` : null,
 ].filter(Boolean);
+const connectionCount = data.connections.length;
 
 const externalComments = data.externalComments.map((comment, index) => ({
   ...comment,
@@ -119,9 +120,36 @@ function youtubeEmbedUrl(url: string): string | null {
 
         <blockquote class="film-logline">"{data.logline}"</blockquote>
       </div>
+
+      <aside class="film-dossier" aria-label={t('film.studyFile')}>
+        <div class="dossier-row">
+          <span>{t('film.studyFile')}</span>
+          <strong>{caseNumber}</strong>
+        </div>
+        <div class="dossier-row">
+          <span>{t('film.watched')}</span>
+          <strong>{watched}</strong>
+        </div>
+        <div class="dossier-row">
+          <span>{t('film.connections')}</span>
+          <strong>{connectionCount}</strong>
+        </div>
+        {
+          data.tags.length > 0 && (
+            <div class="dossier-tags">
+              <span>{t('director.obsessions')}</span>
+              <div class="tag-row">
+                {data.tags.map((tag) => (
+                  <span class="tag">{tag}</span>
+                ))}
+              </div>
+            </div>
+          )
+        }
+      </aside>
     </header>
 
-    <figure class="wrap frame-figure selected-frame">
+    <figure class="wrap frame-figure selected-frame" id="study-frame">
       <div class="frame-stage is-frame">
         <Frame
           src={data.frame}
@@ -139,14 +167,23 @@ function youtubeEmbedUrl(url: string): string | null {
       </figcaption>
     </figure>
 
-    <div class="wrap">
-      <div class="prose film-prose">
-        <Content />
-      </div>
+    <div class="wrap film-study-layout">
+      <aside class="study-rail" aria-label={t('film.studyNavigation')}>
+        <a href="#study-frame">{t('film.studyFrame')}</a>
+        <a href="#study-notes">{t('film.readingNotes')}</a>
+        {externalComments.length > 0 && <a href="#curated-comments">{t('film.externalComments')}</a>}
+        {data.videos.length > 0 && <a href="#study-videos">{t('film.videos')}</a>}
+        {data.connections.length > 0 && <a href="#study-connections">{t('film.connections')}</a>}
+      </aside>
 
-      {
-        externalComments.length > 0 && (
-          <section class="external-section selected-external-comments">
+      <div class="study-main">
+        <div class="prose film-prose" id="study-notes">
+          <Content />
+        </div>
+
+        {
+          externalComments.length > 0 && (
+            <section class="external-section selected-external-comments" id="curated-comments">
             <h2>{t('film.externalComments')}</h2>
             <div class="external-grid comments-grid">
               {externalComments.map((comment) => (
@@ -192,13 +229,13 @@ function youtubeEmbedUrl(url: string): string | null {
                 </article>
               ))}
             </div>
-          </section>
-        )
-      }
+            </section>
+          )
+        }
 
-      {
-        data.videos.length > 0 && (
-          <section class="external-section selected-videos">
+        {
+          data.videos.length > 0 && (
+            <section class="external-section selected-videos" id="study-videos">
             <h2>{t('film.videos')}</h2>
             <div class="external-grid video-grid">
               {data.videos.map((video) => {
@@ -233,13 +270,13 @@ function youtubeEmbedUrl(url: string): string | null {
                 );
               })}
             </div>
-          </section>
-        )
-      }
+            </section>
+          )
+        }
 
-      {
-        data.connections.length > 0 && (
-          <section class="connections selected-connections">
+        {
+          data.connections.length > 0 && (
+            <section class="connections selected-connections" id="study-connections">
             <h2>{t('film.connections')}</h2>
             <div class="connection-grid">
               {data.connections.map((c) => {
@@ -258,23 +295,35 @@ function youtubeEmbedUrl(url: string): string | null {
                         height={236}
                       />
                     </div>
-                    <div class="to">{title}</div>
-                    <div class="why">{c.note}</div>
+                    <div class="connection-copy">
+                      {related && (
+                        <div class="connection-kicker">
+                          <span>{related.data.director}</span>
+                          <span>{related.data.year}</span>
+                        </div>
+                      )}
+                      <div class="to">{title}</div>
+                      <div class="why">{c.note}</div>
+                      <span class="connection-action">{t('film.studyFile')} <i aria-hidden="true">↗</i></span>
+                    </div>
                   </a>
                 ) : (
                   <div class="connection">
                     <div class="connection-frame is-frame">
                       <Frame src={undefined} alt={c.slug} title={c.slug} noFrameLabel={t('frame.noFrame')} />
                     </div>
-                    <div class="to">{c.slug}</div>
-                    <div class="why">{c.note}</div>
+                    <div class="connection-copy">
+                      <div class="to">{c.slug}</div>
+                      <div class="why">{c.note}</div>
+                    </div>
                   </div>
                 );
               })}
             </div>
-          </section>
-        )
-      }
+            </section>
+          )
+        }
+      </div>
     </div>
   </article>
 </BaseLayout>
@@ -307,11 +356,11 @@ function youtubeEmbedUrl(url: string): string | null {
 
 <style>
   .film-page {
-    padding-block: 3rem 4rem;
+    padding-block: 2.5rem 4rem;
   }
 
   .film-backbar {
-    margin-bottom: 3rem;
+    margin-bottom: clamp(2rem, 5vw, 3.5rem);
   }
 
   .film-backbar .back-link {
@@ -330,9 +379,10 @@ function youtubeEmbedUrl(url: string): string | null {
 
   .selected-film-hero {
     display: grid;
-    grid-template-columns: minmax(0, 8fr) minmax(220px, 4fr);
-    gap: 2rem;
-    padding-block: 0 4rem;
+    grid-template-columns: minmax(0, 1fr) minmax(17rem, 0.36fr);
+    gap: clamp(2rem, 6vw, 5rem);
+    align-items: end;
+    padding-block: 0 2.5rem;
   }
 
   .film-heading {
@@ -359,9 +409,12 @@ function youtubeEmbedUrl(url: string): string | null {
 
   .selected-film-hero h1 {
     margin: 0 0 0.75rem;
-    font-size: clamp(3rem, 8vw, 5.6rem);
-    font-weight: 700;
+    max-width: 11ch;
+    font-size: clamp(3.2rem, 8vw, 6.4rem);
+    font-weight: 900;
+    line-height: 0.96;
     letter-spacing: 0;
+    text-transform: uppercase;
   }
 
   .selected-film-hero .original {
@@ -417,30 +470,84 @@ function youtubeEmbedUrl(url: string): string | null {
   }
 
   .selected-film-hero .film-logline {
-    max-width: 40rem;
+    max-width: 44rem;
     margin: 0;
-    border-left: 2px solid var(--accent-strong);
-    padding-left: 1.6rem;
-    color: var(--text);
+    border-left: 2px solid var(--accent-muted);
+    padding-left: 1.25rem;
+    color: var(--text-soft);
     font-family: var(--font-serif);
-    font-size: clamp(1.35rem, 2.8vw, 1.75rem);
+    font-size: clamp(1.28rem, 2.4vw, 1.68rem);
     font-style: italic;
+    line-height: 1.48;
+  }
+
+  .film-dossier {
+    border: 1px solid var(--border);
+    border-top-color: var(--accent-muted);
+    background: rgba(21, 20, 17, 0.72);
+  }
+
+  .dossier-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 1rem;
+    align-items: baseline;
+    border-bottom: 1px solid var(--border);
+    padding: 1rem;
+  }
+
+  .dossier-row span,
+  .dossier-tags > span {
+    color: var(--text-faint);
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.16em;
     line-height: 1.45;
+    text-transform: uppercase;
+  }
+
+  .dossier-row strong {
+    color: var(--accent);
+    font-family: var(--font-serif);
+    font-size: 1.35rem;
+    font-weight: 700;
+    line-height: 1.1;
+    text-align: right;
+  }
+
+  .dossier-tags {
+    display: grid;
+    gap: 0.8rem;
+    padding: 1rem;
+  }
+
+  .dossier-tags .tag-row {
+    gap: 0.45rem;
   }
 
   .selected-frame {
-    margin-block: 0 4rem;
+    margin-block: 0 4.5rem;
   }
 
   .frame-stage {
     aspect-ratio: 16 / 9;
     border: 1px solid var(--border);
+    background: var(--surface-high);
+    box-shadow: 0 28px 80px rgba(0, 0, 0, 0.34);
+  }
+
+  .frame-stage::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border: 1px solid rgba(244, 208, 138, 0.08);
   }
 
   .selected-frame figcaption {
-    max-width: 70ch;
+    max-width: 78ch;
     margin-top: 1.4rem;
-    border-left: 1px solid var(--border);
+    border-left: 2px solid var(--accent-muted);
     padding-left: 1rem;
     color: var(--text-soft);
     font-size: 0.82rem;
@@ -449,20 +556,23 @@ function youtubeEmbedUrl(url: string): string | null {
   }
 
   .film-prose {
-    max-width: 65ch;
-    border-top: 1px solid var(--border);
-    padding-top: 3rem;
+    max-width: 70ch;
+    margin-inline: 0;
+    border-top: 1px solid var(--accent-muted);
+    padding-top: 3.25rem;
   }
 
   .film-prose h2 {
-    margin-bottom: 1.4rem;
-    font-size: 2rem;
+    margin-top: 3.5rem;
+    margin-bottom: 1.2rem;
+    font-size: clamp(2rem, 4vw, 2.55rem);
+    line-height: 1.05;
   }
 
   .film-prose p,
   .film-prose li {
-    font-size: 1.08rem;
-    line-height: 1.8;
+    font-size: 1.12rem;
+    line-height: 1.86;
   }
 
   .film-prose blockquote {
@@ -473,10 +583,47 @@ function youtubeEmbedUrl(url: string): string | null {
     text-align: center;
   }
 
+  .film-study-layout {
+    display: grid;
+    grid-template-columns: minmax(9rem, 0.22fr) minmax(0, 1fr);
+    gap: clamp(2rem, 7vw, 6rem);
+    align-items: start;
+  }
+
+  .study-rail {
+    position: sticky;
+    top: 7rem;
+    display: grid;
+    gap: 0.25rem;
+    border-top: 1px solid var(--accent-muted);
+    padding-top: 1rem;
+  }
+
+  .study-rail a {
+    border-bottom: 1px solid var(--border);
+    padding: 0.65rem 0;
+    color: var(--text-faint);
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
+    line-height: 1.45;
+    text-transform: uppercase;
+    transition: color 0.2s ease, padding-left 0.2s ease;
+  }
+
+  .study-rail a:hover {
+    padding-left: 0.35rem;
+    color: var(--accent);
+  }
+
+  .study-main {
+    min-width: 0;
+  }
+
   .external-section {
     margin-top: 5rem;
     padding-top: 3.5rem;
-    border-top: 1px solid var(--border);
+    border-top: 1px solid var(--accent-muted);
   }
 
   .external-section h2 {
@@ -505,8 +652,9 @@ function youtubeEmbedUrl(url: string): string | null {
   .external-card {
     display: block;
     border: 1px solid var(--border);
+    border-radius: var(--radius);
     padding: 1.25rem;
-    background: rgba(255, 255, 255, 0.02);
+    background: rgba(21, 20, 17, 0.72);
   }
 
   .comment-card {
@@ -779,20 +927,31 @@ function youtubeEmbedUrl(url: string): string | null {
 
   .connection-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 1.5rem;
   }
 
   .selected-connections .connection {
-    border: 0;
-    padding: 0;
-    background: transparent;
+    display: grid;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.75rem;
+    background: rgba(21, 20, 17, 0.72);
+    transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+  }
+
+  .selected-connections .connection:hover {
+    border-color: var(--accent-muted);
+    background: var(--surface-high);
+    transform: translateY(-2px);
   }
 
   .connection-frame {
     aspect-ratio: 16 / 9;
     margin-bottom: 1rem;
     border: 1px solid var(--border);
+    border-radius: 2px;
     background: var(--surface-high);
   }
 
@@ -806,9 +965,28 @@ function youtubeEmbedUrl(url: string): string | null {
     transform: scale(1.04);
   }
 
+  .connection-copy {
+    display: grid;
+    gap: 0.65rem;
+  }
+
+  .connection-kicker {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    color: var(--text-faint);
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.13em;
+    line-height: 1.35;
+    text-transform: uppercase;
+  }
+
   .selected-connections .to {
     color: var(--text);
+    font-family: var(--font-serif);
     font-size: 1.35rem;
+    line-height: 1.12;
     transition: color 0.2s ease;
   }
 
@@ -820,6 +998,32 @@ function youtubeEmbedUrl(url: string): string | null {
     color: var(--text-soft);
     font-size: 0.82rem;
     line-height: 1.55;
+  }
+
+  .connection-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.65rem;
+    border-top: 1px solid var(--border);
+    margin-top: 0.2rem;
+    padding-top: 0.75rem;
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .connection-action i {
+    color: var(--accent-strong);
+    font-style: normal;
+    transition: transform 0.25s ease;
+  }
+
+  .connection:hover .connection-action i {
+    transform: translate(2px, -2px);
   }
 
   @media (max-width: 760px) {
@@ -836,12 +1040,51 @@ function youtubeEmbedUrl(url: string): string | null {
       padding-bottom: 3rem;
     }
 
+    .selected-film-hero h1 {
+      max-width: 100%;
+      font-size: clamp(2.8rem, 15vw, 4rem);
+    }
+
     .selected-film-hero .film-meta {
       gap: 0.55rem;
     }
 
     .selected-film-hero .film-logline {
       padding-left: 1rem;
+    }
+
+    .film-dossier {
+      margin-top: 2rem;
+    }
+
+    .dossier-row {
+      grid-template-columns: 1fr;
+      gap: 0.35rem;
+    }
+
+    .dossier-row strong {
+      text-align: left;
+    }
+
+    .film-study-layout {
+      display: block;
+    }
+
+    .study-rail {
+      position: static;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.5rem;
+      margin-bottom: 2.5rem;
+      border-top: 1px solid var(--accent-muted);
+    }
+
+    .study-rail a {
+      border: 1px solid var(--border);
+      padding: 0.65rem;
+    }
+
+    .study-rail a:hover {
+      padding-left: 0.65rem;
     }
 
     .comment-modal {

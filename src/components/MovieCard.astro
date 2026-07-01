@@ -15,38 +15,55 @@ const { movie, index = 1, lang } = Astro.props;
 const { data } = movie;
 const t = useTranslations(lang);
 const href = localizePath(`/films/${slugOf(movie)}/`, lang);
-const meta = [data.director, String(data.year), data.country].filter(Boolean).join(' · ');
+const timecode = runtimeTimecode(data.runtime);
+const meta = [data.country, data.runtime ? `${data.runtime} min` : null].filter(Boolean).join(' · ');
+const visibleTags = data.tags.slice(0, 3);
+const hiddenTagCount = Math.max(data.tags.length - visibleTags.length, 0);
+const connectionText =
+  data.connections.length > 0
+    ? `${data.connections.length} ${
+        data.connections.length === 1 ? t('dashboard.connection') : t('dashboard.connections')
+      }`
+    : t('film.studyFile');
 ---
 
 <a class="card" href={href}>
-  <div class="sprockets" aria-hidden="true"></div>
+  <div class="card-topline">
+    <span>{caseNo(index)}</span>
+    <span>{connectionText}</span>
+  </div>
   <div class="card-frame is-frame">
     <Frame
       src={data.frame}
       alt={`${t('film.frameAlt')} ${data.title}`}
       title={data.title}
-      code={runtimeTimecode(data.runtime)}
+      code={timecode}
       noFrameLabel={t('frame.noFrame')}
       width={520}
       height={293}
     />
+    <span class="card-year">{data.year}</span>
   </div>
   <div class="card-body">
     <div class="card-kicker">
-      <span>{caseNo(index)}</span>
-      <span>{runtimeTimecode(data.runtime)} · {data.year}</span>
+      <span>{data.director}</span>
+      <span>{timecode}</span>
     </div>
     <h2 class="card-title">{data.title}</h2>
-    <p class="card-meta">{meta}</p>
+    {meta && <p class="card-meta">{meta}</p>}
     <p class="card-logline">{data.logline}</p>
-    {
-      data.tags.length > 0 && (
-        <div class="tag-row">
-          {data.tags.slice(0, 3).map((tag) => (
-            <span class="tag">{tag}</span>
-          ))}
-        </div>
-      )
-    }
+    <div class="card-footer">
+      {
+        visibleTags.length > 0 && (
+          <div class="tag-row">
+            {visibleTags.map((tag) => (
+              <span class="tag">{tag}</span>
+            ))}
+            {hiddenTagCount > 0 && <span class="tag tag-more">+{hiddenTagCount}</span>}
+          </div>
+        )
+      }
+      <span class="card-action">{t('film.studyFile')} <i aria-hidden="true">↗</i></span>
+    </div>
   </div>
 </a>

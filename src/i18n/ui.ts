@@ -37,6 +37,7 @@ export const ui = {
     'home.archiveLabel': 'Film archive',
     'home.archiveTag': 'Archive',
     'home.scroll': 'Scroll',
+    'home.latest': 'Latest study',
     'home.quote': "Cinema isn't a verdict: it's a way of looking twice.",
     'home.note':
       "In this journal I'm not trying to close a film with a score. I'm trying to understand why a scene comes back days later: the composition, the rhythm, the silences and the connections that surface once the archive starts talking to itself.",
@@ -93,9 +94,12 @@ export const ui = {
 
     'film.back': 'Back to the archive',
     'film.studyFile': 'Study file',
+    'film.studyFrame': 'Study frame',
     'film.watched': 'Watched on',
     'film.ratingOf': 'of 5',
     'film.connections': 'Connections',
+    'film.readingNotes': 'Study notes',
+    'film.studyNavigation': 'Study navigation',
     'film.externalComments': 'Curated comments',
     'film.externalComment': 'Curated comment',
     'film.readComment': 'Read comment',
@@ -188,6 +192,7 @@ export const ui = {
     'home.archiveLabel': 'Archivo de películas',
     'home.archiveTag': 'Archivo',
     'home.scroll': 'Scroll',
+    'home.latest': 'Última ficha',
     'home.quote': 'El cine no es un veredicto: es una forma de mirar dos veces.',
     'home.note':
       'En este cuaderno no busco cerrar una película con un puntaje. Busco entender por qué una escena vuelve días después: la composición, el ritmo, los silencios y las conexiones que aparecen cuando el archivo empieza a hablar entre sí.',
@@ -244,9 +249,12 @@ export const ui = {
 
     'film.back': 'Volver al archivo',
     'film.studyFile': 'Ficha de estudio',
+    'film.studyFrame': 'Fotograma de estudio',
     'film.watched': 'Vista el',
     'film.ratingOf': 'de 5',
     'film.connections': 'Conexiones',
+    'film.readingNotes': 'Notas de estudio',
+    'film.studyNavigation': 'Navegación de la ficha',
     'film.externalComments': 'Comentarios curados',
     'film.externalComment': 'Comentario curado',
     'film.readComment': 'Leer comentario',

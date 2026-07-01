@@ -16,6 +16,7 @@ const movies = await getMovies(lang);
 const directors = await getDirectors(lang);
 const countries = new Set(movies.map((movie) => movie.data.country).filter(Boolean));
 const countryOptions = [...countries].sort((a, b) => String(a).localeCompare(String(b)));
+const latestMovie = movies[0];
 
 // Case numbers stay global and chronological (newest = highest), even though
 // the archive is laid out by director.
@@ -163,19 +164,43 @@ const dashboardViews = [
 
 <BaseLayout title={t('brand')} description={t('meta.home')} lang={lang}>
   <section class="wrap intro home-hero" id="about">
-    <div class="hero-gunfire" aria-hidden="true"></div>
-    <div class="hero-marquee" aria-hidden="true">
+    <div class="hero-marquee">
       <span>{caseNo(movies.length)} · {t('home.archiveTag')}</span>
-      <span>EST. MMXXVI</span>
+      <span>{directors.length} {t('home.stat.directors')}</span>
     </div>
-    <p class="eyebrow">{t('home.eyebrow')}</p>
-    <h1>{t('home.title.a')} <span>{t('home.title.b')}</span></h1>
-    <div class="editorial-divider" aria-hidden="true">
-      <i></i>
-      <b></b>
-      <i></i>
+
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow">{t('home.eyebrow')}</p>
+        <h1>{t('home.title.a')} <span>{t('home.title.b')}</span></h1>
+        <p>{t('home.intro')}</p>
+      </div>
+
+      <aside class="hero-ledger" aria-label={t('home.summaryLabel')}>
+        <div class="hero-ledger-row">
+          <strong>{movies.length}</strong>
+          <span>{t('home.stat.studies')}</span>
+        </div>
+        <div class="hero-ledger-row">
+          <strong>{directors.length}</strong>
+          <span>{t('home.stat.directors')}</span>
+        </div>
+        <div class="hero-ledger-row">
+          <strong>{countries.size}</strong>
+          <span>{t('home.stat.countries')}</span>
+        </div>
+        {
+          latestMovie && (
+            <a class="latest-file" href={localizePath(`/films/${slugOf(latestMovie)}/`, lang)}>
+              <span>{t('home.latest')}</span>
+              <strong>{latestMovie.data.title}</strong>
+              <small>{latestMovie.data.director} · {latestMovie.data.year}</small>
+            </a>
+          )
+        }
+      </aside>
     </div>
-    <p>{t('home.intro')}</p>
+
     <div class="hero-scroll" aria-hidden="true">
       <span>{t('home.scroll')}</span>
       <i></i>
@@ -184,9 +209,16 @@ const dashboardViews = [
 
   <section class="wrap archive-section dashboard" aria-label={t('home.archiveLabel')}>
     <header class="dashboard-head">
-      <p class="eyebrow">{t('dashboard.eyebrow')}</p>
-      <h2>{t('dashboard.title')}</h2>
-      <p>{t('dashboard.intro')}</p>
+      <div>
+        <p class="eyebrow">{t('dashboard.eyebrow')}</p>
+        <h2>{t('dashboard.title')}</h2>
+        <p>{t('dashboard.intro')}</p>
+      </div>
+      <div class="dashboard-stamp" aria-hidden="true">
+        <span>{caseNo(movies.length)}</span>
+        <strong>{dashboardViews.length}</strong>
+        <small>{t('dashboard.viewLabel')}</small>
+      </div>
     </header>
 
     <div class="dashboard-controls" aria-label={t('dashboard.controls')}>
@@ -307,7 +339,10 @@ const dashboardViews = [
 
   <style>
     .dashboard-head {
-      max-width: 68ch;
+      display: grid;
+      grid-template-columns: minmax(0, 0.82fr) minmax(16rem, 0.34fr);
+      gap: clamp(2rem, 6vw, 5rem);
+      align-items: end;
       margin-bottom: 2rem;
     }
 
@@ -324,6 +359,7 @@ const dashboardViews = [
     }
 
     .dashboard-head p:not(.eyebrow) {
+      max-width: 62ch;
       margin-top: 1rem;
       color: var(--text-soft);
       font-size: 1.06rem;
@@ -331,14 +367,39 @@ const dashboardViews = [
       line-height: 1.75;
     }
 
+    .dashboard-stamp {
+      display: grid;
+      justify-items: end;
+      gap: 0.25rem;
+      border-top: 1px solid var(--accent-muted);
+      padding-top: 1rem;
+      color: var(--text-faint);
+      font-family: var(--font-mono);
+      text-align: right;
+      text-transform: uppercase;
+    }
+
+    .dashboard-stamp span,
+    .dashboard-stamp small {
+      font-size: 0.62rem;
+      letter-spacing: 0.16em;
+    }
+
+    .dashboard-stamp strong {
+      color: var(--accent);
+      font-family: var(--font-serif);
+      font-size: 3.4rem;
+      line-height: 1;
+    }
+
     .dashboard-controls {
       position: sticky;
       top: 5.4rem;
       z-index: 10;
-      margin-bottom: 3rem;
-      border-block: 1px solid var(--border);
-      padding-block: 1rem;
-      background: rgba(0, 0, 0, 0.94);
+      margin-bottom: 3.5rem;
+      border: 1px solid var(--border);
+      padding: 1rem;
+      background: color-mix(in srgb, var(--bg-soft) 92%, transparent);
       backdrop-filter: blur(12px);
     }
 
@@ -352,8 +413,8 @@ const dashboardViews = [
     .view-button,
     .dashboard-filters select {
       border: 1px solid var(--border);
-      border-radius: 0;
-      background: var(--bg);
+      border-radius: 2px;
+      background: var(--surface);
       color: var(--text-soft);
       font-family: var(--font-mono);
       font-size: 0.62rem;
@@ -369,7 +430,7 @@ const dashboardViews = [
 
     .view-button:hover,
     .view-button[aria-selected='true'] {
-      border-color: var(--accent);
+      border-color: var(--accent-muted);
       background: var(--surface-high);
       color: var(--text);
     }
@@ -401,7 +462,7 @@ const dashboardViews = [
     }
 
     .dashboard-group {
-      margin-bottom: 4rem;
+      margin-bottom: 4.8rem;
     }
 
     .dashboard-group:last-child {
@@ -409,13 +470,12 @@ const dashboardViews = [
     }
 
     .dashboard-group-head {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: baseline;
-      gap: 1rem;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 0.35rem 1.5rem;
       border-top: 1px solid var(--border);
-      margin-bottom: 1.8rem;
-      padding-top: 1.6rem;
+      margin-bottom: 1.6rem;
+      padding-top: 1.25rem;
     }
 
     .dashboard-group-head a {
@@ -424,7 +484,7 @@ const dashboardViews = [
 
     .dashboard-group-head h3 {
       margin: 0;
-      font-size: clamp(1.5rem, 3vw, 2.1rem);
+      font-size: clamp(1.45rem, 3vw, 2.15rem);
       font-weight: 700;
       transition: color 0.2s ease;
     }
@@ -434,6 +494,7 @@ const dashboardViews = [
     }
 
     .dashboard-group-head span {
+      align-self: center;
       color: var(--text-faint);
       font-family: var(--font-mono);
       font-size: 0.66rem;
@@ -442,7 +503,7 @@ const dashboardViews = [
     }
 
     .dashboard-group-head p {
-      flex-basis: 100%;
+      grid-column: 1 / -1;
       max-width: 52rem;
       margin: 0.2rem 0 0;
       color: var(--text-soft);
@@ -474,6 +535,15 @@ const dashboardViews = [
     }
 
     @media (max-width: 820px) {
+      .dashboard-head {
+        grid-template-columns: 1fr;
+      }
+
+      .dashboard-stamp {
+        justify-items: start;
+        text-align: left;
+      }
+
       .dashboard-controls {
         position: static;
       }
@@ -485,6 +555,10 @@ const dashboardViews = [
 
     @media (max-width: 560px) {
       .dashboard-filters {
+        grid-template-columns: 1fr;
+      }
+
+      .dashboard-group-head {
         grid-template-columns: 1fr;
       }
     }
@@ -581,43 +655,6 @@ const dashboardViews = [
         io.observe(card);
       });
 
-      // 3 — click inside the hero leaves a bullet hole + muzzle flash + recoil
-      const hero = document.querySelector<HTMLElement>('.home-hero');
-      if (hero) {
-        const flash = document.createElement('div');
-        flash.className = 'muzzle-screen-flash';
-        document.body.appendChild(flash);
-
-        const bulletSvg = `<svg viewBox="0 0 100 100" width="46" height="46" aria-hidden="true">
-          <circle cx="50" cy="50" r="26" fill="rgba(0,0,0,0.55)"/>
-          <g stroke="rgba(255,255,255,0.5)" stroke-width="1.4" fill="none">
-            <path d="M50 50 L82 28 M50 50 L88 60 M50 50 L58 90 M50 50 L18 78 M50 50 L10 46 M50 50 L36 12"/>
-          </g>
-          <circle cx="50" cy="50" r="8.5" fill="#000" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
-        </svg>`;
-
-        hero.addEventListener('click', (ev) => {
-          // ignore clicks on links/buttons inside the hero
-          if ((ev.target as HTMLElement).closest('a, button')) return;
-          const rect = hero.getBoundingClientRect();
-          const hole = document.createElement('span');
-          hole.className = 'bullet-hole';
-          hole.style.left = `${ev.clientX - rect.left}px`;
-          hole.style.top = `${ev.clientY - rect.top}px`;
-          hole.innerHTML = bulletSvg;
-          hero.appendChild(hole);
-
-          flash.classList.remove('fire');
-          void flash.offsetWidth;
-          flash.classList.add('fire');
-
-          hero.classList.remove('hero-shake');
-          void hero.offsetWidth;
-          hero.classList.add('hero-shake');
-
-          window.setTimeout(() => hole.remove(), 3800);
-        });
-      }
     }
   </script>
 </BaseLayout>
