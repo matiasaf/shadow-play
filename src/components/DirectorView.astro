@@ -1,9 +1,11 @@
 ---
 import { render } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Frame from './Frame.astro';
 import MovieCard from './MovieCard.astro';
 import { useTranslations, localizePath, type Lang } from '../i18n/ui';
 import { obsessionsOf, type DirectorGroup } from '../lib/directors';
+import { runtimeTimecode } from '../lib/format';
 import type { MovieEntry } from '../lib/movies';
 
 interface Props {
@@ -31,6 +33,10 @@ const metaParts = [
 const caseIndexOf = (m: MovieEntry) => all.length - all.findIndex((x) => x.id === m.id);
 
 const description = entry?.data.worldview ?? `${director.name} — ${t('director.dossier')}`;
+const latestFilm = director.films[0];
+const years = director.films.map((film) => film.data.year);
+const yearSpan =
+  years.length > 1 ? `${Math.min(...years)}-${Math.max(...years)}` : String(years[0] ?? '');
 ---
 
 <BaseLayout title={`${director.name} — ${t('brand')}`} description={description} lang={lang}>
@@ -42,41 +48,94 @@ const description = entry?.data.worldview ?? `${director.name} — ${t('director
     </div>
 
     <header class="wrap director-hero">
-      <div class="film-overline" aria-hidden="true">
-        <span>{t('director.dossier')}</span>
-        <span class="film-overline-sep"></span>
-        <span>{director.films.length} {countLabel}</span>
-      </div>
-      <h1>{director.name}</h1>
+      <div class="director-hero-copy">
+        <div class="film-overline" aria-hidden="true">
+          <span>{t('director.dossier')}</span>
+          <span class="film-overline-sep"></span>
+          <span>{director.films.length} {countLabel}</span>
+        </div>
+        <h1>{director.name}</h1>
 
-      <div class="film-meta director-meta">
+        <div class="film-meta director-meta">
+          {
+            metaParts.map((part, i) => (
+              <>
+                {i > 0 && <span class="sep"></span>}
+                <span>{part}</span>
+              </>
+            ))
+          }
+        </div>
+
+        <a class="director-map-link" href={`${localizePath('/map', lang)}#director:${director.slug}`}>
+          <span aria-hidden="true">◎</span> {t('director.openMap')}
+        </a>
+
         {
-          metaParts.map((part, i) => (
-            <>
-              {i > 0 && <span class="sep"></span>}
-              <span>{part}</span>
-            </>
-          ))
+          entry ? (
+            <blockquote class="film-logline">"{entry.data.worldview}"</blockquote>
+          ) : (
+            <p class="essay-pending">{t('director.essayPending')}</p>
+          )
         }
       </div>
 
-      <a class="director-map-link" href={`${localizePath('/map', lang)}#director:${director.slug}`}>
-        <span aria-hidden="true">◎</span> {t('director.openMap')}
-      </a>
-
-      {
-        entry ? (
-          <blockquote class="film-logline">"{entry.data.worldview}"</blockquote>
-        ) : (
-          <p class="essay-pending">{t('director.essayPending')}</p>
-        )
-      }
+      <aside class="director-dossier" aria-label={t('director.dossier')}>
+        <div class="director-dossier-row">
+          <span>{t('director.filmography')}</span>
+          <strong>{director.films.length}</strong>
+        </div>
+        {yearSpan && (
+          <div class="director-dossier-row">
+            <span>{t('dashboard.view.timeline')}</span>
+            <strong>{yearSpan}</strong>
+          </div>
+        )}
+        {latestFilm && (
+          <div class="director-dossier-row">
+            <span>{t('home.latest')}</span>
+            <strong>{latestFilm.data.title}</strong>
+          </div>
+        )}
+        {obsessions.length > 0 && (
+          <div class="director-dossier-tags">
+            <span>{t('director.obsessions')}</span>
+            <div class="tag-row">
+              {obsessions.slice(0, 10).map((tag) => (
+                <span class="tag">{tag}</span>
+              ))}
+            </div>
+          </div>
+        )}
+      </aside>
     </header>
+
+    <section class="wrap director-frame-strip" aria-label={t('director.filmography')}>
+      {director.films.slice(0, 3).map((film) => (
+        <a class="director-frame-link is-frame" href={localizePath(`/films/${film.id.split('/').pop()}/`, lang)}>
+          <Frame
+            src={film.data.frame}
+            alt={`${t('film.frameAlt')} ${film.data.title}`}
+            title={film.data.title}
+            code={runtimeTimecode(film.data.runtime)}
+            noFrameLabel={t('frame.noFrame')}
+            width={720}
+            height={405}
+          />
+          <span>{film.data.title}</span>
+        </a>
+      ))}
+    </section>
 
     {
       Content && (
-        <div class="wrap">
-          <div class="prose director-prose">
+        <div class="wrap director-study-layout">
+          <aside class="director-rail" aria-label={t('film.studyNavigation')}>
+            <a href="#director-essay">{t('director.worldview')}</a>
+            {obsessions.length > 0 && <a href="#director-obsessions">{t('director.obsessions')}</a>}
+            <a href="#director-films">{t('director.filmography')}</a>
+          </aside>
+          <div class="prose director-prose" id="director-essay">
             <Content />
           </div>
         </div>
@@ -85,7 +144,7 @@ const description = entry?.data.worldview ?? `${director.name} — ${t('director
 
     {
       obsessions.length > 0 && (
-        <section class="wrap director-obsessions">
+        <section class="wrap director-obsessions" id="director-obsessions">
           <h2>{t('director.obsessions')}</h2>
           <div class="tag-row">
             {obsessions.map((tag) => (
@@ -96,7 +155,7 @@ const description = entry?.data.worldview ?? `${director.name} — ${t('director
       )
     }
 
-    <section class="wrap director-films">
+    <section class="wrap director-films" id="director-films">
       <h2>{t('director.filmography')}</h2>
       <div class="movie-grid">
         {
@@ -111,11 +170,11 @@ const description = entry?.data.worldview ?? `${director.name} — ${t('director
 
 <style>
   .director-page {
-    padding-block: 3rem 4rem;
+    padding-block: 2.5rem 4rem;
   }
 
   .film-backbar {
-    margin-bottom: 3rem;
+    margin-bottom: clamp(2rem, 5vw, 3.5rem);
   }
 
   .film-backbar .back-link {
@@ -133,7 +192,11 @@ const description = entry?.data.worldview ?? `${director.name} — ${t('director
   }
 
   .director-hero {
-    padding-block: 0 3.5rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(17rem, 0.36fr);
+    gap: clamp(2rem, 6vw, 5rem);
+    align-items: end;
+    padding-block: 0 2.5rem;
   }
 
   .film-overline {
@@ -156,9 +219,12 @@ const description = entry?.data.worldview ?? `${director.name} — ${t('director
 
   .director-hero h1 {
     margin: 0 0 0.9rem;
-    font-size: clamp(2.6rem, 7vw, 4.8rem);
-    font-weight: 700;
+    max-width: 11ch;
+    font-size: clamp(3.2rem, 8vw, 6.4rem);
+    font-weight: 900;
+    line-height: 0.96;
     letter-spacing: 0;
+    text-transform: uppercase;
   }
 
   .director-meta {
@@ -180,15 +246,15 @@ const description = entry?.data.worldview ?? `${director.name} — ${t('director
   }
 
   .director-hero .film-logline {
-    max-width: 40rem;
+    max-width: 44rem;
     margin: 0;
-    border-left: 2px solid var(--accent-strong);
-    padding-left: 1.6rem;
-    color: var(--text);
+    border-left: 2px solid var(--accent-muted);
+    padding-left: 1.25rem;
+    color: var(--text-soft);
     font-family: var(--font-serif);
-    font-size: clamp(1.3rem, 2.6vw, 1.7rem);
+    font-size: clamp(1.28rem, 2.4vw, 1.68rem);
     font-style: italic;
-    line-height: 1.45;
+    line-height: 1.48;
   }
 
   .director-map-link {
@@ -206,8 +272,8 @@ const description = entry?.data.worldview ?? `${director.name} — ${t('director
   }
 
   .director-map-link:hover {
-    border-color: var(--accent);
-    background: rgba(150, 178, 207, 0.07);
+    border-color: var(--accent-muted);
+    background: rgba(244, 208, 138, 0.08);
   }
 
   .essay-pending {
@@ -218,26 +284,156 @@ const description = entry?.data.worldview ?? `${director.name} — ${t('director
     font-style: italic;
   }
 
+  .director-dossier {
+    border: 1px solid var(--border);
+    border-top-color: var(--accent-muted);
+    background: rgba(21, 20, 17, 0.72);
+  }
+
+  .director-dossier-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 1rem;
+    align-items: baseline;
+    border-bottom: 1px solid var(--border);
+    padding: 1rem;
+  }
+
+  .director-dossier-row span,
+  .director-dossier-tags > span {
+    color: var(--text-faint);
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.16em;
+    line-height: 1.45;
+    text-transform: uppercase;
+  }
+
+  .director-dossier-row strong {
+    color: var(--accent);
+    font-family: var(--font-serif);
+    font-size: 1.35rem;
+    font-weight: 700;
+    line-height: 1.1;
+    text-align: right;
+  }
+
+  .director-dossier-tags {
+    display: grid;
+    gap: 0.8rem;
+    padding: 1rem;
+  }
+
+  .director-frame-strip {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1px;
+    margin-bottom: 4.5rem;
+    border: 1px solid var(--border);
+    background: var(--border);
+  }
+
+  .director-frame-link {
+    position: relative;
+    display: block;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: var(--surface-high);
+  }
+
+  .director-frame-link :global(.frame-img),
+  .director-frame-link :global(.frame-gen) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(1) contrast(1.14) brightness(0.74);
+    transition: filter 0.45s ease, transform 0.65s ease;
+  }
+
+  .director-frame-link:hover :global(.frame-img),
+  .director-frame-link:hover :global(.frame-gen) {
+    filter: grayscale(0.65) contrast(1.16) brightness(0.95);
+    transform: scale(1.035);
+  }
+
+  .director-frame-link span {
+    position: absolute;
+    right: 0.8rem;
+    bottom: 0.7rem;
+    left: 0.8rem;
+    z-index: 2;
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.13em;
+    line-height: 1.35;
+    text-transform: uppercase;
+  }
+
+  .director-frame-link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(180deg, transparent 45%, rgba(0, 0, 0, 0.72));
+  }
+
+  .director-study-layout {
+    display: grid;
+    grid-template-columns: minmax(9rem, 0.22fr) minmax(0, 1fr);
+    gap: clamp(2rem, 7vw, 6rem);
+    align-items: start;
+  }
+
+  .director-rail {
+    position: sticky;
+    top: 7rem;
+    display: grid;
+    gap: 0.25rem;
+    border-top: 1px solid var(--accent-muted);
+    padding-top: 1rem;
+  }
+
+  .director-rail a {
+    border-bottom: 1px solid var(--border);
+    padding: 0.65rem 0;
+    color: var(--text-faint);
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
+    line-height: 1.45;
+    text-transform: uppercase;
+    transition: color 0.2s ease, padding-left 0.2s ease;
+  }
+
+  .director-rail a:hover {
+    padding-left: 0.35rem;
+    color: var(--accent);
+  }
+
   .director-prose {
-    max-width: 65ch;
-    border-top: 1px solid var(--border);
-    padding-top: 3rem;
+    max-width: 70ch;
+    margin-inline: 0;
+    border-top: 1px solid var(--accent-muted);
+    padding-top: 3.25rem;
     padding-bottom: 1rem;
   }
 
   .director-prose :global(h2) {
-    margin-bottom: 1.4rem;
-    font-size: 2rem;
+    margin-top: 3.5rem;
+    margin-bottom: 1.2rem;
+    font-size: clamp(2rem, 4vw, 2.55rem);
+    line-height: 1.05;
   }
 
   .director-prose :global(p),
   .director-prose :global(li) {
-    font-size: 1.08rem;
-    line-height: 1.8;
+    font-size: 1.12rem;
+    line-height: 1.86;
   }
 
   .director-obsessions {
-    padding-block: 2.5rem 0;
+    padding-block: 3.5rem 0;
   }
 
   .director-obsessions h2,
@@ -252,7 +448,7 @@ const description = entry?.data.worldview ?? `${director.name} — ${t('director
   }
 
   .director-films {
-    padding-top: 3.5rem;
+    padding-top: 4.5rem;
   }
 
   @media (max-width: 760px) {
@@ -266,6 +462,54 @@ const description = entry?.data.worldview ?? `${director.name} — ${t('director
 
     .director-hero .film-logline {
       padding-left: 1rem;
+    }
+
+    .director-hero {
+      display: block;
+      padding-bottom: 3rem;
+    }
+
+    .director-hero h1 {
+      max-width: 100%;
+      font-size: clamp(2.8rem, 15vw, 4rem);
+    }
+
+    .director-dossier {
+      margin-top: 2rem;
+    }
+
+    .director-dossier-row {
+      grid-template-columns: 1fr;
+      gap: 0.35rem;
+    }
+
+    .director-dossier-row strong {
+      text-align: left;
+    }
+
+    .director-frame-strip {
+      grid-template-columns: 1fr;
+      margin-bottom: 3rem;
+    }
+
+    .director-study-layout {
+      display: block;
+    }
+
+    .director-rail {
+      position: static;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .director-rail a {
+      border: 1px solid var(--border);
+      padding: 0.65rem;
+    }
+
+    .director-rail a:hover {
+      padding-left: 0.65rem;
     }
   }
 </style>

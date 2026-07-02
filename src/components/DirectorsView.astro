@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Frame from './Frame.astro';
 import { useTranslations, localizePath, type Lang } from '../i18n/ui';
-import { getDirectors } from '../lib/directors';
+import { getDirectors, obsessionsOf } from '../lib/directors';
 import { runtimeTimecode } from '../lib/format';
 
 interface Props {
@@ -41,6 +41,7 @@ const filmCount = directors.reduce((total, director) => total + director.films.l
       directors.map((director, i) => {
         const countLabel =
           director.films.length === 1 ? t('director.study') : t('director.studies');
+        const obsessions = obsessionsOf(director).slice(0, 4);
         return (
           <a class="director-card" href={localizePath(`/directors/${director.slug}/`, lang)}>
             <div class={`director-card-frames frames-${Math.min(director.films.length, 3)}`} aria-hidden="true">
@@ -69,6 +70,15 @@ const filmCount = directors.reduce((total, director) => total + director.films.l
               ) : (
                 <p class="director-card-worldview is-pending">{t('director.essayPending')}</p>
               )}
+              {
+                obsessions.length > 0 && (
+                  <div class="director-card-tags" aria-label={t('director.obsessions')}>
+                    {obsessions.map((tag) => (
+                      <span class="tag">{tag}</span>
+                    ))}
+                  </div>
+                )
+              }
               <div class="director-card-footer">
                 <ul class="director-film-list" aria-label={t('director.filmography')}>
                   {director.films.map((film) => <li>{film.data.title}</li>)}
@@ -86,10 +96,10 @@ const filmCount = directors.reduce((total, director) => total + director.films.l
 <style>
   .directors-intro {
     display: grid;
-    grid-template-columns: minmax(0, 1.2fr) minmax(18rem, 0.8fr);
+    grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.42fr);
     gap: clamp(3rem, 8vw, 7rem);
     align-items: end;
-    padding-block: clamp(4rem, 9vw, 7rem) clamp(3rem, 6vw, 5rem);
+    padding-block: clamp(3rem, 7vw, 5.5rem) clamp(3rem, 6vw, 5rem);
   }
 
   .directors-intro .eyebrow {
@@ -97,10 +107,13 @@ const filmCount = directors.reduce((total, director) => total + director.films.l
   }
 
   .directors-intro h1 {
-    max-width: 8ch;
-    font-size: clamp(4rem, 8.5vw, 7.4rem);
-    line-height: 0.82;
+    max-width: 9ch;
+    font-size: clamp(3.6rem, 7vw, 6.4rem);
+    font-weight: 900;
+    line-height: 0.9;
     text-align: left;
+    overflow-wrap: anywhere;
+    text-transform: uppercase;
   }
 
   .directors-intro-copy > p {
@@ -116,7 +129,7 @@ const filmCount = directors.reduce((total, director) => total + director.films.l
     display: flex;
     gap: 2.5rem;
     margin-top: 2rem;
-    border-top: 1px solid var(--border);
+    border-top: 1px solid var(--accent-muted);
     padding-top: 1.2rem;
   }
 
@@ -145,9 +158,7 @@ const filmCount = directors.reduce((total, director) => total + director.films.l
   .directors-list {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1px;
-    border: 1px solid var(--border);
-    background: var(--border);
+    gap: 1.5rem;
     padding-bottom: 5rem;
   }
 
@@ -155,13 +166,18 @@ const filmCount = directors.reduce((total, director) => total + director.films.l
     display: flex;
     min-width: 0;
     flex-direction: column;
-    background: var(--bg-soft);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: rgba(21, 20, 17, 0.72);
     color: var(--text);
-    transition: background 0.3s ease;
+    transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
   }
 
   .director-card:hover {
+    border-color: var(--accent-muted);
     background: var(--surface-high);
+    transform: translateY(-2px);
   }
 
   .director-card-frames {
@@ -208,10 +224,10 @@ const filmCount = directors.reduce((total, director) => total + director.films.l
 
   .director-card-body {
     display: flex;
-    min-height: 21rem;
+    min-height: 23rem;
     flex: 1;
     flex-direction: column;
-    padding: clamp(1.5rem, 3vw, 2.2rem);
+    padding: clamp(1.25rem, 2.5vw, 1.8rem);
   }
 
   .director-card-kicker {
@@ -227,8 +243,10 @@ const filmCount = directors.reduce((total, director) => total + director.films.l
 
   .director-card h2 {
     margin-bottom: 1rem;
-    font-size: clamp(2rem, 3.5vw, 3.25rem);
+    font-size: clamp(1.85rem, 3.1vw, 2.85rem);
+    font-weight: 900;
     line-height: 1;
+    text-transform: uppercase;
     transition: color 0.2s ease;
   }
 
@@ -246,6 +264,19 @@ const filmCount = directors.reduce((total, director) => total + director.films.l
     line-height: 1.6;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 4;
+  }
+
+  .director-card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1.35rem;
+    min-width: 0;
+  }
+
+  .director-card-tags .tag {
+    max-width: 100%;
+    overflow-wrap: anywhere;
   }
 
   .director-card-worldview.is-pending {
@@ -287,6 +318,7 @@ const filmCount = directors.reduce((total, director) => total + director.films.l
     font-family: var(--font-mono);
     font-size: 0.58rem;
     letter-spacing: 0.12em;
+    line-height: 1.35;
     text-transform: uppercase;
   }
 
@@ -318,7 +350,7 @@ const filmCount = directors.reduce((total, director) => total + director.films.l
 
   @media (max-width: 760px) {
     .directors-intro h1 {
-      font-size: clamp(3.5rem, 18vw, 5.2rem);
+      font-size: clamp(3rem, 15vw, 4.7rem);
     }
 
     .director-card-body {

@@ -149,6 +149,10 @@ export const ui = {
     'map.filmsCount': 'Films',
     'map.linksCount': 'Written links',
     'map.fieldLabel': 'Memory field',
+    'map.find': 'Find in the map',
+    'map.searchLabel': 'Find node',
+    'map.searchPlaceholder': 'Search films or directors',
+    'map.resetView': 'Reset view',
     'director.openMap': 'See on the map',
 
     'upnext.eyebrow': "What's still on the table",
@@ -305,6 +309,10 @@ export const ui = {
     'map.filmsCount': 'Películas',
     'map.linksCount': 'Vínculos escritos',
     'map.fieldLabel': 'Campo de memoria',
+    'map.find': 'Buscar en el mapa',
+    'map.searchLabel': 'Buscar nodo',
+    'map.searchPlaceholder': 'Buscar películas o directores',
+    'map.resetView': 'Reencuadrar',
     'director.openMap': 'Ver en el mapa',
 
     'upnext.eyebrow': 'Lo que sigue sobre la mesa',
