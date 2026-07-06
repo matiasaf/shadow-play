@@ -1,9 +1,10 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { useTranslations, localizePath, type Lang } from '../i18n/ui';
+import { useTranslations, localizePath, dateLocale, type Lang } from '../i18n/ui';
 import { getWatchlist, groupByThread, watchSlugOf } from '../lib/watchlist';
 import { getMovies, slugOf } from '../lib/movies';
 import { runtimeTimecode } from '../lib/format';
+import streaming from '../data/streaming.json';
 
 interface Props {
   lang: Lang;
@@ -21,6 +22,17 @@ const movies = await getMovies(lang);
 const seenBySlug = new Map(
   movies.map((m) => [slugOf(m), { title: m.data.title, href: localizePath(`/films/${slugOf(m)}/`, lang) }])
 );
+
+// Where each film streams in Argentina (src/data/streaming.json, regenerated
+// with `npm run streaming:update`). Keyed by the same neutral slug as `seeds`.
+type Availability = { link: string | null; flatrate: string[]; rent: string[] };
+const streamingBySlug = new Map<string, Availability>(Object.entries(streaming.films));
+const checkedOn = new Date(streaming.checkedOn).toLocaleDateString(dateLocale[lang], {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+  timeZone: 'UTC',
+});
 
 let counter = 0;
 ---
@@ -44,6 +56,9 @@ let counter = 0;
         </div>
       </dl>
       <span class="upnext-badge">{t('upnext.spoilerFree')}</span>
+      <p class="upnext-availability">
+        {t('upnext.availability')} {checkedOn} · {t('upnext.attribution')}
+      </p>
     </div>
   </section>
 
@@ -62,6 +77,8 @@ let counter = 0;
             const d = entry.data;
             const meta = [d.year, d.country, d.runtime ? runtimeTimecode(d.runtime) : null].filter(Boolean);
             const seeds = d.seeds.map((slug) => seenBySlug.get(slug) ?? { title: slug, href: null });
+            const avail = streamingBySlug.get(watchSlugOf(entry));
+            const hasStreaming = Boolean(avail && (avail.flatrate.length || avail.rent.length));
             return (
               <li class="upnext-card" id={watchSlugOf(entry)}>
                 <div class="upnext-card-kicker">
@@ -105,6 +122,31 @@ let counter = 0;
                     </ul>
                   </div>
                 )}
+
+                <div class="upnext-block">
+                  <p class="upnext-label">
+                    {hasStreaming && avail?.link ? (
+                      <a class="upnext-where-link" href={avail.link} rel="noopener">
+                        {t('upnext.where')} ↗
+                      </a>
+                    ) : (
+                      t('upnext.where')
+                    )}
+                  </p>
+                  {avail && avail.flatrate.length > 0 && (
+                    <ul class="upnext-platforms">
+                      {avail.flatrate.map((name) => (
+                        <li>{name}</li>
+                      ))}
+                    </ul>
+                  )}
+                  {avail && avail.rent.length > 0 && (
+                    <p class="upnext-rent">
+                      <span>{t('upnext.rent')}</span> {avail.rent.join(' · ')}
+                    </p>
+                  )}
+                  {!hasStreaming && <p class="upnext-nostream">{t('upnext.notStreaming')}</p>}
+                </div>
 
                 {d.tags.length > 0 && (
                   <ul class="upnext-tags" aria-hidden="true">
@@ -191,6 +233,18 @@ let counter = 0;
     font-family: var(--font-mono);
     font-size: 0.58rem;
     letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .upnext-intro-copy > p.upnext-availability {
+    max-width: 36rem;
+    margin-top: 1rem;
+    color: var(--text-faint);
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+    font-style: normal;
+    letter-spacing: 0.12em;
+    line-height: 1.7;
     text-transform: uppercase;
   }
 
@@ -358,6 +412,62 @@ let counter = 0;
 
   .upnext-seed-untracked {
     color: var(--text-faint);
+  }
+
+  .upnext-where-link {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px solid var(--border);
+    transition: color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .upnext-where-link:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .upnext-platforms {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .upnext-platforms li {
+    border: 1px solid var(--accent);
+    border-radius: 999px;
+    padding: 0.25rem 0.7rem;
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.08em;
+  }
+
+  .upnext-rent {
+    margin-top: 0.5rem;
+    color: var(--text-soft);
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+  }
+
+  .upnext-rent span {
+    color: var(--text-faint);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .upnext-rent span::after {
+    content: ' — ';
+  }
+
+  .upnext-nostream {
+    color: var(--text-faint);
+    font-family: var(--font-serif);
+    font-size: 0.9rem;
+    font-style: italic;
   }
 
   .upnext-tags {

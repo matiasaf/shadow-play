@@ -1,0 +1,150 @@
+{
+  "region": "AR",
+  "checkedOn": "2026-07-06",
+  "films": {
+    "adaptation": {
+      "tmdbId": 2757,
+      "link": "https://www.themoviedb.org/movie/2757-adaptation/watch?locale=AR",
+      "flatrate": [],
+      "rent": [
+        "Apple TV Store",
+        "Claro video"
+      ]
+    },
+    "blue-velvet": {
+      "tmdbId": 793,
+      "link": "https://www.themoviedb.org/movie/793-blue-velvet/watch?locale=AR",
+      "flatrate": [
+        "MovistarTV",
+        "MUBI"
+      ],
+      "rent": [
+        "Apple TV Store",
+        "Google Play Movies"
+      ]
+    },
+    "inside-man": {
+      "tmdbId": 388,
+      "link": "https://www.themoviedb.org/movie/388-inside-man/watch?locale=AR",
+      "flatrate": [
+        "Amazon Prime Video",
+        "MovistarTV",
+        "HBO Max"
+      ],
+      "rent": [
+        "Apple TV Store",
+        "Google Play Movies",
+        "Claro video"
+      ]
+    },
+    "invasion": {
+      "tmdbId": 163924,
+      "link": null,
+      "flatrate": [],
+      "rent": []
+    },
+    "la-cienaga": {
+      "tmdbId": 58429,
+      "link": "https://www.themoviedb.org/movie/58429-la-cienaga/watch?locale=AR",
+      "flatrate": [
+        "Amazon Prime Video",
+        "MovistarTV",
+        "MUBI"
+      ],
+      "rent": []
+    },
+    "le-samourai": {
+      "tmdbId": 5511,
+      "link": null,
+      "flatrate": [],
+      "rent": []
+    },
+    "mulholland-drive": {
+      "tmdbId": 1018,
+      "link": "https://www.themoviedb.org/movie/1018-mulholland-drive/watch?locale=AR",
+      "flatrate": [],
+      "rent": [
+        "Apple TV Store"
+      ]
+    },
+    "out-of-the-past": {
+      "tmdbId": 678,
+      "link": null,
+      "flatrate": [],
+      "rent": []
+    },
+    "persona": {
+      "tmdbId": 797,
+      "link": "https://www.themoviedb.org/movie/797-persona/watch?locale=AR",
+      "flatrate": [
+        "Artiflix"
+      ],
+      "rent": []
+    },
+    "punch-drunk-love": {
+      "tmdbId": 8051,
+      "link": "https://www.themoviedb.org/movie/8051-punch-drunk-love/watch?locale=AR",
+      "flatrate": [],
+      "rent": [
+        "Apple TV Store",
+        "Claro video"
+      ]
+    },
+    "sunset-boulevard": {
+      "tmdbId": 599,
+      "link": "https://www.themoviedb.org/movie/599-sunset-boulevard/watch?locale=AR",
+      "flatrate": [],
+      "rent": [
+        "Apple TV Store",
+        "Google Play Movies",
+        "Claro video"
+      ]
+    },
+    "synecdoche-new-york": {
+      "tmdbId": 4960,
+      "link": "https://www.themoviedb.org/movie/4960-synecdoche-new-york/watch?locale=AR",
+      "flatrate": [
+        "MUBI"
+      ],
+      "rent": []
+    },
+    "the-conversation": {
+      "tmdbId": 592,
+      "link": "https://www.themoviedb.org/movie/592-the-conversation/watch?locale=AR",
+      "flatrate": [],
+      "rent": [
+        "Apple TV Store"
+      ]
+    },
+    "the-seventh-seal": {
+      "tmdbId": 490,
+      "link": null,
+      "flatrate": [],
+      "rent": []
+    },
+    "the-third-man": {
+      "tmdbId": 1092,
+      "link": "https://www.themoviedb.org/movie/1092-the-third-man/watch?locale=AR",
+      "flatrate": [
+        "Artiflix"
+      ],
+      "rent": [
+        "Apple TV Store"
+      ]
+    },
+    "thief": {
+      "tmdbId": 11524,
+      "link": "https://www.themoviedb.org/movie/11524-thief/watch?locale=AR",
+      "flatrate": [
+        "MGM+ Apple TV Channel"
+      ],
+      "rent": []
+    },
+    "winter-light": {
+      "tmdbId": 29455,
+      "link": null,
+      "flatrate": [],
+      "rent": []
+    }
+  }
+}

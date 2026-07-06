@@ -167,6 +167,11 @@ export const ui = {
     'upnext.tips': 'Viewing keys',
     'upnext.seeds': 'On the list because of',
     'upnext.untracked': 'in the archive',
+    'upnext.where': 'Where to watch',
+    'upnext.rent': 'Rent or buy',
+    'upnext.notStreaming': 'Not streaming in Argentina right now',
+    'upnext.availability': 'Availability in Argentina checked on',
+    'upnext.attribution': 'Streaming data by JustWatch, via TMDB',
   },
   es: {
     'brand': 'Shadowplay',
@@ -327,6 +332,11 @@ export const ui = {
     'upnext.tips': 'Claves para verla',
     'upnext.seeds': 'En la lista por',
     'upnext.untracked': 'en el archivo',
+    'upnext.where': 'Dónde verla',
+    'upnext.rent': 'Alquiler o compra',
+    'upnext.notStreaming': 'Sin streaming en Argentina por ahora',
+    'upnext.availability': 'Disponibilidad en Argentina revisada el',
+    'upnext.attribution': 'Datos de streaming de JustWatch, vía TMDB',
   },
 } as const;
 
