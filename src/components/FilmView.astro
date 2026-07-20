@@ -620,6 +620,33 @@ function youtubeEmbedUrl(url: string): string | null {
     min-width: 0;
   }
 
+  @media (max-width: 960px) {
+    .film-study-layout {
+      display: block;
+    }
+
+    .study-rail {
+      position: static;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.5rem;
+      margin-bottom: 3rem;
+      border-top: 1px solid var(--accent-muted);
+    }
+
+    .study-rail a {
+      border: 1px solid var(--border);
+      padding: 0.7rem;
+    }
+
+    .study-rail a:hover {
+      padding-left: 0.7rem;
+    }
+
+    .film-prose {
+      margin-inline: auto;
+    }
+  }
+
   .external-section {
     margin-top: 5rem;
     padding-top: 3.5rem;
@@ -1066,25 +1093,9 @@ function youtubeEmbedUrl(url: string): string | null {
       text-align: left;
     }
 
-    .film-study-layout {
-      display: block;
-    }
-
     .study-rail {
-      position: static;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 0.5rem;
       margin-bottom: 2.5rem;
-      border-top: 1px solid var(--accent-muted);
-    }
-
-    .study-rail a {
-      border: 1px solid var(--border);
-      padding: 0.65rem;
-    }
-
-    .study-rail a:hover {
-      padding-left: 0.65rem;
     }
 
     .comment-modal {
