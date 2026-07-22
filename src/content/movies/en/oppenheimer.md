@@ -6,7 +6,7 @@ year: 2023
 country: 'United States / United Kingdom'
 runtime: 180
 watchedOn: 2026-07-21
-# frame: '../../../assets/frames/oppenheimer.jpg'
+frame: '../../../assets/frames/oppenheimer.jpg'
 frameCaption: "Oppenheimer before the Trinity test, his face held between darkness and the hard horizontal light of the bunker: the scientist as both witness and author, waiting to learn whether an idea can still be called his once it enters history."
 logline: 'A physicist gathers the minds and machinery that make the atomic bomb possible, then discovers that political power can use both his genius and his conscience without ever belonging to him.'
 rating: 5
