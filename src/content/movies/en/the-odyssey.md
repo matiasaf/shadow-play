@@ -6,8 +6,8 @@ year: 2026
 country: 'United Kingdom / United States'
 runtime: 172
 watchedOn: 2026-07-23
-# frame: '../../../assets/frames/the-odyssey.jpg'
-frameCaption: 'Odysseus bound upright to the mast while the sea and sky erase every stable horizon: the man who survives by mastering every situation choosing, for once, to make himself powerless before what he most wants to know.'
+frame: '../../../assets/frames/the-odyssey.jpg'
+frameCaption: 'Odysseus stands armed before the waiting fleet, close enough to command it and already separate from every man behind him. The ships promise a road home; his backward glance suggests that the strategist who won the war knows the voyage will also be an inquiry into what victory made of him.'
 logline: 'After winning the Trojan War through deception, Odysseus fights his way home across a world of monsters and gods, only to discover that return is impossible without answering for the man who left.'
 rating: 5
 tags: ['myth', 'homecoming', 'guilt', 'war', 'memory', 'identity', 'storytelling', 'the sublime']

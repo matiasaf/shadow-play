@@ -6,8 +6,8 @@ year: 2026
 country: 'Reino Unido / Estados Unidos'
 runtime: 172
 watchedOn: 2026-07-23
-# frame: '../../../assets/frames/the-odyssey.jpg'
-frameCaption: 'Odiseo atado de pie al mástil mientras el mar y el cielo borran todo horizonte estable: el hombre que sobrevive dominando cada situación elige, por una vez, quedar sin poder frente a aquello que más desea conocer.'
+frame: '../../../assets/frames/the-odyssey.jpg'
+frameCaption: 'Odiseo permanece armado frente a la flota que espera, lo bastante cerca como para mandarla y ya separado de cada hombre detrás suyo. Los barcos prometen el camino a casa; su mirada hacia atrás sugiere que el estratega que ganó la guerra sabe que el viaje también va a investigar en qué lo convirtió la victoria.'
 logline: 'Después de ganar la guerra de Troya mediante un engaño, Odiseo atraviesa un mundo de monstruos y dioses para volver a casa, y descubre que el regreso es imposible sin responder por el hombre que partió.'
 rating: 5
 tags: ['mito', 'regreso', 'culpa', 'guerra', 'memoria', 'identidad', 'relato', 'lo sublime']
