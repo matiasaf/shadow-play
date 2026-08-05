@@ -42,9 +42,10 @@ the invoice.
 
 ## Where to go next
 
-*Dune: Part One* is the archive's entry point, and it is a first act by design: the study
-isn't finished until *Part Two* pays the invoice on the holy war Paul already saw. Before
-that, *Arrival* (2016) is the purest form of his obsession with foreknowledge—there, seeing
+The two *Dune* films are one argument in two movements, and the second is where it lands:
+*Part One* assembles the machinery of the myth, *Part Two* watches a lucid man pick it up
+anyway and gives the last word to the woman who won't kneel. Next stop: *Arrival* (2016),
+the purest form of his obsession with foreknowledge—there, seeing
 the future is a grief you accept rather than a war you unleash—and *Sicario* (2015) is the
 recruited protagonist in its cruelest version, where the person we identify with turns out
 not to be the film's subject at all.

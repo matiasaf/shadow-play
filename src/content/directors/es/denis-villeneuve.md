@@ -43,9 +43,10 @@ mito y después le muestra la factura.
 
 ## Por dónde seguir
 
-*Duna: Parte Uno* es la puerta de entrada del archivo, y es un primer acto por diseño: el
-estudio no está cerrado hasta que *Parte Dos* pague la factura de la guerra santa que Paul ya
-vio. Antes de eso, *La llegada* (2016) es la forma más pura de su obsesión con la
-anticipación —ahí, ver el futuro es un duelo que se acepta y no una guerra que se desata— y
+Las dos *Duna* son un mismo argumento en dos movimientos, y es el segundo el que aterriza:
+*Parte Uno* ensambla la maquinaria del mito, *Parte Dos* mira cómo un hombre lúcido la
+levanta igual y le da la última palabra a la mujer que no se arrodilla. Próxima parada: *La
+llegada* (2016), la forma más pura de su obsesión con la anticipación —ahí, ver el futuro es
+un duelo que se acepta y no una guerra que se desata— y
 *Sicario* (2015) es el protagonista reclutado en su versión más cruel, donde la persona con
 la que nos identificamos termina no siendo el tema de la película.

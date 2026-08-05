@@ -16,6 +16,8 @@ connections:
     note: 'Dos protagonistas de Nolan ganan una guerra mediante un invento que los excede—la bomba y el caballo de madera—y pasan el después descubriendo que el remordimiento no devuelve autoridad sobre aquello que su inteligencia puso en marcha.'
   - slug: '2001-a-space-odyssey'
     note: 'Dos odiseas que le quitan al viajero su escala humana. Kubrick manda a la especie hacia un futuro incognoscible; Nolan empuja a un hombre agotado por las ruinas del mito hasta que el propio hogar se vuelve lo desconocido.'
+  - slug: 'dune-part-one'
+    note: 'Dos viajes en los que el mito que lleva el nombre del héroe resulta ser una máquina más vieja que él: a Odiseo lo construyen los relatos que cuenta para sobrevivir; a Paul, una orden que sembró una profecía siglos antes de su nacimiento. En las dos, avanzar implica aceptar que la leyenda nunca fue una recompensa que les ofrecieron, sino un rol que les prepararon.'
 draft: false
 ---
 

@@ -18,6 +18,8 @@ connections:
     note: 'La obsesión convierte a una persona viva en una imagen que debe perfeccionarse a cualquier costo. Scottie dirige a Judy hacia la Madeleine muerta; los magos se dirigen a sí mismos y a sus dobles hacia personajes escénicos ideales. En ambas, amar la imagen exige destruir el cuerpo que la sostiene.'
   - slug: 'the-killing'
     note: 'Dos relatos de relojería que revelan un plan reordenando el tiempo. Kubrick muestra cómo el azar rompe un mecanismo perfecto; Nolan muestra que el mecanismo solo funciona porque escondieron una vida humana adentro.'
+  - slug: 'dune-part-two'
+    note: 'Las dos películas miden un mito por lo que consume. Angier ahoga una copia de sí mismo en cada función para que la ilusión siga funcionando; Paul toma el Agua de Vida y vuelve como una figura que el desierto puede adorar y que Chani ya no puede alcanzar. El truco sobrevive en los dos casos. Lo que se gasta es el hombre.'
 draft: false
 ---
 

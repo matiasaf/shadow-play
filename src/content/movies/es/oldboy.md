@@ -16,6 +16,8 @@ connections:
     note: 'Dos películas sobre un hombre cuyo amor y obsesión fueron diseñados por otro. Elster fabrica una Madeleine falsa para que Scottie se enamore; Lee Woo-jin construye el deseo entero de Oh Dae-su como un relojero. Las dos terminan en el horror de descubrir que el sentimiento más íntimo que tuviste lo escribió tu enemigo.'
   - slug: 'strangers-on-a-train'
     note: 'La venganza como un contrato que contamina a las dos partes. Bruno propone el cruce de asesinatos; Woo-jin arma una venganza que vuelve a Dae-su cómplice de su propia condena. En ambas, la culpa no se paga sino que se transfiere —el vengador se convierte en aquello que cazaba.'
+  - slug: 'dune-part-two'
+    note: 'Dos venganzas que resultan redactadas por otro. Woo-jin arma la furia de Dae-su como un relojero; la hermandad cruzó el linaje de Paul y sembró la profecía que lo esperaba en Arrakis. En las dos, la revelación llega demasiado tarde para deshacer nada —y los dos hombres siguen igual, que es la parte que de verdad duele.'
 draft: false
 ---
 

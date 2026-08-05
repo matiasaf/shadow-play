@@ -16,6 +16,10 @@ connections:
     note: "Two films about intelligence crossing a threshold it cannot uncross. Kubrick looks at the species from a cosmic distance; Nolan traps us inside one man's perception, where technological transcendence arrives as guilt rather than wonder."
   - slug: '12-angry-men'
     note: 'Both turn judgment into a drama of individual responsibility inside an institution. Lumet asks whether one person can slow a group rushing toward death; Nolan asks what remains of that responsibility after the institution has already learned to manufacture it at scale.'
+  - slug: 'dune-part-one'
+    note: 'Both films hand a man an instrument he understands better than the people handing it to him. Oppenheimer sees the chain reaction long before the test; Paul sees the holy war long before he has an army. Villeneuve stays in the moment when refusing still looks possible—which is exactly the moment Nolan skips past in order to study the bill.'
+  - slug: 'dune-part-two'
+    note: 'The bomb and the prophecy work the same way: once they exist, the man who understood them first loses the right to decide how they get used. Nolan films the aftermath as a hearing that never ends; Villeneuve films it as a fleet leaving orbit while its commander says nothing. Two readings of "I am become death"—one a confession, the other an order.'
 draft: false
 ---
 

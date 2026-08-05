@@ -16,6 +16,8 @@ connections:
     note: "Two films about a man whose love and obsession were engineered by someone else's design. Elster builds a fake Madeleine for Scottie to fall for; Lee Woo-jin builds Oh Dae-su's entire desire like a clockmaker. Both end on the horror of discovering that the most intimate feeling you had was authored by your enemy."
   - slug: 'strangers-on-a-train'
     note: "Vengeance as a contract that contaminates both parties. Bruno proposes the criss-cross of murders; Woo-jin engineers a revenge that makes Dae-su complicit in his own damnation. In both, guilt is not paid off but transferred — the avenger becomes the thing he hunted."
+  - slug: 'dune-part-two'
+    note: "Two revenges that turn out to have been drafted by someone else. Woo-jin assembles Dae-su's rage like a clockmaker; the sisterhood bred Paul's bloodline and planted the prophecy waiting for him on Arrakis. In both, the revelation arrives too late to undo anything —and both men go on anyway, which is the part that really hurts."
 draft: false
 ---
 

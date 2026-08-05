@@ -16,6 +16,8 @@ connections:
     note: 'Two films about contact with a higher intelligence, at opposite ends of tone: where Kubrick films the cosmos''s indifference with silence and coldness, Spielberg answers with light and music —the encounter as communion rather than vertigo. One question, two temperaments.'
   - slug: 'moebius'
     note: 'In both, the State organizes itself so that an extraordinary event won''t be seen: the bureaucracy of Moebius denies the lost train; here the government invents a gas spill to empty the mountain. Concealment with opposite signs —there to erase a loss, here to curate a miracle— but the same distrust of the citizen who looks.'
+  - slug: 'dune-part-one'
+    note: "Roy and Paul are both taken over by images they never asked for and cannot verify, and both let the vision pull them out of their lives toward an appointment in an empty landscape. Spielberg treats the call as a wonder worth losing a family for; Villeneuve gives the same experience to a boy who reads it correctly as a warning —and follows it anyway."
 draft: false
 ---
 

@@ -16,6 +16,8 @@ connections:
     note: 'Dos películas sobre el contacto con una inteligencia superior, en las antípodas del tono: donde Kubrick filma la indiferencia del cosmos con silencio y frialdad, Spielberg responde con luz y música —el encuentro como comunión y no como vértigo. Una pregunta, dos temperamentos.'
   - slug: 'moebius'
     note: 'En las dos, el Estado se organiza para que un hecho extraordinario no se vea: la burocracia de Moebius niega el tren perdido; acá el gobierno inventa un derrame de gas para vaciar la montaña. Ocultamiento con signo opuesto —allá para borrar una pérdida, acá para curar un milagro— pero la misma desconfianza en el ciudadano que mira.'
+  - slug: 'dune-part-one'
+    note: 'A Roy y a Paul los toman imágenes que no pidieron y no pueden verificar, y los dos dejan que la visión los arranque de su vida hacia una cita en un paisaje vacío. Spielberg trata el llamado como un asombro por el que vale perder una familia; Villeneuve le da la misma experiencia a un pibe que la lee correctamente como advertencia —y la sigue igual.'
 draft: false
 ---
 

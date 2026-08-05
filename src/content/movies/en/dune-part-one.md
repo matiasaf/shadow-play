@@ -12,6 +12,8 @@ logline: "A ducal heir inherits a desert planet engineered as a trap for his fam
 rating: 4
 tags: ['prophecy', 'power', 'colonialism', 'destiny', 'the sublime', 'faith', 'inheritance', 'ecology', 'manufactured myth']
 connections:
+  - slug: 'dune-part-two'
+    note: 'The second half is where this one gets answered. *Part One* builds the trap and ends with Paul seeing the war his name will cause; *Part Two* has him pick the trap up and use it, and hands the final look to Chani—the only person who refuses the myth this film spends its whole running time assembling.'
   - slug: 'oppenheimer'
     note: 'Two men who see the consequence before they cause it and go ahead anyway. Oppenheimer watches the chain reaction of history escape his hands the instant the bomb works; Paul sees the holy war his own name will unleash and keeps walking toward the desert. Both films argue that lucidity about the catastrophe is not the same as the power to stop it.'
   - slug: '2001-a-space-odyssey'

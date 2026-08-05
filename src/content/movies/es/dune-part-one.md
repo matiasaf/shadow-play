@@ -12,6 +12,8 @@ logline: 'Un heredero ducal recibe un planeta desértico diseñado como trampa p
 rating: 4
 tags: ['profecía', 'poder', 'colonialismo', 'destino', 'lo sublime', 'fe', 'herencia', 'ecología', 'mito fabricado']
 connections:
+  - slug: 'dune-part-two'
+    note: 'La segunda mitad es donde esta encuentra respuesta. *Parte Uno* arma la trampa y termina con Paul viendo la guerra que va a causar su nombre; *Parte Dos* lo pone a levantar esa trampa y usarla, y le entrega la última mirada a Chani: la única que rechaza el mito que esta película se pasa todo el metraje ensamblando.'
   - slug: 'oppenheimer'
     note: 'Dos hombres que ven la consecuencia antes de causarla y avanzan igual. Oppenheimer mira cómo la reacción en cadena de la historia se le escapa de las manos en el instante mismo en que la bomba funciona; Paul ve la guerra santa que va a desatar su nombre y sigue caminando hacia el desierto. Las dos películas sostienen que la lucidez sobre la catástrofe no es lo mismo que el poder de frenarla.'
   - slug: '2001-a-space-odyssey'

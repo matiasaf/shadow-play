@@ -23,6 +23,8 @@ tags:
 connections:
   - slug: 'the-killing'
     note: 'Twelve years later, the same theorem at another scale. In The Killing the perfect plan is undone by a lapdog on a runway; here, the infallible computer undoes the mission through something like pride. Kubrick swapped the heist for the whole species; the conclusion stayed intact.'
+  - slug: 'dune-part-one'
+    note: "The monolith and the sandworm perform the same operation: an object with no available comparison, which turns the human in the frame into a detail. Both films trust image and sound over explanation, and both end with a man crossing into something he will not be able to report back from."
 draft: false
 ---
 

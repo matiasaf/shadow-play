@@ -23,6 +23,8 @@ tags:
 connections:
   - slug: 'the-killing'
     note: 'Doce años después, el mismo teorema a otra escala. En The Killing el plan perfecto lo deshace un caniche en una pista; acá, la computadora infalible deshace la misión por algo parecido al orgullo. Kubrick cambió el atraco por la especie entera; la conclusión quedó intacta.'
+  - slug: 'dune-part-one'
+    note: 'El monolito y el gusano hacen la misma operación: un objeto sin comparación disponible, que convierte en detalle al humano que está en el cuadro. Las dos películas confían más en la imagen y el sonido que en la explicación, y las dos terminan con un hombre cruzando hacia algo de lo que no va a poder dar cuenta.'
 draft: false
 ---
 

@@ -18,6 +18,8 @@ connections:
     note: 'Obsession turns a living person into an image that must be perfected at any cost. Scottie directs Judy into the dead Madeleine; the magicians direct themselves and their doubles into ideal stage personas. In both, loving the image means destroying the body that carries it.'
   - slug: 'the-killing'
     note: "Two clockwork narratives that reveal a plan through rearranged time. Kubrick exposes how chance breaks a perfect mechanism; Nolan exposes that the mechanism only works because a human life has been hidden inside it."
+  - slug: 'dune-part-two'
+    note: "Both films measure a myth by what it consumes. Angier drowns a copy of himself at every performance so the illusion keeps working; Paul drinks the Water of Life and comes back as a figure the desert can worship and Chani can no longer reach. The trick survives in both cases. The man is what gets spent."
 draft: false
 ---
 

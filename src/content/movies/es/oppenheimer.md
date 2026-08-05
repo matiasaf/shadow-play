@@ -16,6 +16,10 @@ connections:
     note: 'Dos películas sobre la inteligencia cuando cruza un umbral del que no puede volver. Kubrick mira a la especie desde una distancia cósmica; Nolan nos encierra en la percepción de un hombre, donde la trascendencia tecnológica llega como culpa y no como asombro.'
   - slug: '12-angry-men'
     note: 'Las dos convierten el juicio en un drama sobre la responsabilidad individual dentro de una institución. Lumet pregunta si una persona puede frenar a un grupo lanzado hacia la muerte; Nolan pregunta qué queda de esa responsabilidad cuando la institución ya aprendió a fabricarla a escala.'
+  - slug: 'dune-part-one'
+    note: 'Las dos películas le entregan a un hombre un instrumento que él entiende mejor que quienes se lo entregan. Oppenheimer ve la reacción en cadena mucho antes de la prueba; Paul ve la guerra santa mucho antes de tener un ejército. Villeneuve se queda en el momento en que negarse todavía parece posible: justo el momento que Nolan saltea para estudiar la factura.'
+  - slug: 'dune-part-two'
+    note: 'La bomba y la profecía funcionan igual: una vez que existen, el hombre que las entendió primero pierde el derecho a decidir cómo se usan. Nolan filma el después como una audiencia que no termina nunca; Villeneuve, como una flota saliendo de órbita mientras quien la comanda no dice nada. Dos lecturas de "me he convertido en la muerte": una es confesión, la otra es orden.'
 draft: false
 ---
 

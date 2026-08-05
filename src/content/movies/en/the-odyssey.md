@@ -16,6 +16,8 @@ connections:
     note: 'Two Nolan protagonists win a war through an invention that exceeds them—the bomb and the wooden horse—and spend the aftermath discovering that remorse cannot restore authority over what their intelligence set in motion.'
   - slug: '2001-a-space-odyssey'
     note: 'Two odysseys that strip the traveler of human scale. Kubrick sends the species toward an unknowable future; Nolan sends one exhausted man through the ruins of myth until home itself becomes the unknown.'
+  - slug: 'dune-part-one'
+    note: "Two journeys in which the myth carrying the hero's name turns out to be a machine older than he is: Odysseus is built by the stories he tells to survive, Paul by an order that seeded a prophecy centuries before his birth. In both, advancing means accepting that the legend was never a reward offered to them—it was a role prepared for them."
 draft: false
 ---
 
