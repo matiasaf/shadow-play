@@ -25,6 +25,8 @@ connections:
     note: 'Dos películas que convierten una estructura abstracta en el verdadero protagonista —Kubrick el mecanismo cronometrado de un atraco, Mosquera la topología de un subte—. En ambas, el sistema es una máquina que excede a los hombres que la habitan.'
   - slug: 'barton-fink'
     note: 'Dos laberintos que pliegan la ficción sobre la realidad: el subte curvado en una cinta de Möbius y el Hotel Earle como un pasillo sin salida, donde un cuadro termina saliéndose del marco. Las dos hacen de una topología del encierro el verdadero tema.'
+  - slug: 'lost-highway'
+    note: 'La cinta de Möbius puesta a trabajar dos veces, en dos escalas de la negación. Mosquera pliega el subte de una ciudad hasta que un tren lleno de gente puede estar oficialmente no-desaparecido; Lynch pliega la vida de un solo hombre hasta que puede huir de su propio crimen y llegar de vuelta a su puerta a anunciarlo. La negación pública y la privada resultan tener la misma forma: una superficie sin otro lado, donde escapar y volver son el mismo movimiento.'
 draft: false
 ---
 

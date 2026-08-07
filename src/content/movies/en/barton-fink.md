@@ -20,6 +20,8 @@ connections:
     note: "The Coens' previous film, its mirror in a gangster key —John Turturro plays the man begging for his life there (Bernie: 'Look into your heart!') and the deaf intellectual here (Barton). One is all surface and strategy, the other all interior and noise; both pit a head against a heart and watch the head fail."
   - slug: 'a-serious-man'
     note: "Two Coen portraits of a Jewish intellectual trapped inside forces that won't speak to him. Barton pleads 'I'll show you the life of the mind' to a world on fire; Larry pleads 'I didn't do anything' to a God who answers with a tornado. Both seal a thinking man into a closed nightmare and refuse him the explanation he's sure he's owed."
+  - slug: 'lost-highway'
+    note: "Two films where a man's interior stops being described and starts being built. The Hotel Earle peels and sweats around Barton's blocked head until the woman on the wall walks out of her picture; the Madison house swallows its own hallways in black until a stranger with a camcorder stands in two places at once. Neither director will explain the leak between mind and world, and both are right —naming it would turn a haunting into a diagnosis."
 draft: false
 ---
 

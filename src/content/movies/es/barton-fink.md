@@ -20,6 +20,8 @@ connections:
     note: "La película anterior de los Coen, su espejo en clave gánster —John Turturro hace allá al hombre que ruega por su vida (Bernie: '¡Mirá en tu corazón!') y acá al intelectual sordo (Barton). Una es toda superficie y estrategia, la otra todo interior y ruido; las dos enfrentan una cabeza contra un corazón y miran cómo la cabeza fracasa."
   - slug: 'a-serious-man'
     note: "Dos retratos Coen de un intelectual judío atrapado dentro de fuerzas que no le hablan. Barton ruega 'te voy a mostrar la vida de la mente' a un mundo en llamas; Larry ruega 'yo no hice nada' a un Dios que le contesta con un tornado. Las dos encierran a un hombre que piensa en una pesadilla cerrada y le niegan la explicación que está seguro de que le deben."
+  - slug: 'lost-highway'
+    note: 'Dos películas donde el interior de un hombre deja de describirse y pasa a construirse. El Hotel Earle se despega y transpira alrededor de la cabeza trabada de Barton hasta que la mujer del cuadro se sale de su marco; la casa de los Madison se traga sus propios pasillos en negro hasta que un desconocido con una camarita está en dos lugares a la vez. Ninguno de los dos directores va a explicar la filtración entre mente y mundo, y los dos tienen razón: nombrarla convertiría una aparición en un diagnóstico.'
 videos:
   - platform: 'youtube'
     title: 'Análisis de Barton Fink'

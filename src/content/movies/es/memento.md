@@ -18,6 +18,8 @@ connections:
     note: 'Dos hombres convierten una imagen en una realidad que pueden habitar. Scottie rehace a Judy para conservar a una muerta; Leonard ordena fotos y epígrafes para conservar una versión justa de sí mismo. En ambas, la obsesión sobrevive sacrificando a la persona viva en favor de la ficción deseada.'
   - slug: 'moebius'
     note: 'Un bucle se vuelve la forma de una verdad que el protagonista no puede alcanzar desde afuera. Mosquera pliega el espacio físico en una superficie sin otro lado; Nolan pliega el relato y la memoria en una venganza sin acto final.'
+  - slug: 'lost-highway'
+    note: 'El mismo autoengaño filmado desde la silla de enfrente. Leonard falsifica un archivo —polaroids, tatuajes, notas— para que el mundo de afuera le siga confirmando el hombre que necesita ser; Fred Madison se saltea el papeleo y falsifica un yo entero, cuerpo y género incluidos. Nolan te deja auditar la mentira cuadro por cuadro al revés; Lynch te encierra adentro y no abre nunca el expediente. Las dos terminan con el loop volviendo a arrancar, que es el verdadero veredicto.'
 draft: false
 ---
 

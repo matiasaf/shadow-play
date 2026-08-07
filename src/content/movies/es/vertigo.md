@@ -18,6 +18,8 @@ connections:
     note: "Las dos películas saben que la mujer es una construcción del deseo masculino —pero Wilder deja que Phyllis se construya sola, y Vértigo muestra al hombre construyéndola, vistiendo a Judy y tiñéndola para meterla adentro de la fantasía. La femme fatale y su víctima, por fin revelados como escultor y arcilla."
   - slug: 'oldboy'
     note: "Park Chan-wook repite el diseño de Hitchcock desde el lado del titiritero. Scottie rehace a una mujer viva para convertirla en una fantasía muerta; Lee Woo-jin fabrica el amor y la rabia enteros de Oh Dae-su como un relojero. Las dos terminan en el mismo horror —descubrir que tu sentimiento más íntimo lo escribió otro—, pero Vértigo llora al obsesionado y Oldboy deja que el arquitecto mire."
+  - slug: 'lost-highway'
+    note: 'Lynch agarra la morocha-hecha-rubia de Hitchcock y muda toda la operación adentro del cráneo del hombre. Scottie tiene que comprar el tailleur y pagar la tintura; Fred directamente reescribe a la mujer y la convierte en alguien que lo desea, y pone a la misma actriz en los dos papeles para que no se nos pase. La lección es idéntica y la de Lynch es más cruel: incluso con autoría total sobre la fantasía, al hombre le avisan que nunca la va a tener.'
 externalComments:
   - source: 'FilmAffinity'
     title: 'La cámara lasciva'

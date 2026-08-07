@@ -18,6 +18,8 @@ connections:
     note: "Both films know the woman is a construction of male desire —but Wilder lets Phyllis build herself, while Vertigo shows the man doing the building, dressing Judy and dyeing her hair into the fantasy. The femme fatale and her victim, finally revealed as sculptor and clay."
   - slug: 'oldboy'
     note: "Park Chan-wook reruns Hitchcock's design from the puppeteer's side. Scottie remakes a living woman into a dead fantasy; Lee Woo-jin engineers Oh Dae-su's whole love and rage like a clockmaker. Both films end on the same horror —discovering that your most intimate feeling was authored by someone else— but Vertigo grieves the obsessed, while Oldboy lets the architect watch."
+  - slug: 'lost-highway'
+    note: "Lynch takes Hitchcock's brunette-into-blonde and moves the whole operation inside the man's skull. Scottie has to buy the suit and pay for the dye job; Fred simply rewrites the woman into someone who wants him, and casts the same actress in both parts so we can't miss it. The lesson is identical and Lynch's is crueler: even with total authorship of the fantasy, the man is told he will never have her."
 externalComments:
   - source: 'FilmAffinity'
     title: 'La cámara lasciva'

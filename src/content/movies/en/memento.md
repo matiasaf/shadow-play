@@ -18,6 +18,8 @@ connections:
     note: "Two men turn an image into a reality they can inhabit. Scottie remakes Judy to preserve a dead woman; Leonard arranges photographs and captions to preserve a righteous version of himself. In both, obsession survives by sacrificing the living person to the desired fiction."
   - slug: 'moebius'
     note: "A loop becomes the form of a truth the protagonist cannot reach from outside. Mosquera folds physical space into a surface with no other side; Nolan folds narration and memory into a revenge with no final act."
+  - slug: 'lost-highway'
+    note: "The same self-deception filmed from the opposite chair. Leonard forges an archive —Polaroids, tattoos, notes— so the outside world will keep confirming the man he needs to be; Fred Madison skips the paperwork and forges a whole new self, body and genre included. Nolan lets you audit the lie frame by reversed frame; Lynch locks you inside it and never opens the file. Both end with the loop restarting, which is the real verdict."
 draft: false
 ---
 

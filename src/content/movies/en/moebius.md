@@ -25,6 +25,8 @@ connections:
     note: 'Two films that turn an abstract structure into the real protagonist —Kubrick the timed mechanism of a heist, Mosquera the topology of a subway. In both, the system is a machine that exceeds the men inside it.'
   - slug: 'barton-fink'
     note: "Two labyrinths that fold fiction back onto reality: the subway curled into a Möbius strip and the Hotel Earle as a corridor with no exit, where a painting finally steps out of its frame. Both films make a topology of entrapment the true subject."
+  - slug: 'lost-highway'
+    note: "The Möbius strip put to work twice, on two scales of denial. Mosquera folds a city's subway until a trainload of people can be officially not-missing; Lynch folds one man's life until he can flee his own crime and arrive back at his own front door announcing it. Public denial and private denial turn out to have the same shape —a surface with no other side, where escaping and returning are the same movement."
 draft: false
 ---
 
