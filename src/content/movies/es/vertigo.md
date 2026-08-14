@@ -20,6 +20,8 @@ connections:
     note: "Park Chan-wook repite el diseño de Hitchcock desde el lado del titiritero. Scottie rehace a una mujer viva para convertirla en una fantasía muerta; Lee Woo-jin fabrica el amor y la rabia enteros de Oh Dae-su como un relojero. Las dos terminan en el mismo horror —descubrir que tu sentimiento más íntimo lo escribió otro—, pero Vértigo llora al obsesionado y Oldboy deja que el arquitecto mire."
   - slug: 'lost-highway'
     note: 'Lynch agarra la morocha-hecha-rubia de Hitchcock y muda toda la operación adentro del cráneo del hombre. Scottie tiene que comprar el tailleur y pagar la tintura; Fred directamente reescribe a la mujer y la convierte en alguien que lo desea, y pone a la misma actriz en los dos papeles para que no se nos pase. La lección es idéntica y la de Lynch es más cruel: incluso con autoría total sobre la fantasía, al hombre le avisan que nunca la va a tener.'
+  - slug: 'blue-velvet'
+    note: 'Dos hombres que se hacen detectives para poder seguir mirando a una mujer, con el caso haciendo de coartada del deseo. A Scottie le pagan por seguir a Madeleine y le dice "trabajo"; Jeffrey entra al departamento de Dorothy con una llave robada y le dice "prueba". Hitchcock deja que su voyeur siga adelante y rehaga a la mujer a imagen de lo que quiere, desde afuera y a su ritmo; Lynch al suyo lo agarra mirando, lo saca del placard a punta de cuchillo y le da un papel. Las dos giran sobre la misma bisagra: el momento en que mirar deja de ser seguro y pasa a ser participar.'
 externalComments:
   - source: 'FilmAffinity'
     title: 'La cámara lasciva'

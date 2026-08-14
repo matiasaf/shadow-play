@@ -20,6 +20,8 @@ connections:
     note: "Park Chan-wook reruns Hitchcock's design from the puppeteer's side. Scottie remakes a living woman into a dead fantasy; Lee Woo-jin engineers Oh Dae-su's whole love and rage like a clockmaker. Both films end on the same horror —discovering that your most intimate feeling was authored by someone else— but Vertigo grieves the obsessed, while Oldboy lets the architect watch."
   - slug: 'lost-highway'
     note: "Lynch takes Hitchcock's brunette-into-blonde and moves the whole operation inside the man's skull. Scottie has to buy the suit and pay for the dye job; Fred simply rewrites the woman into someone who wants him, and casts the same actress in both parts so we can't miss it. The lesson is identical and Lynch's is crueler: even with total authorship of the fantasy, the man is told he will never have her."
+  - slug: 'blue-velvet'
+    note: "Two men who take up detective work so they can keep looking at a woman, with the case standing in for the desire. Scottie is paid to follow Madeleine and calls it a job; Jeffrey climbs into Dorothy's apartment with a stolen key and calls it evidence. Hitchcock lets his voyeur go on to remake the woman into the image he wants, from the outside and at his own pace; Lynch has his caught mid-look, pulled out of the closet at knifepoint and handed a role. Both films turn on the same hinge —the moment looking stops being safe and becomes participation."
 externalComments:
   - source: 'FilmAffinity'
     title: 'La cámara lasciva'

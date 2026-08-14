@@ -30,6 +30,8 @@ connections:
     note: 'Dos películas sobre el deseo que intenta fabricar una mujer a partir de una imagen, con identidades rubias y morochas plegadas sobre la misma actriz. Hitchcock muestra al hombre dirigiendo la transformación; Lynch esconde a la directora adentro del sueño de Diane y deja que Betty elija, rescate y ame a la mujer que la rechazó. En las dos, la fantasía alcanza su máxima belleza justo antes de que el cuerpo se niegue a sostener el papel.'
   - slug: 'barton-fink'
     note: 'Hollywood aparece en ambas como una fábrica de sueños cuya promesa no puede separarse de su violencia. Barton imagina que habla por la gente común mientras se niega a escuchar a una persona; Diane imagina una industria donde el talento puro es reconocido al instante y la corrupción siempre es de los otros. El pasillo del hotel y Club Silencio terminan revelando lo mismo: la película estuvo construyendo a quien soñaba con construirla.'
+  - slug: 'blue-velvet'
+    note: 'Las dos grandes declaraciones de Lynch de que la superficie luminosa es una segunda verdad y no una máscara, puestas a prueba desde los dos extremos de una vida. Diane necesita un sueño entero para hacer vivible su existencia y despierta en lo que ese sueño vino a tapar; a Jeffrey le alcanza con abrir la puerta de un placard, y aun así lo mandan de vuelta a un césped, un petirrojo y un almuerzo familiar que Lynch filma con la misma sinceridad que el horror. Una termina en una felicidad con un escarabajo en el pico; la otra termina revelando que la felicidad nunca fue otra cosa que el sueño.'
 draft: false
 ---
 

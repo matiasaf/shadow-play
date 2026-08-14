@@ -22,6 +22,8 @@ connections:
     note: 'La rima que cierra el ciclo, mismo director: otra vez el doble, pero ahora hacia adentro. Donde Bruno es otro hombre que ejecuta el deseo de Guy, en Vértigo el doble es una mujer muerta que Scottie trata de resucitar rehaciendo a una viva. Los dos héroes son culpables sin que sus manos hagan nada —Guy por deseo, Scottie por el miedo que lo paraliza en la torre.'
   - slug: 'oldboy'
     note: 'La venganza como un contrato que contamina a las dos partes. Bruno propone el cruce para que ninguno tenga motivo; Lee Woo-jin arma una venganza que vuelve a Oh Dae-su cómplice de su propia condena. En ambas, la culpa no se paga sino que se transfiere, y el vengador termina fundido con aquello que cazaba —solo que Park deja que la herida sea el incesto y que el pacto dure quince años.'
+  - slug: 'blue-velvet'
+    note: 'El cruce convertido de contrato en apetito. Bruno ejecuta el asesinato que Guy apenas deseó, y todo el suspenso depende de que Guy nunca admita ese deseo; Frank Booth ejecuta una violencia que Jeffrey descubre después, con espanto, que él también puede ejecutar —y Lynch se juega la película entera en esa admisión. El doble de Hitchcock llega de afuera, en un tren, y siempre se puede negar; el de Lynch ya está adentro del placard con vos, y te pide que salgas.'
 draft: false
 ---
 

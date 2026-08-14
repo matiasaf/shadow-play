@@ -31,6 +31,8 @@ connections:
     note: "A surface with no other side, used twice as the shape of a truth nobody wants to face. Mosquera folds a subway network until a train can go missing inside a state that prefers it missing; Lynch folds a life until a man can drive away from his own confession and arrive back at his own door delivering it. In both, the loop is not a gimmick: it is the exact geometry of a denial."
   - slug: 'barton-fink'
     note: "Two films where an interior state stops being a metaphor and becomes the set. The Hotel Earle sweats and peels around Barton's blocked head until a picture on the wall steps out of its frame; the Madison house swallows its own hallways in black until a stranger with a camcorder is standing in two places at once. Neither film explains the leak between mind and world — both know that explaining it would kill it."
+  - slug: 'blue-velvet'
+    note: "The same conviction eleven years earlier, back when there was still a way out. Blue Velvet keeps its two worlds inside one town and gives Jeffrey doors, closets and stairwells to cross between them, so every descent is a decision he could have declined. By the time Fred Madison arrives, there is no door left: the split has moved into his own body and the crossing has become the form of the film. Lynch's young man comes back to the lawn shaken but intact; Fred cannot come back, so the highway does the returning for him."
 draft: false
 ---
 

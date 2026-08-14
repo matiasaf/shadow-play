@@ -31,6 +31,8 @@ connections:
     note: 'Una superficie sin otro lado usada dos veces como forma de una verdad que nadie quiere mirar. Mosquera pliega una red de subte hasta que un tren puede perderse adentro de un Estado que prefiere tenerlo perdido; Lynch pliega una vida hasta que un tipo puede escaparse de su propia confesión y llegar de vuelta a su puerta a entregarla. En las dos, el loop no es un truco: es la geometría exacta de una negación.'
   - slug: 'barton-fink'
     note: 'Dos películas donde un estado interior deja de ser metáfora y se vuelve decorado. El Hotel Earle transpira y se despega alrededor de la cabeza trabada de Barton hasta que un cuadro se sale del marco; la casa de los Madison se traga sus propios pasillos en negro hasta que un desconocido con una camarita está en dos lugares a la vez. Ninguna explica la filtración entre mente y mundo —las dos saben que explicarla la mataría.'
+  - slug: 'blue-velvet'
+    note: 'La misma convicción once años antes, cuando todavía había salida. Terciopelo azul mantiene sus dos mundos adentro de un mismo pueblo y le da a Jeffrey puertas, placares y escaleras para cruzar entre ellos, así que cada descenso es una decisión que podría no haber tomado. Para cuando llega Fred Madison ya no queda ninguna puerta: la escisión se le mudó al cuerpo y el cruce pasó a ser la forma misma de la película. El pibe de Lynch vuelve al césped sacudido pero entero; Fred no puede volver, y la ruta vuelve por él.'
 draft: false
 ---
 

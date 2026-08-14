@@ -30,6 +30,8 @@ connections:
     note: "Two films about desire trying to manufacture a woman from an image, with blonde and brunette identities folded into one actress. Hitchcock makes the man visibly direct the transformation; Lynch hides the director inside Diane's dream and lets Betty cast, rescue and love the woman who rejected her. In both, the fantasy becomes most beautiful just before the body refuses the role."
   - slug: 'barton-fink'
     note: "Hollywood appears in both as a dream factory whose promise and violence cannot be separated. Barton imagines he can speak for ordinary people while refusing to hear one; Diane imagines an industry where pure talent is recognized instantly and corruption belongs to other people. The hotel corridor and Club Silencio finally expose the same thing: the picture was always constructing its dreamer."
+  - slug: 'blue-velvet'
+    note: "Lynch's two great statements that the bright surface is a second truth rather than a mask, tested from opposite ends of a life. Diane needs a whole dream to make her existence bearable and wakes into what it was built to hide; Jeffrey needs only to open a closet door, and still gets sent home to a lawn, a robin and a family lunch that Lynch films as sincerely as the horror. One picture ends in happiness with a beetle in its beak; the other ends by revealing that the happiness was never anything but the dream."
 draft: false
 ---
 

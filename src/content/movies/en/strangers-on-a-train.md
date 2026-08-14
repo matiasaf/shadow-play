@@ -22,6 +22,8 @@ connections:
     note: "The cycle's closing rhyme, same director: the double again, but turned inward. Where Bruno is another man who acts out Guy's wish, in Vertigo the double is a dead woman Scottie tries to resurrect by remaking a living one. Both heroes are guilty without their hands doing the deed —Guy by desire, Scottie by the fear that paralyzes him on the tower."
   - slug: 'oldboy'
     note: "Vengeance as a contract that contaminates both parties. Bruno proposes the criss-cross so neither man has a motive; Lee Woo-jin engineers a revenge that makes Oh Dae-su complicit in his own damnation. In both, guilt is not paid off but transferred, and the avenger ends up fused with the thing he hunted —only Park lets the wound be incest and the pact run for fifteen years."
+  - slug: 'blue-velvet'
+    note: "The criss-cross turned from a contract into an appetite. Bruno performs the murder Guy only wished for, and the suspense depends on Guy never admitting the wish; Frank Booth performs a violence that Jeffrey then discovers, to his horror, he can perform himself —and Lynch stakes the whole film on that admission. Hitchcock's double arrives from outside, on a train, and can always be denied; Lynch's is already in the closet with you, and asks you to come out."
 draft: false
 ---
 
