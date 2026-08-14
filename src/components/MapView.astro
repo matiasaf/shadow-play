@@ -100,6 +100,12 @@ const config = {
   noRelations: t('map.noRelations'),
   seeFilm: t('map.seeStudy'),
   seeDirector: t('map.seeDirector'),
+  membershipLabel: t('map.membershipLabel'),
+  referencesLabel: t('map.referencesLabel'),
+  locate: t('map.locate'),
+  openReference: t('map.openReference'),
+  maximize: t('map.maximize'),
+  minimize: t('map.minimize'),
 };
 ---
 
@@ -128,7 +134,7 @@ const config = {
     </div>
   </section>
 
-  <section class="wrap map-wrap">
+  <section class="wrap map-wrap" id="map-workspace">
     <div class="map-toolbar" aria-label={t('map.layers')}>
       <div class="map-toolbar-copy">
         <span class="map-toolbar-index">01</span>
@@ -159,7 +165,24 @@ const config = {
         <datalist id="map-node-options">
           {graph.nodes.map((node) => <option value={node.title} />)}
         </datalist>
-        <button class="map-reset" type="button" id="map-reset">{t('map.resetView')}</button>
+        <button class="map-tool-button map-reset" type="button" id="map-reset">
+          <svg aria-hidden="true" viewBox="0 0 20 20">
+            <path d="M15.8 6.2A7 7 0 1 0 17 10M15.8 6.2V2.8m0 3.4h-3.4" />
+          </svg>
+          <span>{t('map.resetView')}</span>
+        </button>
+        <button
+          class="map-tool-button map-expand"
+          type="button"
+          id="map-expand"
+          aria-expanded="false"
+          aria-controls="map-workspace"
+        >
+          <svg class="expand-icon" aria-hidden="true" viewBox="0 0 20 20">
+            <path d="M7.2 3H3v4.2M12.8 3H17v4.2M7.2 17H3v-4.2M12.8 17H17v-4.2" />
+          </svg>
+          <span id="map-expand-label">{t('map.maximize')}</span>
+        </button>
       </div>
     </div>
 
@@ -176,7 +199,7 @@ const config = {
         </div>
       </div>
 
-      <aside class="map-panel" id="panel">
+      <aside class="map-panel" id="panel" aria-live="polite">
         <div class="panel-head">
           <span id="panel-kind">{t('map.memoryFile')}</span>
           <button class="panel-close" id="panel-close" aria-label={t('map.close')}>×</button>
@@ -188,7 +211,10 @@ const config = {
         <div class="panel-tags" id="panel-tags"></div>
         <a class="panel-link" id="panel-link" href={localizePath('/', lang)}>{t('map.seeStudy')}</a>
         <div class="panel-relations">
-          <h3 id="panel-relations-title">{t('map.related')}</h3>
+          <div class="panel-relations-head">
+            <h3 id="panel-relations-title">{t('map.related')}</h3>
+            <span id="panel-relations-count">00</span>
+          </div>
           <ul class="panel-conns" id="panel-conns"></ul>
         </div>
       </aside>
@@ -252,16 +278,51 @@ const config = {
         noRelations: string;
         seeFilm: string;
         seeDirector: string;
+        membershipLabel: string;
+        referencesLabel: string;
+        locate: string;
+        openReference: string;
+        maximize: string;
+        minimize: string;
       };
       const svgEl = document.getElementById('graph') as unknown as SVGSVGElement;
       const panel = document.getElementById('panel')!;
+      const workspace = document.getElementById('map-workspace')!;
+      const expandButton = document.getElementById('map-expand') as HTMLButtonElement;
+      const expandLabel = document.getElementById('map-expand-label')!;
       const nodes = graph.nodes;
       const links = graph.links;
       const idOf = (node: string | GraphNode) => (typeof node === 'string' ? node : node.id);
       const filmSize = { width: 112, height: 84 };
+      const filmTitleLines = (title: string) => {
+        const words = title.split(/\s+/);
+        const lineCount = Math.min(3, words.length, Math.max(1, Math.ceil(title.length / 18)));
+        if (lineCount === 1) return [title];
+
+        let best: string[] = [];
+        let bestScore = Number.POSITIVE_INFINITY;
+        const partition = (start: number, lines: string[]) => {
+          if (lines.length === lineCount - 1) {
+            const candidate = [...lines, words.slice(start).join(' ')];
+            const lengths = candidate.map((line) => line.length);
+            const score = Math.max(...lengths) * 100 + Math.max(...lengths) - Math.min(...lengths);
+            if (score < bestScore) {
+              best = candidate;
+              bestScore = score;
+            }
+            return;
+          }
+          const wordsStillNeeded = lineCount - lines.length - 1;
+          for (let end = start + 1; end <= words.length - wordsStillNeeded; end += 1) {
+            partition(end, [...lines, words.slice(start, end).join(' ')]);
+          }
+        };
+        partition(0, []);
+        return best;
+      };
 
       let width = svgEl.clientWidth || 900;
-      let height = Math.max(650, Math.round(width * 0.68));
+      let height = svgEl.clientHeight || Math.max(650, Math.round(width * 0.68));
       const svg = d3.select(svgEl).attr('viewBox', `0 0 ${width} ${height}`);
       const container = svg.append('g');
       const zoomBehavior = d3
@@ -281,6 +342,32 @@ const config = {
         .attr('class', (item) => `edge edge-${item.type}`)
         .classed('is-hidden', (item) => item.type === 'theme');
 
+      const labelFor = (item: Link) =>
+        item.type === 'idea'
+          ? config.ideaLabel
+          : item.type === 'theme'
+            ? config.themeLabel
+            : config.membershipLabel;
+      const relationLabel = container
+        .append('g')
+        .attr('class', 'edge-labels')
+        .selectAll<SVGGElement, Link>('g')
+        .data(links)
+        .join('g')
+        .attr('class', (item) => `edge-label edge-label-${item.type}`)
+        .attr('aria-hidden', 'true');
+      relationLabel
+        .append('rect')
+        .attr('x', (item) => -(Math.max(46, labelFor(item).length * 5.2 + 18) / 2))
+        .attr('y', -11)
+        .attr('width', (item) => Math.max(46, labelFor(item).length * 5.2 + 18))
+        .attr('height', 22)
+        .attr('rx', 11);
+      relationLabel
+        .append('text')
+        .attr('dy', '0.34em')
+        .text(labelFor);
+
       const node = container
         .append('g')
         .attr('class', 'nodes')
@@ -288,6 +375,9 @@ const config = {
         .data(nodes)
         .join('g')
         .attr('class', (item) => `node node-${item.kind}`)
+        .attr('role', 'button')
+        .attr('tabindex', 0)
+        .attr('aria-label', (item) => item.title)
         .style('cursor', 'pointer');
 
       const directors = node.filter((item) => item.kind === 'director');
@@ -341,8 +431,21 @@ const config = {
       films
         .append('text')
         .attr('class', 'film-title')
-        .attr('y', filmSize.height / 2 - 10)
-        .text((item) => item.title);
+        .each(function (item) {
+          const lines = filmTitleLines(item.title);
+          const longestLine = Math.max(...lines.map((line) => line.length));
+          const fontSize = longestLine > 21 ? 7 : longestLine > 18 ? 8 : 9;
+          const lineHeight = fontSize + 1;
+          const firstBaseline = filmSize.height / 2 - 10 - ((lines.length - 1) * lineHeight) / 2;
+          d3.select(this)
+            .style('font-size', `${fontSize}px`)
+            .selectAll('tspan')
+            .data(lines)
+            .join('tspan')
+            .attr('x', 0)
+            .attr('y', (_, index) => firstBaseline + index * lineHeight)
+            .text((line) => line);
+        });
       films
         .append('text')
         .attr('class', 'film-year')
@@ -368,6 +471,13 @@ const config = {
             .attr('y1', (item) => (item.source as GraphNode).y!)
             .attr('x2', (item) => (item.target as GraphNode).x!)
             .attr('y2', (item) => (item.target as GraphNode).y!);
+          relationLabel.attr(
+            'transform',
+            (item) =>
+              `translate(${((item.source as GraphNode).x! + (item.target as GraphNode).x!) / 2},${
+                ((item.source as GraphNode).y! + (item.target as GraphNode).y!) / 2
+              })`
+          );
           node.attr('transform', (item) => `translate(${item.x},${item.y})`);
         });
 
@@ -414,11 +524,16 @@ const config = {
         );
       }
 
+      function allRelatedLinks(id: string) {
+        return links.filter((item) => idOf(item.source) === id || idOf(item.target) === id);
+      }
+
       function select(id: string | null, focus = false) {
         selected = id;
         if (!id) {
-          node.classed('is-dim', false).classed('is-active', false);
+          node.classed('is-dim', false).classed('is-active', false).classed('is-near', false);
           link.classed('is-dim', false).classed('is-hot', false);
+          relationLabel.classed('is-visible', false);
           panel.classList.remove('is-filled');
           return;
         }
@@ -427,6 +542,7 @@ const config = {
           near.add(idOf(item.source) === id ? idOf(item.target) : idOf(item.source));
         }
         node.classed('is-active', (item) => item.id === id);
+        node.classed('is-near', (item) => near.has(item.id));
         node.classed('is-dim', (item) => item.id !== id && !near.has(item.id));
         link.classed(
           'is-hot',
@@ -437,6 +553,11 @@ const config = {
           'is-dim',
           (item) =>
             !activeLayers.has(item.type) || (idOf(item.source) !== id && idOf(item.target) !== id)
+        );
+        relationLabel.classed(
+          'is-visible',
+          (item) =>
+            activeLayers.has(item.type) && (idOf(item.source) === id || idOf(item.target) === id)
         );
         fillPanel(id);
         if (focus) focusNode(nodes.find((item) => item.id === id));
@@ -453,17 +574,52 @@ const config = {
         }
       }
 
-      function addRelation(title: string, detail: string, href: string, className = '') {
+      function addRelation({
+        nodeId,
+        title,
+        detail,
+        href,
+        type,
+      }: {
+        nodeId: string;
+        title: string;
+        detail: string;
+        href: string;
+        type: Link['type'];
+      }) {
         const li = document.createElement('li');
-        const anchor = document.createElement('a');
-        anchor.href = href;
+        li.className = `relation-card relation-${type}`;
+        const focus = document.createElement('button');
+        focus.className = 'relation-focus';
+        focus.type = 'button';
+        focus.setAttribute('aria-label', `${config.locate}: ${title}`);
+        focus.addEventListener('click', () => select(nodeId, true));
+        const badge = document.createElement('span');
+        badge.className = 'relation-type';
+        badge.textContent =
+          type === 'idea'
+            ? config.ideaLabel
+            : type === 'theme'
+              ? config.themeLabel
+              : config.membershipLabel;
+        const copy = document.createElement('span');
+        copy.className = 'relation-copy';
         const strong = document.createElement('strong');
         strong.textContent = title;
-        anchor.appendChild(strong);
-        const note = document.createElement('p');
-        note.className = `why ${className}`.trim();
+        const note = document.createElement('span');
+        note.className = 'why';
         note.textContent = detail;
-        li.append(anchor, note);
+        copy.append(strong, note);
+        const marker = document.createElement('span');
+        marker.className = 'relation-marker';
+        marker.setAttribute('aria-hidden', 'true');
+        marker.textContent = '⌖';
+        focus.append(badge, copy, marker);
+        const anchor = document.createElement('a');
+        anchor.href = href;
+        anchor.className = 'relation-open';
+        anchor.textContent = config.openReference;
+        li.append(focus, anchor);
         document.getElementById('panel-conns')!.appendChild(li);
       }
 
@@ -473,6 +629,8 @@ const config = {
         const visual = document.getElementById('panel-visual')!;
         const initial = document.getElementById('panel-initial')!;
         const linkEl = document.getElementById('panel-link') as HTMLAnchorElement;
+        const relationTitle = document.getElementById('panel-relations-title')!;
+        const relationCount = document.getElementById('panel-relations-count')!;
         list.replaceChildren();
         visual.style.backgroundImage = '';
         visual.classList.toggle('is-director', current.kind === 'director');
@@ -488,9 +646,17 @@ const config = {
           setTags(current.obsessions);
           linkEl.href = `${config.directorsBase}${current.slug}/`;
           linkEl.textContent = config.seeDirector;
+          relationTitle.textContent = config.membershipLabel;
           for (const filmId of current.filmIds) {
             const film = nodes.find((item): item is FilmNode => item.id === filmId && item.kind === 'film');
-            if (film) addRelation(film.title, String(film.year), `${config.filmsBase}${film.slug}/`);
+            if (!film) continue;
+            addRelation({
+              nodeId: film.id,
+              title: film.title,
+              detail: String(film.year),
+              href: `${config.filmsBase}${film.slug}/`,
+              type: 'membership',
+            });
           }
         } else {
           document.getElementById('panel-kind')!.textContent = config.filmLabel;
@@ -500,27 +666,40 @@ const config = {
           if (current.frame) visual.style.backgroundImage = `url("${current.frame}")`;
           linkEl.href = `${config.filmsBase}${current.slug}/`;
           linkEl.textContent = config.seeFilm;
-          addRelation(
-            current.director,
-            config.seeDirector,
-            `${config.directorsBase}${current.directorSlug}/`
-          );
-          const relations = relatedLinks(current.id).filter((item) => item.type !== 'membership');
+          relationTitle.textContent = config.referencesLabel;
+          addRelation({
+            nodeId: `director:${current.directorSlug}`,
+            title: current.director,
+            detail: config.seeDirector,
+            href: `${config.directorsBase}${current.directorSlug}/`,
+            type: 'membership',
+          });
+          const relations = allRelatedLinks(current.id).filter((item) => item.type !== 'membership');
           for (const relation of relations) {
             const otherId = idOf(relation.source) === current.id ? idOf(relation.target) : idOf(relation.source);
             const other = nodes.find((item) => item.id === otherId);
             if (!other) continue;
-            addRelation(
-              other.title,
-              relation.note,
-              other.kind === 'film'
+            addRelation({
+              nodeId: other.id,
+              title: other.title,
+              detail: relation.note,
+              href: other.kind === 'film'
                 ? `${config.filmsBase}${other.slug}/`
                 : `${config.directorsBase}${other.slug}/`,
-              relation.type === 'theme' ? 'is-faint' : ''
-            );
+              type: relation.type,
+            });
           }
         }
+        const relationTotal = list.children.length;
+        relationCount.textContent = String(relationTotal).padStart(2, '0');
+        if (relationTotal === 0) {
+          const empty = document.createElement('li');
+          empty.className = 'empty-relation';
+          empty.textContent = config.noRelations;
+          list.appendChild(empty);
+        }
         panel.classList.add('is-filled');
+        panel.scrollTo({ top: 0 });
       }
 
       document.querySelectorAll<HTMLButtonElement>('[data-layer]').forEach((button) => {
@@ -581,9 +760,53 @@ const config = {
         resetView();
       });
 
+      function resizeGraph() {
+        const nextWidth = svgEl.clientWidth;
+        const nextHeight = svgEl.clientHeight;
+        if (!nextWidth || !nextHeight) return;
+        width = nextWidth;
+        height = nextHeight;
+        svg.attr('viewBox', `0 0 ${width} ${height}`);
+        simulation.force('center', d3.forceCenter(width / 2, height / 2));
+        simulation.alpha(0.2).restart();
+      }
+
+      function setExpanded(expanded: boolean) {
+        workspace.classList.toggle('is-expanded', expanded);
+        document.body.classList.toggle('map-is-expanded', expanded);
+        expandButton.classList.toggle('is-active', expanded);
+        expandButton.setAttribute('aria-expanded', String(expanded));
+        expandLabel.textContent = expanded ? config.minimize : config.maximize;
+        requestAnimationFrame(() => {
+          resizeGraph();
+          if (selected) focusNode(nodes.find((item) => item.id === selected));
+        });
+        window.setTimeout(() => {
+          if (selected && workspace.classList.contains('is-expanded')) {
+            focusNode(nodes.find((item) => item.id === selected));
+          }
+        }, 450);
+      }
+
+      expandButton.addEventListener('click', () => {
+        setExpanded(!workspace.classList.contains('is-expanded'));
+      });
+
+      document.addEventListener('keydown', (event) => {
+        if (event.key !== 'Escape' || !workspace.classList.contains('is-expanded')) return;
+        setExpanded(false);
+        expandButton.focus();
+      });
+
       node.on('click', (event, item) => {
         event.stopPropagation();
         select(selected === item.id ? null : item.id);
+      });
+      node.on('keydown', (event, item) => {
+        if (event.key !== 'Enter' && event.key !== ' ') return;
+        event.preventDefault();
+        event.stopPropagation();
+        select(item.id, true);
       });
       svg.on('click', () => select(null));
       document.getElementById('panel-close')!.addEventListener('click', () => select(null));
@@ -592,13 +815,9 @@ const config = {
       const initial = nodes.find((item) => item.id === hashId) ?? nodes.find((item) => item.kind === 'director');
       if (initial) select(initial.id);
 
-      window.addEventListener('resize', () => {
-        width = svgEl.clientWidth || width;
-        height = Math.max(650, Math.round(width * 0.68));
-        svg.attr('viewBox', `0 0 ${width} ${height}`);
-        simulation.force('center', d3.forceCenter(width / 2, height / 2));
-        simulation.alpha(0.25).restart();
-      });
+      const resizeObserver = new ResizeObserver(resizeGraph);
+      resizeObserver.observe(svgEl);
+      workspace.dataset.mapReady = 'true';
     }
   </script>
 </BaseLayout>
@@ -613,7 +832,7 @@ const config = {
   .map-stats dt { color: var(--text-faint); font-family: var(--font-mono); font-size: 0.55rem; letter-spacing: 0.14em; text-transform: uppercase; }
   .map-stats dd { color: var(--accent); font-family: var(--font-serif); font-size: 2.2rem; font-weight: 700; line-height: 1; }
   .map-wrap { padding-bottom: 5rem; }
-  .map-toolbar { display: grid; grid-template-columns: minmax(16rem, 1fr) auto minmax(17rem, 0.62fr); align-items: stretch; border: 1px solid var(--border); border-bottom: 0; border-radius: var(--radius) var(--radius) 0 0; background: rgba(17, 16, 14, 0.86); overflow: hidden; }
+  .map-toolbar { display: grid; grid-template-columns: minmax(14rem, 0.85fr) auto minmax(24rem, 0.9fr); align-items: stretch; border: 1px solid var(--border); border-bottom: 0; border-radius: var(--radius) var(--radius) 0 0; background: rgba(17, 16, 14, 0.86); overflow: hidden; }
   .map-toolbar-copy { display: flex; align-items: center; gap: 1rem; padding: 1rem 1.2rem; min-width: 0; }
   .map-toolbar-copy > div { display: grid; gap: 0.1rem; }
   .map-toolbar-index { display: grid; place-items: center; width: 2.35rem; height: 2.35rem; border: 1px solid var(--accent-muted); color: var(--accent); font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.15em; }
@@ -626,14 +845,16 @@ const config = {
   .layer-button.is-active b { color: var(--accent); }
   .legend-line { display: block; width: 1.5rem; height: 1px; background: var(--accent); }
   .legend-line.theme { background: repeating-linear-gradient(90deg, var(--text-faint) 0 3px, transparent 3px 6px); }
-  .map-tools { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: stretch; border-left: 1px solid var(--border); }
+  .map-tools { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: stretch; border-left: 1px solid var(--border); }
   .map-search { display: grid; gap: 0.25rem; min-width: 0; padding: 0.65rem 0.8rem; }
   .map-search span { color: var(--text-faint); font-family: var(--font-mono); font-size: 0.52rem; letter-spacing: 0.16em; line-height: 1; text-transform: uppercase; }
   .map-search input { min-width: 0; width: 100%; border: 0; border-bottom: 1px solid var(--border); border-radius: 0; padding: 0.15rem 0 0.35rem; background: transparent; color: var(--text); font: inherit; font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.04em; outline: 0; }
   .map-search input::placeholder { color: var(--text-faint); opacity: 0.74; }
   .map-search:focus-within input { border-color: var(--accent-muted); }
-  .map-reset { border: 0; border-left: 1px solid var(--border); padding: 0.75rem 0.9rem; background: transparent; color: var(--accent); font-family: var(--font-mono); font-size: 0.56rem; letter-spacing: 0.12em; line-height: 1.35; text-transform: uppercase; cursor: pointer; transition: background 0.2s ease, color 0.2s ease; }
-  .map-reset:hover { background: var(--accent); color: var(--bg); }
+  .map-tool-button { display: flex; align-items: center; justify-content: center; gap: 0.45rem; border: 0; border-left: 1px solid var(--border); padding: 0.75rem 0.8rem; background: transparent; color: var(--accent); font-family: var(--font-mono); font-size: 0.54rem; letter-spacing: 0.11em; line-height: 1.35; text-transform: uppercase; cursor: pointer; transition: background 0.2s ease, color 0.2s ease; }
+  .map-tool-button svg { width: 1rem; height: 1rem; flex: 0 0 auto; fill: none; stroke: currentColor; stroke-linecap: square; stroke-linejoin: miter; stroke-width: 1.35; }
+  .map-tool-button:hover { background: var(--accent); color: var(--bg); }
+  .map-tool-button.is-active { background: rgba(244, 208, 138, 0.1); color: var(--accent); }
   .map-shell { display: grid; grid-template-columns: minmax(0, 1fr) 380px; min-height: 760px; border: 1px solid var(--border); border-radius: 0 0 var(--radius) var(--radius); background: var(--surface); overflow: hidden; }
   .map-stage { position: relative; min-height: 760px; overflow: hidden; background: radial-gradient(circle at 47% 45%, rgba(244, 208, 138, 0.1), transparent 36%), radial-gradient(circle at 78% 18%, rgba(134, 146, 125, 0.09), transparent 42%), var(--bg); }
   .map-stage::before { content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0.24; background-image: linear-gradient(rgba(227, 227, 222, 0.045) 1px, transparent 1px), linear-gradient(90deg, rgba(227, 227, 222, 0.045) 1px, transparent 1px); background-size: 72px 72px; mask-image: radial-gradient(circle at center, #000 20%, transparent 86%); }
@@ -643,7 +864,7 @@ const config = {
   .map-stage-label b { color: var(--text); font-family: var(--font-serif); font-size: 1.6rem; letter-spacing: 0; line-height: 1; }
   .map-hints { position: absolute; bottom: 1.2rem; left: 1.2rem; z-index: 2; display: flex; gap: 0.5rem; }
   .map-hints span { border: 1px solid var(--border); padding: 0.35rem 0.65rem; background: rgba(0, 0, 0, 0.72); color: var(--text-faint); font-family: var(--font-mono); font-size: 0.52rem; letter-spacing: 0.14em; text-transform: uppercase; backdrop-filter: blur(10px); }
-  .map-panel { display: flex; flex-direction: column; gap: 1.1rem; min-height: 100%; border-left: 1px solid var(--border); padding: 1.4rem; background: linear-gradient(180deg, rgba(21, 20, 17, 0.96), rgba(8, 8, 7, 0.98)); overflow-y: auto; }
+  .map-panel { display: flex; flex-direction: column; gap: 1.1rem; min-height: 100%; border-left: 1px solid var(--border); padding: 1.4rem; background: linear-gradient(180deg, rgba(21, 20, 17, 0.96), rgba(8, 8, 7, 0.98)); overflow-y: auto; scrollbar-color: var(--accent-muted) var(--bg); scrollbar-width: thin; }
   .panel-head { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 0.9rem; color: var(--text-faint); font-family: var(--font-mono); font-size: 0.58rem; letter-spacing: 0.16em; text-transform: uppercase; }
   .panel-close { display: grid; place-items: center; width: 2rem; height: 2rem; border: 1px solid var(--border); border-radius: 50%; background: transparent; color: var(--text-faint); font-size: 1.1rem; line-height: 1; cursor: pointer; transition: border-color 0.2s ease, color 0.2s ease; }
   .panel-close:hover { border-color: var(--accent-muted); color: var(--accent); }
@@ -659,19 +880,50 @@ const config = {
   .panel-link { width: 100%; border: 1px solid var(--accent-muted); padding: 0.7rem 0.85rem; color: var(--accent); font-family: var(--font-mono); font-size: 0.6rem; font-weight: 700; letter-spacing: 0.12em; line-height: 1.35; text-align: center; text-transform: uppercase; }
   .panel-link:hover { background: var(--accent); color: var(--bg); }
   .panel-relations { margin-top: 0.5rem; border-top: 1px solid var(--border); padding-top: 1rem; }
-  .panel-relations h3 { margin-bottom: 0.8rem; color: var(--text-faint); font-size: 0.62rem; letter-spacing: 0.16em; text-transform: uppercase; }
-  .panel-conns { display: grid; gap: 0.55rem; list-style: none; padding: 0; }
-  .panel-conns li { border-bottom: 1px solid var(--border); padding: 0.2rem 0 0.8rem; }
-  .panel-conns a { color: var(--text); }
-  .panel-conns strong { font-family: var(--font-serif); font-size: 1rem; }
-  .panel-conns .why { margin-top: 0.3rem; color: var(--text-soft); font-size: 0.76rem; line-height: 1.45; }
-  .panel-conns .why.is-faint, .empty-relation { color: var(--text-faint); font-style: italic; }
+  .panel-relations-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 0.8rem; }
+  .panel-relations h3 { color: var(--text-faint); font-size: 0.62rem; letter-spacing: 0.16em; text-transform: uppercase; }
+  #panel-relations-count { color: var(--accent); font-family: var(--font-mono); font-size: 0.58rem; letter-spacing: 0.12em; }
+  .panel-conns { display: grid; gap: 0.7rem; list-style: none; padding: 0; }
   @media (max-width: 1100px) { .map-toolbar { grid-template-columns: 1fr; } .layer-controls, .map-tools { border-top: 1px solid var(--border); } .map-tools { border-left: 0; } }
   @media (max-width: 980px) { .map-intro { grid-template-columns: 1fr; gap: 2rem; } .map-shell { grid-template-columns: 1fr; } .map-panel { border-top: 1px solid var(--border); border-left: 0; } }
-  @media (max-width: 760px) { .map-intro h1 { font-size: clamp(3rem, 15vw, 4.7rem); } .map-stats { flex-wrap: wrap; } .map-toolbar-copy { border-bottom: 0; } .layer-controls { display: grid; grid-template-columns: 1fr 1fr; } .layer-button { min-width: 0; border-left: 0; padding: 0.85rem 0.75rem; } .layer-button + .layer-button { border-left: 1px solid var(--border); } .map-tools { grid-template-columns: 1fr; } .map-reset { border-top: 1px solid var(--border); border-left: 0; } .map-shell, .map-stage { min-height: 580px; } .map-hints { display: none; } .map-panel { padding: 1rem; } }
+  @media (max-width: 760px) { .map-intro h1 { font-size: clamp(3rem, 15vw, 4.7rem); } .map-stats { flex-wrap: wrap; } .map-toolbar-copy { border-bottom: 0; } .layer-controls { display: grid; grid-template-columns: 1fr 1fr; } .layer-button { min-width: 0; border-left: 0; padding: 0.85rem 0.75rem; } .layer-button + .layer-button { border-left: 1px solid var(--border); } .map-tools { grid-template-columns: 1fr; } .map-tool-button { border-top: 1px solid var(--border); border-left: 0; } .map-shell, .map-stage { min-height: 580px; } .map-hints { display: none; } .map-panel { padding: 1rem; } }
+
+  :global(body.map-is-expanded) { overflow: hidden; }
+  .map-wrap.is-expanded { position: fixed; inset: 0; z-index: 9998; display: grid; grid-template-rows: auto minmax(0, 1fr); width: 100%; max-width: none; margin: 0; padding: 0.7rem; background: var(--bg); }
+  .map-wrap.is-expanded .map-toolbar { grid-template-columns: auto minmax(22rem, 1fr); border-radius: var(--radius) var(--radius) 0 0; }
+  .map-wrap.is-expanded .map-toolbar-copy { display: none; }
+  .map-wrap.is-expanded .map-tools { border-top: 0; border-left: 1px solid var(--border); }
+  .map-wrap.is-expanded .map-shell { grid-template-columns: minmax(0, 1fr) minmax(340px, 27vw); height: 100%; min-height: 0; border-radius: 0 0 var(--radius) var(--radius); }
+  .map-wrap.is-expanded .map-stage { min-height: 0; }
+  .map-wrap.is-expanded .map-panel { min-height: 0; max-height: 100%; }
+
+  @media (max-width: 760px) {
+    .map-wrap.is-expanded { padding: 0; }
+    .map-wrap.is-expanded .map-toolbar { grid-template-columns: 1fr; border-radius: 0; }
+    .map-wrap.is-expanded .map-tools { grid-template-columns: minmax(0, 1fr) auto auto; border-top: 1px solid var(--border); border-left: 0; }
+    .map-wrap.is-expanded .map-tool-button { border-top: 0; border-left: 1px solid var(--border); }
+    .map-wrap.is-expanded .map-tool-button span { display: none; }
+    .map-wrap.is-expanded .map-shell { position: relative; grid-template-columns: 1fr; border-radius: 0; }
+    .map-wrap.is-expanded .map-panel { position: absolute; inset: auto 0 0; z-index: 4; max-height: 58%; border-top: 1px solid var(--accent-muted); border-left: 0; box-shadow: 0 -24px 50px rgba(0, 0, 0, 0.6); transform: translateY(102%); transition: transform 0.3s ease; }
+    .map-wrap.is-expanded .map-panel.is-filled { transform: translateY(0); }
+  }
 </style>
 
 <style is:global>
+  .panel-conns .relation-card { border: 1px solid var(--border); background: rgba(255, 255, 255, 0.018); transition: border-color 0.2s ease, background 0.2s ease; }
+  .panel-conns .relation-card:hover { border-color: var(--accent-muted); background: rgba(244, 208, 138, 0.04); }
+  .panel-conns .relation-focus { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0.45rem 0.8rem; width: 100%; border: 0; padding: 0.75rem 0.8rem 0.65rem; background: transparent; color: var(--text); text-align: left; cursor: pointer; }
+  .panel-conns .relation-type { grid-column: 1 / -1; width: fit-content; color: var(--accent); font-family: var(--font-mono); font-size: 0.48rem; letter-spacing: 0.14em; line-height: 1; text-transform: uppercase; }
+  .panel-conns .relation-theme .relation-type { color: var(--registry); }
+  .panel-conns .relation-membership .relation-type { color: var(--text-faint); }
+  .panel-conns .relation-copy { display: grid; gap: 0.2rem; min-width: 0; }
+  .panel-conns .relation-copy strong { font-family: var(--font-serif); font-size: 1rem; line-height: 1.25; overflow-wrap: anywhere; }
+  .panel-conns .relation-copy .why { color: var(--text-soft); font-family: var(--font-body); font-size: 0.76rem; line-height: 1.45; }
+  .panel-conns .relation-marker { align-self: center; color: var(--accent); font-family: var(--font-mono); font-size: 0.8rem; transition: transform 0.2s ease; }
+  .panel-conns .relation-focus:hover .relation-marker { transform: translate(2px, -2px); }
+  .panel-conns .relation-open { display: block; border-top: 1px solid var(--border); padding: 0.38rem 0.8rem; color: var(--text-faint); font-family: var(--font-mono); font-size: 0.48rem; letter-spacing: 0.12em; text-align: right; text-transform: uppercase; }
+  .panel-conns .relation-open:hover { color: var(--accent); }
+  .panel-conns .empty-relation { border: 1px dashed var(--border); padding: 0.8rem; color: var(--text-faint); font-size: 0.76rem; font-style: italic; }
   #graph .edge { transition: opacity 0.2s ease, stroke-width 0.2s ease; }
   #graph .edge-membership { stroke: var(--accent-muted); stroke-width: 1.2; stroke-opacity: 0.52; }
   #graph .edge-idea { stroke: var(--accent-strong); stroke-width: 2; stroke-dasharray: 6 3; stroke-opacity: 0.82; }
@@ -679,6 +931,12 @@ const config = {
   #graph .edge.is-hidden { opacity: 0; pointer-events: none; }
   #graph .edge.is-hot { stroke-opacity: 1; stroke-width: 3; }
   #graph .edge.is-dim { opacity: 0.04; }
+  #graph .edge-label { opacity: 0; pointer-events: none; transition: opacity 0.2s ease; }
+  #graph .edge-label.is-visible { opacity: 1; }
+  #graph .edge-label rect { fill: rgba(8, 8, 7, 0.94); stroke: var(--border); stroke-width: 1; }
+  #graph .edge-label text { fill: var(--accent); font-family: var(--font-mono); font-size: 7px; letter-spacing: 0.11em; text-anchor: middle; text-transform: uppercase; }
+  #graph .edge-label-theme text { fill: var(--registry); }
+  #graph .edge-label-membership text { fill: var(--text-soft); }
   #graph .node { transition: opacity 0.2s ease; }
   #graph .node.is-dim { opacity: 0.15; }
   #graph .node.is-search-hit .director-halo { fill: rgba(244, 208, 138, 0.16); stroke-opacity: 1; }
@@ -697,4 +955,7 @@ const config = {
   #graph .film-year { fill: rgba(25, 23, 20, 0.64); font-family: var(--font-mono); font-size: 8px; text-anchor: middle; }
   #graph .node.is-active .director-core, #graph .node.is-active .film-card { stroke: var(--accent); stroke-width: 3; filter: drop-shadow(0 14px 22px rgba(244, 208, 138, 0.25)); }
   #graph .node.is-active .director-halo { fill: rgba(244, 208, 138, 0.09); stroke-opacity: 0.9; }
+  #graph .node.is-near .director-core, #graph .node.is-near .film-card { stroke: var(--accent-muted); stroke-width: 2; }
+  #graph .node:focus-visible { outline: none; }
+  #graph .node:focus-visible .director-halo, #graph .node:focus-visible .film-card { stroke: var(--accent-strong); stroke-width: 3; }
 </style>
