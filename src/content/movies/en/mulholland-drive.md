@@ -32,6 +32,8 @@ connections:
     note: "Hollywood appears in both as a dream factory whose promise and violence cannot be separated. Barton imagines he can speak for ordinary people while refusing to hear one; Diane imagines an industry where pure talent is recognized instantly and corruption belongs to other people. The hotel corridor and Club Silencio finally expose the same thing: the picture was always constructing its dreamer."
   - slug: 'blue-velvet'
     note: "Lynch's two great statements that the bright surface is a second truth rather than a mask, tested from opposite ends of a life. Diane needs a whole dream to make her existence bearable and wakes into what it was built to hide; Jeffrey needs only to open a closet door, and still gets sent home to a lawn, a robin and a family lunch that Lynch films as sincerely as the horror. One picture ends in happiness with a beetle in its beak; the other ends by revealing that the happiness was never anything but the dream."
+  - slug: 'ai-artificial-intelligence'
+    note: "Two films that end by manufacturing the happy ending their protagonist could not obtain, and leave the machinery visible. Diane builds hers herself, out of a dream that rots from the inside; David has his built for him by future beings who can only run it for a single day. Lynch treats wish fulfilment as self-deception and Spielberg treats it as tenderness —which is exactly why his is the crueler of the two."
 draft: false
 ---
 

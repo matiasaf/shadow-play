@@ -126,10 +126,14 @@ extra (ej. `## Puesta en escena`, `## Notas filosóficas`) cuando la película l
 ## Para sumar una película
 
 Usá el skill **`/add-film`**, que tiene la receta paso a paso. Resumen: crear `en/<slug>.md` y
-`es/<slug>.md` desde la plantilla, completar frontmatter + análisis en ambos idiomas, agregar
-el frame en `src/assets/frames/`, poner `draft: false` y validar con `npm run build`. Si el
-director es nuevo en el archivo, considerá crear también su ficha en
-`content/directors/<lang>/` (la página existe igual sin ella, pero sin ensayo ni worldview).
+`es/<slug>.md` desde la plantilla, completar frontmatter + análisis en ambos idiomas, buscar el
+fotograma en la web y bajarlo a `src/assets/frames/` (con su `frameCaption` en los dos idiomas),
+poner `draft: false` y validar con `npm run build`. Si el director es nuevo en el archivo,
+considerá crear también su ficha en `content/directors/<lang>/` (la página existe igual sin
+ella, pero sin ensayo ni worldview).
+
+El mismo skill sirve para una película que ya está en el archivo pero no tiene fotograma: en
+ese caso arranca directo en el paso del frame.
 
 ## Tono editorial
 

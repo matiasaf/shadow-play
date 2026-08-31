@@ -18,6 +18,8 @@ connections:
     note: 'In both, the State organizes itself so that an extraordinary event won''t be seen: the bureaucracy of Moebius denies the lost train; here the government invents a gas spill to empty the mountain. Concealment with opposite signs —there to erase a loss, here to curate a miracle— but the same distrust of the citizen who looks.'
   - slug: 'dune-part-one'
     note: "Roy and Paul are both taken over by images they never asked for and cannot verify, and both let the vision pull them out of their lives toward an appointment in an empty landscape. Spielberg treats the call as a wonder worth losing a family for; Villeneuve gives the same experience to a boy who reads it correctly as a warning —and follows it anyway."
+  - slug: 'ai-artificial-intelligence'
+    note: "The debt and its payment, twenty-four years apart and by the same hand. Roy boards the ship and the film barely glances at the family left on the ground; A.I. is that glance, stretched to two thousand years and shot from inside the one who stays. Same suburb, same window, same blown-out light —what changes is who Spielberg decides to remain with."
 draft: false
 ---
 
@@ -73,8 +75,8 @@ it is uncomfortable.
   the mothership only at the end, and then without stinginess. It's the lesson of *Jaws*
   applied to awe: the sublime is also cooked off-screen.
 - **An ending that commits.** Roy boards. No epilogue, no return, no scene of the family
-  reconciled. The script —the only one Spielberg ever signed alone— follows its faith to
-  the final consequences, for better and for worse.
+  reconciled. The script —the first of the two Spielberg ever signed alone— follows its
+  faith to the final consequences, for better and for worse.
 
 ## Staging
 

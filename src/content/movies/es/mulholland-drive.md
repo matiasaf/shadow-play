@@ -32,6 +32,8 @@ connections:
     note: 'Hollywood aparece en ambas como una fábrica de sueños cuya promesa no puede separarse de su violencia. Barton imagina que habla por la gente común mientras se niega a escuchar a una persona; Diane imagina una industria donde el talento puro es reconocido al instante y la corrupción siempre es de los otros. El pasillo del hotel y Club Silencio terminan revelando lo mismo: la película estuvo construyendo a quien soñaba con construirla.'
   - slug: 'blue-velvet'
     note: 'Las dos grandes declaraciones de Lynch de que la superficie luminosa es una segunda verdad y no una máscara, puestas a prueba desde los dos extremos de una vida. Diane necesita un sueño entero para hacer vivible su existencia y despierta en lo que ese sueño vino a tapar; a Jeffrey le alcanza con abrir la puerta de un placard, y aun así lo mandan de vuelta a un césped, un petirrojo y un almuerzo familiar que Lynch filma con la misma sinceridad que el horror. Una termina en una felicidad con un escarabajo en el pico; la otra termina revelando que la felicidad nunca fue otra cosa que el sueño.'
+  - slug: 'ai-artificial-intelligence'
+    note: 'Dos películas que terminan fabricando el final feliz que su protagonista no pudo conseguir, y dejan la maquinaria a la vista. Diane se construye el suyo con un sueño que se pudre desde adentro; a David se lo construyen unos seres futuros que solo pueden hacerlo funcionar un día. Lynch trata el cumplimiento del deseo como autoengaño y Spielberg lo trata como ternura —y por eso el suyo es el más cruel de los dos.'
 draft: false
 ---
 

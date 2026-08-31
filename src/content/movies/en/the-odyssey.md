@@ -18,6 +18,8 @@ connections:
     note: 'Two odysseys that strip the traveler of human scale. Kubrick sends the species toward an unknowable future; Nolan sends one exhausted man through the ruins of myth until home itself becomes the unknown.'
   - slug: 'dune-part-one'
     note: "Two journeys in which the myth carrying the hero's name turns out to be a machine older than he is: Odysseus is built by the stories he tells to survive, Paul by an order that seeded a prophecy centuries before his birth. In both, advancing means accepting that the legend was never a reward offered to them—it was a role prepared for them."
+  - slug: 'ai-artificial-intelligence'
+    note: "Two homecomings that turn out to be appointments with something that no longer exists. Odysseus reaches Ithaca and has to answer for the man who left; David reaches a mother rebuilt for a single day out of a lock of hair. Nolan makes the return a trial, Spielberg makes it a gift with an expiry date —and both agree that home is the one thing the journey cannot restore."
 draft: false
 ---
 

@@ -10,7 +10,7 @@ frame: '../../../assets/frames/millers-crossing.jpg'
 frameCaption: "El sombrero de Tom, solo sobre la alfombra de hojas muertas en Miller's Crossing, el viento a punto de llevárselo. La película abre con el sueño y no suelta nunca la imagen: un hombre que juega todos los ángulos, deshecho por lo único —el sombrero, el corazón— que persigue y se niega a nombrar."
 logline: "Tom Reagan, el cerebro detrás de un capo irlandés, juega a las facciones de una guerra mafiosa de la Ley Seca unas contra otras para salvar a un hombre —y una amistad— que no admite que está protegiendo."
 rating: 5
-tags: ['gánsteres', 'Ley Seca', 'lealtad', 'amistad', 'la cabeza y el corazón', 'film noir', 'ética', 'jugar los ángulos', 'el sombrero']
+tags: ['gánsteres', 'Ley Seca', 'lealtad', 'amistad', 'la cabeza y el corazón', 'cine negro', 'ética', 'jugar los ángulos', 'el sombrero']
 connections:
   - slug: 'barton-fink'
     note: "La película siguiente de los Coen, y su espejo en miniatura —John Turturro hace acá al hombre que ruega por su vida (Bernie: '¡Mirá en tu corazón!') y allá al que no escucha a nadie (Barton). Las dos enfrentan una cabeza contra un corazón y dejan que la cabeza parezca ganar a un precio terrible: Miller's Crossing toda superficie y estrategia, Barton Fink todo interior y ruido."

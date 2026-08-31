@@ -10,7 +10,7 @@ frame: '../../../assets/frames/dune-part-one.jpg'
 frameCaption: 'Paul and Jessica on a ridge at dawn, stripped of house, army and name, wearing suits that recycle their own bodies to keep them alive. The desert ahead is not a landscape but a verdict: whatever survives out there will no longer be the boy who arrived. And Jessica, half a step behind, is the woman who wrote the prophecy waiting for him.'
 logline: "A ducal heir inherits a desert planet engineered as a trap for his family, and discovers that the messiah the natives are waiting for was manufactured, generations in advance, to be him."
 rating: 4
-tags: ['prophecy', 'power', 'colonialism', 'destiny', 'the sublime', 'faith', 'inheritance', 'ecology', 'manufactured myth']
+tags: ['prophecy', 'power', 'colonialism', 'fate', 'the sublime', 'faith', 'inheritance', 'ecology', 'manufactured myth']
 connections:
   - slug: 'dune-part-two'
     note: 'The second half is where this one gets answered. *Part One* builds the trap and ends with Paul seeing the war his name will cause; *Part Two* has him pick the trap up and use it, and hands the final look to Chani—the only person who refuses the myth this film spends its whole running time assembling.'

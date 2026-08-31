@@ -10,7 +10,7 @@ frame: '../../../assets/frames/dune-part-two.jpg'
 frameCaption: "Chani looks at Paul; Paul lowers his eyes. She is the only person in the film who keeps looking at the man instead of the Mahdi, and this is the exact moment he stops being able to hold her gaze. Everyone else in the desert is already looking at a prophecy."
 logline: 'Taken in by the Fremen as a fugitive, the heir of a destroyed house takes up the messiah role built for him by an empire of nuns, and wins his revenge at the price of becoming the holy war he had foreseen with horror.'
 rating: 5
-tags: ['prophecy', 'power', 'colonialism', 'fanaticism', 'the double', 'vengeance', 'faith', 'manufactured myth', 'destiny']
+tags: ['prophecy', 'power', 'colonialism', 'fanaticism', 'the double', 'vengeance', 'faith', 'manufactured myth', 'fate']
 connections:
   - slug: 'dune-part-one'
     note: 'The same film in two moral movements. *Part One* shows the machinery being built—the bred bloodline, the seeded legend—and ends with Paul seeing the war his name will cause. *Part Two* has him pick the machinery up and use it. The first half studies a trap; the second studies a decision.'

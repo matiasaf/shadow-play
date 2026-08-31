@@ -18,6 +18,8 @@ connections:
     note: 'Dos odiseas que le quitan al viajero su escala humana. Kubrick manda a la especie hacia un futuro incognoscible; Nolan empuja a un hombre agotado por las ruinas del mito hasta que el propio hogar se vuelve lo desconocido.'
   - slug: 'dune-part-one'
     note: 'Dos viajes en los que el mito que lleva el nombre del héroe resulta ser una máquina más vieja que él: a Odiseo lo construyen los relatos que cuenta para sobrevivir; a Paul, una orden que sembró una profecía siglos antes de su nacimiento. En las dos, avanzar implica aceptar que la leyenda nunca fue una recompensa que les ofrecieron, sino un rol que les prepararon.'
+  - slug: 'ai-artificial-intelligence'
+    note: 'Dos regresos que resultan ser citas con algo que ya no existe. Odiseo llega a Ítaca y tiene que responder por el hombre que se fue; David llega a una madre reconstruida por un solo día a partir de un mechón de pelo. Nolan convierte la vuelta en un juicio; Spielberg, en un regalo con fecha de vencimiento —y las dos coinciden en que el hogar es lo único que el viaje no puede devolver.'
 draft: false
 ---
 

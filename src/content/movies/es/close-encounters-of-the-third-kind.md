@@ -18,6 +18,8 @@ connections:
     note: 'En las dos, el Estado se organiza para que un hecho extraordinario no se vea: la burocracia de Moebius niega el tren perdido; acá el gobierno inventa un derrame de gas para vaciar la montaña. Ocultamiento con signo opuesto —allá para borrar una pérdida, acá para curar un milagro— pero la misma desconfianza en el ciudadano que mira.'
   - slug: 'dune-part-one'
     note: 'A Roy y a Paul los toman imágenes que no pidieron y no pueden verificar, y los dos dejan que la visión los arranque de su vida hacia una cita en un paisaje vacío. Spielberg trata el llamado como un asombro por el que vale perder una familia; Villeneuve le da la misma experiencia a un pibe que la lee correctamente como advertencia —y la sigue igual.'
+  - slug: 'ai-artificial-intelligence'
+    note: 'La deuda y su pago, con veinticuatro años de distancia y la misma mano. Roy sube a la nave y la película apenas mira a la familia que queda en el piso; Inteligencia artificial es esa mirada, estirada a dos mil años y filmada desde adentro del que se queda. El mismo suburbio, la misma ventana, la misma luz reventada: lo que cambia es con quién decide quedarse Spielberg.'
 draft: false
 ---
 
@@ -72,8 +74,8 @@ la nave es tan luminoso como incómodo.
   que hierven; la nave nodriza recién al final, y entonces sin mezquinarla. Es la lección
   de *Tiburón* aplicada al asombro: lo sublime también se cocina fuera de cuadro.
 - **El final que se anima.** Roy sube. Sin epílogo, sin vuelta, sin escena de la familia
-  reconciliada. El guion —el único que Spielberg firmó solo en su carrera— se compromete
-  con su fe hasta las últimas consecuencias, para bien y para mal.
+  reconciliada. El guion —el primero de los dos que Spielberg firmó solo en su carrera— se
+  compromete con su fe hasta las últimas consecuencias, para bien y para mal.
 
 ## Puesta en escena
 

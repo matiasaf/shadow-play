@@ -25,6 +25,8 @@ connections:
     note: 'Twelve years later, the same theorem at another scale. In The Killing the perfect plan is undone by a lapdog on a runway; here, the infallible computer undoes the mission through something like pride. Kubrick swapped the heist for the whole species; the conclusion stayed intact.'
   - slug: 'dune-part-one'
     note: "The monolith and the sandworm perform the same operation: an object with no available comparison, which turns the human in the frame into a detail. Both films trust image and sound over explanation, and both end with a man crossing into something he will not be able to report back from."
+  - slug: 'ai-artificial-intelligence'
+    note: "Kubrick's two machines, split between two directors. HAL is an intelligence that fails by becoming human —fear, pride, self-preservation; David is one that succeeds at being human and is discarded for it. Both films hand the last act to something that comes after us, and both end on a being suspended outside time: the Star Child, and the boy asleep at the bottom of a drowned fairground."
 draft: false
 ---
 

@@ -16,6 +16,7 @@ para el mapa de conexiones).
 npm run dev      # servidor de desarrollo en http://localhost:4321
 npm run build    # build estático a dist/ (valida el frontmatter de todas las fichas)
 npm run preview  # previsualiza el build
+npm run streaming:update  # refresca src/data/streaming.json (dónde ver la watchlist en AR)
 ```
 
 Después de tocar fichas, corré `npm run build` para validar el frontmatter contra el schema.
@@ -75,6 +76,14 @@ src/
   páginas, declaralo en ambas.
 - **i18n:** cualquier string de UI nuevo va en `src/i18n/ui.ts`, en `en` **y** `es`. Las rutas
   se generan con `localizePath()`. No hardcodees texto de interfaz en los componentes.
+- **Streaming de la watchlist (dato derivado, no contenido).** La página Up Next muestra
+  dónde ver cada película pendiente en Argentina leyendo `src/data/streaming.json`, keyeado
+  por slug neutral. Ese JSON **no se edita a mano**: lo regenera `npm run streaming:update`
+  (`scripts/update-streaming.mjs`), que consulta los watch providers de TMDB (datos de
+  JustWatch, región AR) y necesita `TMDB_API_TOKEN` en `.env` (ver `.env.example`). Para
+  corregir matches o cargar plataformas a mano existe `src/data/streaming.overrides.json`
+  (`tmdbId`, `skip`, o campos como `flatrate`). El JSON generado sí se commitea (el build lo
+  importa). Al mostrar los datos hay que mantener la atribución a JustWatch.
 
 ### Schema del frontmatter (`content.config.ts`)
 
@@ -116,11 +125,16 @@ extra (ej. `## Puesta en escena`, `## Notas filosóficas`) cuando la película l
 
 ## Para sumar una película
 
-Usá el skill **`/add-film`**, que tiene la receta paso a paso. Resumen: crear `en/<slug>.md` y
-`es/<slug>.md` desde la plantilla, completar frontmatter + análisis en ambos idiomas, agregar
-el frame en `src/assets/frames/`, poner `draft: false` y validar con `npm run build`. Si el
-director es nuevo en el archivo, considerá crear también su ficha en
-`content/directors/<lang>/` (la página existe igual sin ella, pero sin ensayo ni worldview).
+Usá el skill **`add-film`** (`.agents/skills/add-film/SKILL.md`), que tiene la receta paso a
+paso — Codex lo descubre solo en `./.agents/skills/`. Resumen: crear `en/<slug>.md` y
+`es/<slug>.md` desde la plantilla, completar frontmatter + análisis en ambos idiomas, buscar el
+fotograma en la web y bajarlo a `src/assets/frames/` (con su `frameCaption` en los dos idiomas),
+poner `draft: false` y validar con `npm run build`. Si el director es nuevo en el archivo,
+considerá crear también su ficha en `content/directors/<lang>/` (la página existe igual sin
+ella, pero sin ensayo ni worldview).
+
+El mismo skill sirve para una película que ya está en el archivo pero no tiene fotograma: en
+ese caso arranca directo en el paso del frame.
 
 ## Tono editorial
 
