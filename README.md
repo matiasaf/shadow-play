@@ -17,6 +17,12 @@ npm run build    # build the static site into dist/
 npm run preview  # preview the build
 ```
 
+Requires Node 22.12 or newer and npm. For a fresh cross-platform agent/developer setup, run
+`npm run harness:init` from macOS/Linux or Windows PowerShell. It installs locked dependencies,
+prepares Playwright and validates the repository. `npm run harness:verify` performs the
+read-only harness checks. Agent sessions start at [`AGENTS.md`](AGENTS.md); resumable work is
+recorded in [`PROGRESS.md`](PROGRESS.md).
+
 ## Internationalization (i18n)
 
 - Languages are configured in `astro.config.mjs` (`defaultLocale: 'en'`, `locales: ['en','es']`).
