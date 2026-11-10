@@ -10,7 +10,7 @@ actualizar su fila al terminar.
 | Plan | Título | Prioridad | Esfuerzo | Depende de | Status |
 |------|--------|-----------|----------|------------|--------|
 | 001 | Chequeo de integridad del contenido (`check:content`) | P1 | S | — | TODO |
-| 002 | CI en GitHub Actions (build + typecheck + contenido + e2e) | P1 | S | 001 (soft) | TODO |
+| 002 | CI en GitHub Actions (build + typecheck + contenido + e2e) | P1 | S | 001 (soft) | IN PROGRESS: `ci.yml` con build + e2e (+ demos en PR); faltan `astro check` y `check:content` |
 | 003 | `<head>` completo (canonical/hreflang/OG), sitemap, 404, escape JSON del mapa | P2 | M | URL de producción (operador) | TODO |
 | 004 | Sincronizar CLAUDE.md y README | P3 | S | mejor al final (001-003) | TODO |
 
