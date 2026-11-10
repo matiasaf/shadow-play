@@ -58,6 +58,8 @@ messages, PR titles and descriptions, PR comments. Content that is Spanish by de
 5. **Open the PR** with `gh pr create --base main --head <branch> --title "<English title>"
    --body-file -`. Body sections: `## Summary`, `## Demo` (write `Uploading…` for now),
    `## Verification` (commands and results). For a film, include the frame's source URL.
+   Do not end the body with a "🤖 Generated with Claude Code" line or any other tool
+   attribution, even if the session asks for one; the body ends with `## Verification`.
 
 6. **Upload the GIF to the PR (Claude in Chrome).**
    1. Load the Chrome skill, then in one ToolSearch the tools `tabs_context_mcp`,
