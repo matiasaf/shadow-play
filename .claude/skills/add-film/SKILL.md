@@ -21,6 +21,10 @@ resumen final. `watchedOn` por defecto = hoy (ordena el archivo: más reciente p
 
 ## Pasos
 
+0. **Arrancá en un worktree propio.** Antes de tocar archivos, seguí el paso 1 del skill
+   `ship-pr` (`.agents/skills/ship-pr/SKILL.md`): worktree desde `origin/main` con la rama
+   `film/<slug>`. Todo lo que sigue se hace ahí.
+
 1. **Definí el slug** neutral en kebab-case a partir del título original (ej. `12-angry-men`,
    `perfect-days`). Será el nombre de archivo en ambos idiomas y el id de `connections`.
 
@@ -122,7 +126,11 @@ resumen final. `watchedOn` por defecto = hoy (ordena el archivo: más reciente p
    ficha, ofrecé crearla (en + es, mismo slug derivado del nombre). Mientras no exista, su
    página muestra "ficha pendiente" + filmografía.
 
-8. **Cerrá** con un resumen al usuario: datos usados, **de dónde salió el fotograma (URL de
+8. **Entregá con PR:** seguí los pasos 3 a 7 de `ship-pr`. El demo de película es
+   `npm run demo -- tests/demo/film.demo.ts`; el commit, el título y la descripción del PR van
+   en inglés, con el GIF subido a la descripción.
+
+9. **Cerrá** con un resumen al usuario: link al PR, datos usados, **de dónde salió el fotograma (URL de
    origen)**, conexiones agregadas, y ofrecé (a) levantar
    `npm run dev` para verla, y (b) agregar `connections` recíprocas en las películas vinculadas
    si querés que el enlace aparezca también en sus páginas individuales.
