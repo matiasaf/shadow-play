@@ -33,7 +33,10 @@ Antes de editar:
 - `src/i18n/ui.ts`: todas las cadenas de interfaz en ambos idiomas.
 - `src/lib/`: identidad, formato y acceso a contenido/streaming.
 - `src/components/`: vistas compartidas; `src/pages/` contiene wrappers de rutas por idioma.
-- `tests/e2e/basic.spec.ts`: recorrido de comportamiento representativo.
+- `tests/e2e/`: suite e2e (`basic.spec.ts` es el recorrido representativo; `npm run test:e2e`).
+- `tests/demo/*.demo.ts`: recorridos grabados para PRs (`npm run demo` → `demos/*.mp4|gif`);
+  no son gate. Para un cambio visible, sumá o ajustá un demo y adjuntalo al PR.
+- `.github/workflows/ci.yml`: build + e2e en cada push/PR; en PRs graba los demos como artifact.
 - `plans/`: planes pendientes; orientan trabajo futuro, no reemplazan un pedido actual.
 
 ## Invariantes globales

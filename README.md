@@ -23,6 +23,24 @@ prepares Playwright and validates the repository. `npm run harness:verify` perfo
 read-only harness checks. Agent sessions start at [`AGENTS.md`](AGENTS.md); resumable work is
 recorded in [`PROGRESS.md`](PROGRESS.md).
 
+## Tests and demos
+
+```bash
+npm run test:e2e    # Playwright e2e suite (tests/e2e), against the dev server
+npm run test:e2e:ui # same, in Playwright's UI mode
+npm run demo        # record tests/demo/*.demo.ts into demos/*.webm, .mp4 and .gif
+```
+
+Demos are scripted walkthroughs for pull requests, not tests. To show a change in a PR,
+copy `tests/demo/archive-tour.demo.ts`, script the flow (the `pause` and `glide` helpers
+keep it readable), run `npm run demo -- tests/demo/<name>.demo.ts` and drag
+`demos/<name>.mp4` or `.gif` into the PR description. MP4 and GIF need `ffmpeg`; without
+it you get the `.webm` only. Keep demos under ~15 s: GitHub caps uploads at 10 MB
+(`DEMO_GIF_WIDTH` and `DEMO_GIF_FPS` shrink the GIF).
+
+CI (`.github/workflows/ci.yml`) builds the site and runs the e2e suite on every push and
+PR; on PRs it also records the demos and uploads them as the `demos` artifact.
+
 ## Internationalization (i18n)
 
 - Languages are configured in `astro.config.mjs` (`defaultLocale: 'en'`, `locales: ['en','es']`).
