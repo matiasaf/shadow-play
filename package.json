@@ -11,9 +11,10 @@
     "build": "astro build",
     "preview": "astro preview",
     "streaming:update": "node scripts/update-streaming.mjs",
-    "test:e2e": "playwright test",
+    "test:e2e": "playwright test --project=chromium",
     "test:focused": "playwright test tests/e2e/basic.spec.ts",
     "test:e2e:ui": "playwright test --ui",
+    "demo": "node scripts/demo.mjs",
     "harness:init": "node scripts/harness-init.mjs",
     "harness:verify": "node scripts/verify-harness.mjs",
     "astro": "astro"
