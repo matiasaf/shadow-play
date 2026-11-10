@@ -20,6 +20,15 @@ connections:
     note: 'Dos hombres que intentan reemplazar a una mujer por su copia y pierden a las dos. Scottie rehace a Judy como Madeleine; Anthony va detrás de la novia de Adam como si cambiar de cuerpo fuera una forma de empezar de nuevo. Hitchcock y Villeneuve tratan al doble como la forma de un deseo que no acepta a la persona real que tiene enfrente.'
   - slug: 'mulholland-drive'
     note: 'Dos películas-rompecabezas que sólo cierran si las leés como una mente que se defiende. Diane sueña una versión mejor de sí misma; Adam inventa a un desconocido para que cargue la parte de él que no puede cargar. En las dos, la solución no es un giro sino una herida.'
+externalComments:
+  - source: 'FilmAffinity'
+    author: 'ribeirosnake'
+    title: 'Frustración arácnida'
+    summary: 'El doble leído desde el trauma y la amnesia posteriores a un accidente.'
+    body: |-
+      Resumen del comentario (con spoilers): ribeirosnake propone que Adam sobrevive al choque en el que muere su amante. Las secuelas explicarían su desdoblamiento, sus cambios de gustos y las visiones de arañas. Ver una película en la que actuó reactivaría los recuerdos bloqueados; la llave del club mostraría la persistencia de sus impulsos.
+    url: 'https://www.filmaffinity.com/ar/user/rating/651126/617900.html'
+    note: 'Lo guardo como hipótesis alternativa a la lectura del doble como evasión del compromiso.'
 draft: false
 ---
 

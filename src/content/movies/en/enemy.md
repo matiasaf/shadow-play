@@ -20,6 +20,15 @@ connections:
     note: "Two men who try to replace one woman with her copy and lose both. Scottie remakes Judy into Madeleine; Anthony goes after Adam's girlfriend as if switching bodies were a way of starting over. Hitchcock and Villeneuve both treat the double as the shape of a desire that refuses to accept the real person in front of it."
   - slug: 'mulholland-drive'
     note: "Two puzzle films that only make sense when you read them as a mind defending itself. Diane dreams a better version of herself; Adam invents a stranger to hold the part of himself he cannot carry. In both, the solution is not a twist but a wound."
+externalComments:
+  - source: 'FilmAffinity'
+    author: 'ribeirosnake'
+    title: 'Frustración arácnida'
+    summary: 'The double interpreted through trauma and amnesia following a car crash.'
+    body: |-
+      Summary of the Spanish review (with spoilers): ribeirosnake proposes that Adam survives the crash that kills his lover. Its aftermath would explain his divided identity, altered tastes and spider visions. Watching a film he appeared in would awaken blocked memories; the club key would signal that his impulses persist.
+    url: 'https://www.filmaffinity.com/ar/user/rating/651126/617900.html'
+    note: 'I keep this as an alternative to reading the double as avoidance of commitment.'
 draft: false
 ---
 
