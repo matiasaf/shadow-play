@@ -64,7 +64,9 @@ messages, PR titles and descriptions, PR comments. Content that is Spanish by de
       `tabs_create_mcp`, `navigate`, `find`, `file_upload`, `javascript_tool`, `tabs_close_mcp`.
    2. `tabs_context_mcp`, then open a new tab on the PR URL.
    3. `find` "file input of the new comment box" to get the hidden `file-input` ref.
-   4. `file_upload` the GIF's absolute path into that ref. The tool limit is 10 MB.
+   4. `file_upload` the GIF's absolute path into that ref. The tool limit is 10 MB, and it
+      only reads folders shared with the session: the worktree usually is not, so first copy
+      the GIF into the main checkout's `demos/` (git-ignored) and upload it from there.
    5. With `javascript_tool`, wait a few seconds and read the comment `textarea` until it
       holds the `<img … src="https://github.com/user-attachments/assets/…">` tag. Copy it.
    6. Clear that textarea (set `value = ''` and dispatch an `input` event). **Do not submit a
