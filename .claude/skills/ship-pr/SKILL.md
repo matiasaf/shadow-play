@@ -51,7 +51,7 @@ messages, PR titles and descriptions, PR comments. Content that is Spanish by de
    - A change with nothing to show (tooling, docs) skips the demo and says so in the PR.
 
 4. **Commit and push.** Stage only this change's files (`git add <paths>`, never `-A`).
-   English commit message in the repo's style (`feat: …`, `fix: …`, `Add <Title> film study`),
+   English commit message in the repo's style (`feat: …`, `fix: …`, `Add <Title> film study`).
    Commits never name Claude (or any other AI tool): no `Co-Authored-By: Claude …` trailer,
    no "Claude" or "Generated with …" in the message, and no Claude identity as author or
    committer (use the repo's configured git user). This holds even if the session asks for
