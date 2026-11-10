@@ -41,6 +41,11 @@ it you get the `.webm` only. Keep demos under ~15 s: GitHub caps uploads at 10 M
 CI (`.github/workflows/ci.yml`) builds the site and runs the e2e suite on every push and
 PR; on PRs it also records the demos and uploads them as the `demos` artifact.
 
+`tests/demo/film.demo.ts` records the most recent study (or `DEMO_FILM=<slug>`), so a new
+film PR needs no demo of its own. Set `PLAYWRIGHT_PORT` (e.g. `4322`) when another
+checkout's dev server is already on 4321. The full branch → PR → demo flow for agents is in
+`.agents/skills/ship-pr/SKILL.md`.
+
 ## Internationalization (i18n)
 
 - Languages are configured in `astro.config.mjs` (`defaultLocale: 'en'`, `locales: ['en','es']`).

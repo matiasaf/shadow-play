@@ -1,6 +1,9 @@
 import { defineConfig, devices } from '@playwright/test';
 
 const demoSize = { width: 1280, height: 720 };
+// Set PLAYWRIGHT_PORT when another checkout's dev server already uses 4321.
+const port = Number(process.env.PLAYWRIGHT_PORT ?? 4321);
+const baseURL = `http://127.0.0.1:${port}`;
 
 export default defineConfig({
   timeout: 30_000,
@@ -12,12 +15,12 @@ export default defineConfig({
   retries: process.env.CI ? 1 : 0,
   reporter: [['list'], ['html', { open: 'never' }]],
   use: {
-    baseURL: 'http://127.0.0.1:4321',
+    baseURL,
     trace: 'on-first-retry',
   },
   webServer: {
-    command: 'npm run dev -- --host 127.0.0.1',
-    url: 'http://127.0.0.1:4321',
+    command: `npm run dev -- --host 127.0.0.1 --port ${port}`,
+    url: baseURL,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
   },

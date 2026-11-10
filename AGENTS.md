@@ -56,6 +56,10 @@ Antes de editar:
   muestra las conexiones declaradas por la ficha actual.
 - La voz editorial es estudio crítico en primera persona: inglés neutro y español rioplatense.
 - Para agregar una película o un frame, seguí `.agents/skills/add-film/SKILL.md`.
+- Toda película o feature se entrega con `.agents/skills/ship-pr/SKILL.md`: worktree y rama
+  desde `origin/main`, push, PR y GIF del demo en la descripción del PR.
+- Todo lo que llega a git o GitHub (ramas, commits, títulos y descripciones de PR,
+  comentarios) se escribe en inglés.
 
 El schema vigente siempre manda sobre tablas o ejemplos documentales. Las secciones sugeridas
 de cada estudio están en `src/content/movies/_template.md` y las de director en su `_template.md`.
