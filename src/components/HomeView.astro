@@ -160,6 +160,12 @@ const dashboardViews = [
   { id: 'timeline', label: t('dashboard.view.timeline'), groups: timelineGroups },
   { id: 'connections', label: t('dashboard.view.connections'), groups: connectionGroups },
 ];
+
+// Translated strings the client script needs (same pattern as MapView's #map-config).
+const dashboardConfig = {
+  countOne: t('dashboard.count.one'),
+  countOther: t('dashboard.count.other'),
+};
 ---
 
 <BaseLayout title={t('brand')} description={t('meta.home')} lang={lang}>
@@ -207,7 +213,7 @@ const dashboardViews = [
     </div>
   </section>
 
-  <section class="wrap archive-section dashboard" aria-label={t('home.archiveLabel')}>
+  <section class="wrap archive-section dashboard" id="archive" aria-label={t('home.archiveLabel')}>
     <header class="dashboard-head">
       <div>
         <p class="eyebrow">{t('dashboard.eyebrow')}</p>
@@ -244,35 +250,42 @@ const dashboardViews = [
       <div class="dashboard-filters">
         <label>
           <span>{t('dashboard.filter.director')}</span>
-          <select data-dashboard-filter="director">
+          <select data-dashboard-filter="director" autocomplete="off">
             <option value="">{t('dashboard.all')}</option>
             {directors.map((director) => <option value={director.name}>{director.name}</option>)}
           </select>
         </label>
         <label>
           <span>{t('dashboard.filter.theme')}</span>
-          <select data-dashboard-filter="theme">
+          <select data-dashboard-filter="theme" autocomplete="off">
             <option value="">{t('dashboard.all')}</option>
             {themeOptions.map((tag) => <option value={tag}>{tag}</option>)}
           </select>
         </label>
         <label>
           <span>{t('dashboard.filter.country')}</span>
-          <select data-dashboard-filter="country">
+          <select data-dashboard-filter="country" autocomplete="off">
             <option value="">{t('dashboard.all')}</option>
             {countryOptions.map((country) => <option value={country}>{country}</option>)}
           </select>
         </label>
         <label>
           <span>{t('dashboard.sort')}</span>
-          <select data-dashboard-sort>
+          <select data-dashboard-sort autocomplete="off">
             <option value="recency">{t('dashboard.sort.recency')}</option>
             <option value="count">{t('dashboard.sort.count')}</option>
             <option value="alpha">{t('dashboard.sort.alpha')}</option>
           </select>
         </label>
+        <div class="dashboard-status">
+          <p data-dashboard-count aria-live="polite"></p>
+          <button type="button" class="dashboard-clear" data-dashboard-clear hidden>
+            {t('dashboard.clear')}
+          </button>
+        </div>
       </div>
     </div>
+    <script type="application/json" id="dashboard-config" set:html={JSON.stringify(dashboardConfig)} />
 
     <div class="dashboard-empty" data-dashboard-empty hidden>{t('dashboard.empty')}</div>
 
@@ -341,6 +354,11 @@ const dashboardViews = [
   </section>
 
   <style>
+    .archive-section {
+      /* `/#archive` lands below the sticky site header. */
+      scroll-margin-top: 5.5rem;
+    }
+
     .dashboard-head {
       display: grid;
       grid-template-columns: minmax(0, 0.82fr) minmax(16rem, 0.34fr);
@@ -440,8 +458,49 @@ const dashboardViews = [
 
     .dashboard-filters {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
       gap: 0.8rem;
+    }
+
+    .dashboard-status {
+      display: grid;
+      grid-template-rows: auto auto;
+      align-content: end;
+      justify-items: start;
+      gap: 0.35rem;
+      min-width: 7.5rem;
+    }
+
+    .dashboard-status p {
+      margin: 0;
+      color: var(--text-soft);
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .dashboard-clear {
+      cursor: pointer;
+      border: 1px solid var(--accent-muted);
+      border-radius: 2px;
+      padding: 0.65rem 0.7rem;
+      background: transparent;
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .dashboard-clear:hover {
+      background: var(--surface-high);
+    }
+
+    .dashboard-clear[hidden] {
+      display: none;
     }
 
     .dashboard-filters label {
@@ -567,12 +626,24 @@ const dashboardViews = [
         text-align: left;
       }
 
+      .archive-section {
+        scroll-margin-top: 7.5rem;
+      }
+
       .dashboard-controls {
         position: static;
       }
 
       .dashboard-filters {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .dashboard-status {
+        grid-column: 1 / -1;
+        grid-template-rows: none;
+        grid-auto-flow: column;
+        justify-content: space-between;
+        align-items: center;
       }
     }
 
@@ -597,9 +668,53 @@ const dashboardViews = [
     };
     const sortSelect = document.querySelector<HTMLSelectElement>('[data-dashboard-sort]');
     const emptyState = document.querySelector<HTMLElement>('[data-dashboard-empty]');
+    const countEl = document.querySelector<HTMLElement>('[data-dashboard-count]');
+    const clearButton = document.querySelector<HTMLButtonElement>('[data-dashboard-clear]');
+    const config = JSON.parse(document.getElementById('dashboard-config')?.textContent || '{}') as {
+      countOne?: string;
+      countOther?: string;
+    };
+
+    // Defaults are left out of the URL, so a plain `/` stays clean.
+    const DEFAULT_VIEW = viewButtons[0]?.dataset.viewButton ?? 'directors';
+    const DEFAULT_SORT = 'recency';
+    type FilterKey = keyof typeof filters;
+    const filterKeys = Object.keys(filters) as FilterKey[];
 
     function activePanel() {
       return panels.find((panel) => !panel.hidden);
+    }
+
+    function hasOption(select: HTMLSelectElement, value: string) {
+      return Array.from(select.options).some((option) => option.value === value);
+    }
+
+    function updateStatus(panel: HTMLElement) {
+      // A film can sit in several groups (themes, connections): count each one once.
+      const visible = new Set<string>();
+      for (const card of Array.from(panel.querySelectorAll<HTMLElement>('.dashboard-card:not([hidden])'))) {
+        const href = card.querySelector('a.card')?.getAttribute('href');
+        if (href && !card.closest('[data-dashboard-group][hidden]')) visible.add(href);
+      }
+      if (countEl) {
+        const template = visible.size === 1 ? config.countOne : config.countOther;
+        countEl.textContent = (template ?? '{n}').replace('{n}', String(visible.size));
+      }
+      if (clearButton) clearButton.hidden = !filterKeys.some((key) => filters[key]?.value);
+    }
+
+    function writeUrlState() {
+      const params = new URLSearchParams();
+      const view = viewButtons.find((b) => b.getAttribute('aria-selected') === 'true')?.dataset.viewButton;
+      if (view && view !== DEFAULT_VIEW) params.set('view', view);
+      for (const key of filterKeys) {
+        const value = filters[key]?.value;
+        if (value) params.set(key, value);
+      }
+      if (sortSelect && sortSelect.value !== DEFAULT_SORT) params.set('sort', sortSelect.value);
+      const query = params.toString();
+      // replaceState, not pushState: tweaking filters must not flood the Back button.
+      history.replaceState(null, '', `${location.pathname}${query ? `?${query}` : ''}${location.hash}`);
     }
 
     function applyDashboard() {
@@ -636,6 +751,7 @@ const dashboardViews = [
       }
 
       if (emptyState) emptyState.hidden = visibleGroups > 0;
+      updateStatus(panel);
     }
 
     function selectView(button: HTMLButtonElement) {
@@ -651,8 +767,29 @@ const dashboardViews = [
       applyDashboard();
     }
 
+    // Unknown values (a stale link, or a tag from the other language) are ignored silently.
+    function readUrlState() {
+      const params = new URLSearchParams(location.search);
+      for (const key of filterKeys) {
+        const select = filters[key];
+        if (!select) continue;
+        const value = params.get(key) ?? '';
+        select.value = hasOption(select, value) ? value : '';
+      }
+      if (sortSelect) {
+        const sort = params.get('sort') ?? DEFAULT_SORT;
+        sortSelect.value = hasOption(sortSelect, sort) ? sort : DEFAULT_SORT;
+      }
+      const view = params.get('view') ?? DEFAULT_VIEW;
+      const button = viewButtons.find((b) => b.dataset.viewButton === view) ?? viewButtons[0];
+      if (button) selectView(button);
+    }
+
     for (const button of viewButtons) {
-      button.addEventListener('click', () => selectView(button));
+      button.addEventListener('click', () => {
+        selectView(button);
+        writeUrlState();
+      });
     }
 
     // Arrow keys move between tabs (and select them), as the tablist role promises.
@@ -671,11 +808,32 @@ const dashboardViews = [
       event.preventDefault();
       viewButtons[next].focus();
       selectView(viewButtons[next]);
+      writeUrlState();
     });
 
-    Object.values(filters).forEach((filter) => filter?.addEventListener('change', applyDashboard));
-    sortSelect?.addEventListener('change', applyDashboard);
-    applyDashboard();
+    const onControlChange = () => {
+      applyDashboard();
+      writeUrlState();
+    };
+    Object.values(filters).forEach((filter) => filter?.addEventListener('change', onControlChange));
+    sortSelect?.addEventListener('change', onControlChange);
+
+    clearButton?.addEventListener('click', () => {
+      for (const key of filterKeys) {
+        const select = filters[key];
+        if (select) select.value = '';
+      }
+      onControlChange();
+      // The button hides itself; keep keyboard focus inside the controls.
+      filters.director?.focus();
+    });
+
+    readUrlState();
+
+    // Back from a film page restores the query; bfcache restores need a re-read too.
+    window.addEventListener('pageshow', (event) => {
+      if (event.persisted) readUrlState();
+    });
 
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (!reduce) {

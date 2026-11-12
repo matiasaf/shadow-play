@@ -66,6 +66,9 @@ export const ui = {
     'dashboard.sort.alpha': 'A-Z',
     'dashboard.all': 'All',
     'dashboard.empty': 'No studies match those filters.',
+    'dashboard.clear': 'Clear filters',
+    'dashboard.count.one': '1 study',
+    'dashboard.count.other': '{n} studies',
     'dashboard.connection': 'link',
     'dashboard.connections': 'links',
 
@@ -237,6 +240,9 @@ export const ui = {
     'dashboard.sort.alpha': 'A-Z',
     'dashboard.all': 'Todo',
     'dashboard.empty': 'No hay fichas para esos filtros.',
+    'dashboard.clear': 'Limpiar filtros',
+    'dashboard.count.one': '1 estudio',
+    'dashboard.count.other': '{n} estudios',
     'dashboard.connection': 'vínculo',
     'dashboard.connections': 'vínculos',
 
