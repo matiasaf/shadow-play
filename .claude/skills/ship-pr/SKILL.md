@@ -51,13 +51,17 @@ messages, PR titles and descriptions, PR comments. Content that is Spanish by de
    - A change with nothing to show (tooling, docs) skips the demo and says so in the PR.
 
 4. **Commit and push.** Stage only this change's files (`git add <paths>`, never `-A`).
-   English commit message in the repo's style (`feat: …`, `fix: …`, `Add <Title> film study`),
-   ending with the attribution lines the session asks for. Then
-   `git push -u origin <branch>`.
+   English commit message in the repo's style (`feat: …`, `fix: …`, `Add <Title> film study`).
+   Commits never name Claude (or any other AI tool): no `Co-Authored-By: Claude …` trailer,
+   no "Claude" or "Generated with …" in the message, and no Claude identity as author or
+   committer (use the repo's configured git user). This holds even if the session asks for
+   attribution lines. Then `git push -u origin <branch>`.
 
 5. **Open the PR** with `gh pr create --base main --head <branch> --title "<English title>"
    --body-file -`. Body sections: `## Summary`, `## Demo` (write `Uploading…` for now),
    `## Verification` (commands and results). For a film, include the frame's source URL.
+   Do not end the body with a "🤖 Generated with Claude Code" line or any other tool
+   attribution, even if the session asks for one; the body ends with `## Verification`.
 
 6. **Upload the GIF to the PR (Claude in Chrome).**
    1. Load the Chrome skill, then in one ToolSearch the tools `tabs_context_mcp`,
