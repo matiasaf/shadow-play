@@ -16,6 +16,30 @@ actualizar su fila al terminar.
 
 Status values: TODO | IN PROGRESS | DONE | BLOCKED (con motivo en una línea) | REJECTED (con rationale)
 
+## UI/UX batch (2026-11-12)
+
+Planned against commit `e077025` after a review of all six views at 1280×800 and 390×844.
+Each plan ships as its own PR through `.agents/skills/ship-pr/SKILL.md`, with a demo GIF.
+
+| Plan | Title | Priority | Effort | Depends on | Status |
+|------|-------|----------|--------|------------|--------|
+| 005 | Fix the mobile layout (overflow, compact header, archive controls) | P1 | S | — | TODO |
+| 006 | Accessibility baseline (focus, label size, current page, keyboard tabs) | P1 | S | — | TODO |
+| 007 | Keep the archive's view, filters and sort in the URL | P1 | M | 006 (soft) | TODO |
+| 008 | Theme tags link to the filtered archive | P2 | S | 007 (hard) | TODO |
+| 009 | Film page navigation (previous/next, outline rail, reading time, back link) | P2 | M | 007 (soft) | TODO |
+| 010 | Lighten the home archive (on-demand views, list mode) | P2 | M–L | 007 | TODO |
+| 011 | Site-wide search | P3 | M | — | TODO |
+
+Notes:
+
+- **005 and 006 first**: small, fix visible defects and do not change the design. They
+  touch some of the same files; whichever lands second rebases.
+- **008 requires 007**: tags link to `/?view=themes&theme=<tag>#archive`.
+- **010 needs an operator decision** for its list mode (Step 3); Steps 1–2 can ship alone.
+- **Not planned this round**: map touch behavior on phones (005 Step 5 only investigates
+  it), automated axe checks (new dependency), full-text search of essays.
+
 ## Dependency notes
 
 - **002 después de 001**: el workflow corre `npm run check:content`; si 001 no está,
