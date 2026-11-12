@@ -23,7 +23,7 @@ Each plan ships as its own PR through `.agents/skills/ship-pr/SKILL.md`, with a 
 
 | Plan | Title | Priority | Effort | Depends on | Status |
 |------|-------|----------|--------|------------|--------|
-| 005 | Fix the mobile layout (overflow, compact header, archive controls) | P1 | S | — | TODO |
+| 005 | Fix the mobile layout (overflow, compact header, archive controls) | P1 | S | — | DONE: mobile overflow, one-row phone nav, compact desktop controls (`fix/mobile-layout`) |
 | 006 | Accessibility baseline (focus, label size, current page, keyboard tabs) | P1 | S | — | TODO |
 | 007 | Keep the archive's view, filters and sort in the URL | P1 | M | 006 (soft) | TODO |
 | 008 | Theme tags link to the filtered archive | P2 | S | 007 (hard) | TODO |

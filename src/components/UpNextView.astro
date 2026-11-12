@@ -260,7 +260,9 @@ let counter = 0;
   }
 
   .upnext-thread-head h2 {
-    flex: none;
+    flex: 0 1 auto;
+    min-width: 0;
+    overflow-wrap: anywhere;
     font-size: clamp(1.6rem, 3vw, 2.4rem);
     line-height: 1;
   }
@@ -268,6 +270,7 @@ let counter = 0;
   .upnext-thread-rule {
     order: 3;
     flex: 1;
+    min-width: 2rem;
     height: 1px;
     background: var(--border);
   }
