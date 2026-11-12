@@ -228,9 +228,11 @@ const dashboardViews = [
             <button
               type="button"
               class="view-button"
+              id={`dashboard-tab-${view.id}`}
               data-view-button={view.id}
               role="tab"
               aria-selected={index === 0 ? 'true' : 'false'}
+              tabindex={index === 0 ? 0 : -1}
               aria-controls={`dashboard-${view.id}`}
             >
               {view.label}
@@ -281,6 +283,7 @@ const dashboardViews = [
           id={`dashboard-${view.id}`}
           data-dashboard-panel={view.id}
           role="tabpanel"
+          aria-labelledby={`dashboard-tab-${view.id}`}
           hidden={index !== 0}
         >
           {view.groups.map((group) => (
@@ -381,7 +384,7 @@ const dashboardViews = [
 
     .dashboard-stamp span,
     .dashboard-stamp small {
-      font-size: 0.62rem;
+      font-size: 0.68rem;
       letter-spacing: 0.16em;
     }
 
@@ -417,7 +420,7 @@ const dashboardViews = [
       background: var(--surface);
       color: var(--text-soft);
       font-family: var(--font-mono);
-      font-size: 0.62rem;
+      font-size: 0.68rem;
       letter-spacing: 0.16em;
       text-transform: uppercase;
     }
@@ -450,8 +453,8 @@ const dashboardViews = [
     .dashboard-filters span {
       color: var(--text-faint);
       font-family: var(--font-mono);
-      font-size: 0.56rem;
-      letter-spacing: 0.18em;
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
     }
 
@@ -517,8 +520,8 @@ const dashboardViews = [
       align-self: center;
       color: var(--text-faint);
       font-family: var(--font-mono);
-      font-size: 0.66rem;
-      letter-spacing: 0.2em;
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
     }
 
@@ -635,18 +638,40 @@ const dashboardViews = [
       if (emptyState) emptyState.hidden = visibleGroups > 0;
     }
 
-    for (const button of viewButtons) {
-      button.addEventListener('click', () => {
-        const nextView = button.dataset.viewButton;
-        for (const candidate of viewButtons) {
-          candidate.setAttribute('aria-selected', String(candidate === button));
-        }
-        for (const panel of panels) {
-          panel.hidden = panel.dataset.dashboardPanel !== nextView;
-        }
-        applyDashboard();
-      });
+    function selectView(button: HTMLButtonElement) {
+      const nextView = button.dataset.viewButton;
+      for (const candidate of viewButtons) {
+        const selected = candidate === button;
+        candidate.setAttribute('aria-selected', String(selected));
+        candidate.tabIndex = selected ? 0 : -1;
+      }
+      for (const panel of panels) {
+        panel.hidden = panel.dataset.dashboardPanel !== nextView;
+      }
+      applyDashboard();
     }
+
+    for (const button of viewButtons) {
+      button.addEventListener('click', () => selectView(button));
+    }
+
+    // Arrow keys move between tabs (and select them), as the tablist role promises.
+    document.querySelector('.view-switcher')?.addEventListener('keydown', (event) => {
+      const key = (event as KeyboardEvent).key;
+      const index = viewButtons.indexOf(document.activeElement as HTMLButtonElement);
+      if (index === -1) return;
+      const last = viewButtons.length - 1;
+      const next =
+        key === 'ArrowRight' ? (index === last ? 0 : index + 1)
+        : key === 'ArrowLeft' ? (index === 0 ? last : index - 1)
+        : key === 'Home' ? 0
+        : key === 'End' ? last
+        : -1;
+      if (next === -1) return;
+      event.preventDefault();
+      viewButtons[next].focus();
+      selectView(viewButtons[next]);
+    });
 
     Object.values(filters).forEach((filter) => filter?.addEventListener('change', applyDashboard));
     sortSelect?.addEventListener('change', applyDashboard);

@@ -79,6 +79,36 @@ img {
   padding-inline: 1rem;
 }
 
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 100;
+  border: 1px solid var(--accent);
+  padding: 0.6rem 0.9rem;
+  background: var(--bg);
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transform: translateY(-200%);
+}
+
+.skip-link:focus {
+  transform: none;
+}
+
+.site-nav a[aria-current='page'] {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 .site-header {
   position: sticky;
   top: 0;
@@ -171,8 +201,8 @@ img {
   margin-bottom: clamp(2rem, 5vw, 4.5rem);
   color: var(--text-faint);
   font-family: var(--font-mono);
-  font-size: 0.62rem;
-  letter-spacing: 0.2em;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
@@ -195,8 +225,8 @@ img {
   margin-top: clamp(2.5rem, 5vw, 4rem);
   color: var(--text-faint);
   font-family: var(--font-mono);
-  font-size: 0.56rem;
-  letter-spacing: 0.3em;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
@@ -230,8 +260,8 @@ img {
   background: rgba(244, 208, 138, 0.08);
   color: var(--accent);
   font-family: var(--font-mono);
-  font-size: 0.64rem;
-  letter-spacing: 0.28em;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
   line-height: 1;
   text-transform: uppercase;
 }
@@ -312,7 +342,7 @@ img {
 .latest-file small {
   color: var(--text-faint);
   font-family: var(--font-mono);
-  font-size: 0.62rem;
+  font-size: 0.68rem;
   letter-spacing: 0.16em;
   line-height: 1.45;
   text-transform: uppercase;
@@ -390,7 +420,7 @@ img {
   padding: 0.1rem 0.15rem 0.65rem;
   color: var(--text-faint);
   font-family: var(--font-mono);
-  font-size: 0.58rem;
+  font-size: 0.68rem;
   letter-spacing: 0.16em;
   line-height: 1.35;
   text-transform: uppercase;
@@ -431,7 +461,7 @@ img {
   background: rgba(8, 8, 7, 0.72);
   color: var(--accent);
   font-family: var(--font-mono);
-  font-size: 0.58rem;
+  font-size: 0.68rem;
   letter-spacing: 0.14em;
   line-height: 1;
 }
@@ -487,8 +517,8 @@ img {
   left: 0.85rem;
   color: var(--text-faint);
   font-family: var(--font-mono);
-  font-size: 0.55rem;
-  letter-spacing: 0.24em;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
@@ -556,7 +586,7 @@ img {
   gap: 1rem;
   color: var(--text-soft);
   font-family: var(--font-mono);
-  font-size: 0.6rem;
+  font-size: 0.68rem;
   letter-spacing: 0.13em;
   line-height: 1.35;
   text-transform: uppercase;
@@ -594,7 +624,7 @@ img {
 .card-meta {
   color: var(--text-soft);
   font-family: var(--font-mono);
-  font-size: 0.62rem;
+  font-size: 0.68rem;
   letter-spacing: 0.1em;
   line-height: 1.45;
   text-transform: uppercase;
@@ -626,7 +656,7 @@ img {
   padding: 0.2rem 0.65rem;
   color: var(--text-soft);
   font-family: var(--font-mono);
-  font-size: 0.56rem;
+  font-size: 0.68rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
@@ -656,7 +686,7 @@ img {
   padding-top: 0.75rem;
   color: var(--accent);
   font-family: var(--font-mono);
-  font-size: 0.62rem;
+  font-size: 0.68rem;
   letter-spacing: 0.14em;
   line-height: 1;
   text-transform: uppercase;
@@ -720,8 +750,8 @@ img {
   margin-top: 0.75rem;
   color: var(--text-soft);
   font-family: var(--font-mono);
-  font-size: 0.62rem;
-  letter-spacing: 0.22em;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
   line-height: 1.45;
   text-transform: uppercase;
 }
@@ -936,7 +966,7 @@ img {
   max-width: 36ch;
   color: var(--text-faint);
   font-family: var(--font-mono);
-  font-size: 0.64rem;
+  font-size: 0.68rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }

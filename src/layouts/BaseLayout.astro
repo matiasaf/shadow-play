@@ -1,7 +1,13 @@
 ---
 import '../styles/global.css';
 import LanguageSwitcher from '../components/LanguageSwitcher.astro';
-import { useTranslations, localizePath, getLangFromUrl, type Lang } from '../i18n/ui';
+import {
+  useTranslations,
+  localizePath,
+  getLangFromUrl,
+  stripLangFromPath,
+  type Lang,
+} from '../i18n/ui';
 
 interface Props {
   title: string;
@@ -17,6 +23,12 @@ const home = localizePath('/', lang);
 const directors = localizePath('/directors', lang);
 const map = localizePath('/map', lang);
 const upnext = localizePath('/up-next', lang);
+const current = stripLangFromPath(Astro.url.pathname);
+const section =
+  current === '/' || current.startsWith('/films')
+    ? 'films'
+    : ['directors', 'map', 'up-next'].find((name) => current.startsWith(`/${name}`));
+const currentFor = (name: string) => (section === name ? 'page' : undefined);
 const about = `${home === '/' ? '' : home}/#about`.replace('//', '/');
 ---
 
@@ -39,23 +51,24 @@ const about = `${home === '/' ? '' : home}/#about`.replace('//', '/');
     <title>{title}</title>
   </head>
   <body>
+    <a class="skip-link" href="#main">{t('a11y.skipToContent')}</a>
     <div class="grain-overlay" aria-hidden="true"></div>
     <header class="site-header">
       <div class="wrap">
         <a href={home} class="brand">{t('brand')}<span class="dot">.</span></a>
         <div class="header-end">
           <nav class="site-nav">
-            <a href={home}>{t('nav.films')}</a>
-            <a href={directors}>{t('nav.directors')}</a>
-            <a href={map}>{t('nav.map')}</a>
-            <a href={upnext}>{t('nav.upnext')}</a>
+            <a href={home} aria-current={currentFor('films')}>{t('nav.films')}</a>
+            <a href={directors} aria-current={currentFor('directors')}>{t('nav.directors')}</a>
+            <a href={map} aria-current={currentFor('map')}>{t('nav.map')}</a>
+            <a href={upnext} aria-current={currentFor('up-next')}>{t('nav.upnext')}</a>
           </nav>
           <LanguageSwitcher />
         </div>
       </div>
     </header>
 
-    <main>
+    <main id="main">
       <slot />
     </main>
 
