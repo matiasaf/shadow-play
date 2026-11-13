@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import MovieCard from './MovieCard.astro';
+import MovieRow from './MovieRow.astro';
 import { useTranslations, localizePath, type Lang } from '../i18n/ui';
 import { getMovies, slugOf, type MovieEntry } from '../lib/movies';
 import { getDirectors, type DirectorGroup } from '../lib/directors';
@@ -213,17 +214,41 @@ const dashboardConfig = {
     </div>
   </section>
 
-  <section class="wrap archive-section dashboard" id="archive" aria-label={t('home.archiveLabel')}>
+  <section
+    class="wrap archive-section dashboard"
+    id="archive"
+    aria-label={t('home.archiveLabel')}
+    data-density="grid"
+  >
     <header class="dashboard-head">
       <div>
         <p class="eyebrow">{t('dashboard.eyebrow')}</p>
         <h2>{t('dashboard.title')}</h2>
         <p>{t('dashboard.intro')}</p>
       </div>
-      <div class="dashboard-stamp" aria-hidden="true">
-        <span>{caseNo(movies.length)}</span>
-        <strong>{dashboardViews.length}</strong>
-        <small>{t('dashboard.viewLabel')}</small>
+      <div class="dashboard-head-side">
+        <div class="dashboard-stamp" aria-hidden="true">
+          <span>{caseNo(movies.length)}</span>
+          <strong>{dashboardViews.length}</strong>
+          <small>{t('dashboard.viewLabel')}</small>
+        </div>
+          <div class="density-switch" role="group" aria-label={t('dashboard.density.label')}>
+            <button type="button" data-density-button="grid" aria-pressed="true">
+              <svg aria-hidden="true" viewBox="0 0 12 12" width="11" height="11">
+                <rect x="0.5" y="0.5" width="4.5" height="4.5" fill="none" stroke="currentColor"></rect>
+                <rect x="7" y="0.5" width="4.5" height="4.5" fill="none" stroke="currentColor"></rect>
+                <rect x="0.5" y="7" width="4.5" height="4.5" fill="none" stroke="currentColor"></rect>
+                <rect x="7" y="7" width="4.5" height="4.5" fill="none" stroke="currentColor"></rect>
+              </svg>
+              <span>{t('dashboard.density.grid')}</span>
+            </button>
+            <button type="button" data-density-button="list" aria-pressed="false">
+              <svg aria-hidden="true" viewBox="0 0 12 12" width="11" height="11">
+                <path d="M0 1.5h12M0 6h12M0 10.5h12" stroke="currentColor"></path>
+              </svg>
+              <span>{t('dashboard.density.list')}</span>
+            </button>
+          </div>
       </div>
     </header>
 
@@ -290,45 +315,55 @@ const dashboardConfig = {
     <div class="dashboard-empty" data-dashboard-empty hidden>{t('dashboard.empty')}</div>
 
     {
-      dashboardViews.map((view, index) => (
-        <div
-          class="dashboard-panel"
-          id={`dashboard-${view.id}`}
-          data-dashboard-panel={view.id}
-          role="tabpanel"
-          aria-labelledby={`dashboard-tab-${view.id}`}
-          hidden={index !== 0}
-        >
-          {view.groups.map((group) => (
-            <section
-              class="dashboard-group"
-              data-dashboard-group
-              data-sort-alpha={group.sortAlpha.toLocaleLowerCase()}
-              data-sort-count={group.sortCount}
-              data-sort-recency={group.sortRecency}
-            >
-              <header class="dashboard-group-head">
-                {group.href ? (
-                  <a href={group.href}>
-                    <h3>{group.title}</h3>
-                  </a>
-                ) : (
-                  <h3>{group.title}</h3>
-                )}
-                <span>{group.meta}</span>
-                {group.note && <p>"{group.note}"</p>}
-              </header>
-              <div class="movie-grid dashboard-grid">
-                {group.films.map((movie) => (
-                  <div class="dashboard-card" {...movieAttrs(movie)}>
-                    <MovieCard movie={movie} index={caseIndexById.get(movie.id)} lang={lang} />
+      dashboardViews.map((view, index) => {
+        // Only the default view is rendered live. The others are parsed but not
+        // rendered (no layout, no image requests) until their tab is opened; the
+        // script then swaps each template in once.
+        const Wrap = index === 0 ? Fragment : 'template';
+        const wrapProps = index === 0 ? {} : { 'data-panel-template': view.id };
+        return (
+          <div
+            class="dashboard-panel"
+            id={`dashboard-${view.id}`}
+            data-dashboard-panel={view.id}
+            role="tabpanel"
+            aria-labelledby={`dashboard-tab-${view.id}`}
+            hidden={index !== 0}
+          >
+            <Wrap {...wrapProps}>
+              {view.groups.map((group) => (
+                <section
+                  class="dashboard-group"
+                  data-dashboard-group
+                  data-sort-alpha={group.sortAlpha.toLocaleLowerCase()}
+                  data-sort-count={group.sortCount}
+                  data-sort-recency={group.sortRecency}
+                >
+                  <header class="dashboard-group-head">
+                    {group.href ? (
+                      <a href={group.href}>
+                        <h3>{group.title}</h3>
+                      </a>
+                    ) : (
+                      <h3>{group.title}</h3>
+                    )}
+                    <span>{group.meta}</span>
+                    {group.note && <p>"{group.note}"</p>}
+                  </header>
+                  <div class="movie-grid dashboard-grid">
+                    {group.films.map((movie) => (
+                      <div class="dashboard-card" {...movieAttrs(movie)}>
+                        <MovieCard movie={movie} index={caseIndexById.get(movie.id)} lang={lang} />
+                        <MovieRow movie={movie} index={caseIndexById.get(movie.id)} lang={lang} />
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            </section>
-          ))}
-        </div>
-      ))
+                </section>
+              ))}
+            </Wrap>
+          </div>
+        );
+      })
     }
   </section>
 
@@ -452,6 +487,48 @@ const dashboardConfig = {
     .view-button:hover,
     .view-button[aria-selected='true'] {
       border-color: var(--accent-muted);
+      background: var(--surface-high);
+      color: var(--text);
+    }
+
+    .dashboard-head-side {
+      display: grid;
+      justify-items: end;
+      gap: 1.25rem;
+    }
+
+    .dashboard-head-side .dashboard-stamp {
+      justify-self: stretch;
+    }
+
+    .density-switch {
+      display: inline-flex;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+    }
+
+    .density-switch button {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      cursor: pointer;
+      border: 0;
+      padding: 0.62rem 0.75rem;
+      background: var(--surface);
+      color: var(--text-faint);
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      transition: color 0.2s ease, background 0.2s ease;
+    }
+
+    .density-switch button + button {
+      border-left: 1px solid var(--border);
+    }
+
+    .density-switch button:hover,
+    .density-switch button[aria-pressed='true'] {
       background: var(--surface-high);
       color: var(--text);
     }
@@ -600,6 +677,31 @@ const dashboardConfig = {
       min-width: 0;
     }
 
+    /* List density (rows come from MovieRow; see global.css). These override the
+       scoped grid rules above, so they live here with the same scoping. */
+    [data-density='list'] .dashboard-grid {
+      grid-template-columns: 1fr;
+      gap: 0;
+      padding-block: 0;
+    }
+
+    [data-density='list'] .dashboard-group {
+      margin-bottom: 2.25rem;
+    }
+
+    [data-density='list'] .dashboard-group-head {
+      margin-bottom: 0;
+      padding-block: 0.9rem 0.6rem;
+    }
+
+    [data-density='list'] .dashboard-group-head h3 {
+      font-size: clamp(1.2rem, 2.2vw, 1.5rem);
+    }
+
+    [data-density='list'] .dashboard-group-head p {
+      font-size: 0.9rem;
+    }
+
     .dashboard-card[hidden],
     .dashboard-group[hidden],
     .dashboard-panel[hidden] {
@@ -619,6 +721,10 @@ const dashboardConfig = {
     @media (max-width: 820px) {
       .dashboard-head {
         grid-template-columns: 1fr;
+      }
+
+      .dashboard-head-side {
+        justify-items: start;
       }
 
       .dashboard-stamp {
@@ -678,6 +784,10 @@ const dashboardConfig = {
     // Defaults are left out of the URL, so a plain `/` stays clean.
     const DEFAULT_VIEW = viewButtons[0]?.dataset.viewButton ?? 'directors';
     const DEFAULT_SORT = 'recency';
+    const DEFAULT_DENSITY = 'grid';
+    const DENSITY_KEY = 'shadowplay:archive-density';
+    const archive = document.getElementById('archive');
+    const densityButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-density-button]'));
     type FilterKey = keyof typeof filters;
     const filterKeys = Object.keys(filters) as FilterKey[];
 
@@ -712,6 +822,8 @@ const dashboardConfig = {
         if (value) params.set(key, value);
       }
       if (sortSelect && sortSelect.value !== DEFAULT_SORT) params.set('sort', sortSelect.value);
+      const density = archive?.dataset.density;
+      if (density && density !== DEFAULT_DENSITY) params.set('density', density);
       const query = params.toString();
       // replaceState, not pushState: tweaking filters must not flood the Back button.
       history.replaceState(null, '', `${location.pathname}${query ? `?${query}` : ''}${location.hash}`);
@@ -754,6 +866,40 @@ const dashboardConfig = {
       updateStatus(panel);
     }
 
+    // Cards are "shot into" the archive as they scroll into view. Cards from views
+    // rendered later (see hydratePanel) must be observed too, or they stay invisible.
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!reduceMotion) document.documentElement.classList.add('js-anim');
+    const cardObserver = reduceMotion
+      ? null
+      : new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (!entry.isIntersecting) continue;
+              const card = entry.target as HTMLElement;
+              const delay = Number(card.dataset.delay ?? 0);
+              window.setTimeout(() => card.classList.add('is-hit'), delay);
+              cardObserver?.unobserve(card);
+            }
+          },
+          { threshold: 0.18 }
+        );
+
+    function observeCards(root: ParentNode) {
+      if (!cardObserver) return;
+      Array.from(root.querySelectorAll<HTMLElement>('.movie-grid .card')).forEach((card, i) => {
+        card.dataset.delay = String((i % 3) * 90);
+        cardObserver.observe(card);
+      });
+    }
+
+    function hydratePanel(panel: HTMLElement) {
+      const template = panel.querySelector<HTMLTemplateElement>(':scope > template[data-panel-template]');
+      if (!template) return;
+      panel.replaceChildren(template.content.cloneNode(true));
+      observeCards(panel);
+    }
+
     function selectView(button: HTMLButtonElement) {
       const nextView = button.dataset.viewButton;
       for (const candidate of viewButtons) {
@@ -762,14 +908,34 @@ const dashboardConfig = {
         candidate.tabIndex = selected ? 0 : -1;
       }
       for (const panel of panels) {
-        panel.hidden = panel.dataset.dashboardPanel !== nextView;
+        const selected = panel.dataset.dashboardPanel === nextView;
+        if (selected) hydratePanel(panel);
+        panel.hidden = !selected;
       }
       applyDashboard();
+    }
+
+    function setDensity(density: string) {
+      const next = densityButtons.some((b) => b.dataset.densityButton === density) ? density : DEFAULT_DENSITY;
+      if (archive) archive.dataset.density = next;
+      for (const button of densityButtons) {
+        button.setAttribute('aria-pressed', String(button.dataset.densityButton === next));
+      }
+    }
+
+    function storedDensity(): string | null {
+      try {
+        return localStorage.getItem(DENSITY_KEY);
+      } catch {
+        return null;
+      }
     }
 
     // Unknown values (a stale link, or a tag from the other language) are ignored silently.
     function readUrlState() {
       const params = new URLSearchParams(location.search);
+      // The URL wins; without it, the reader's last choice on this browser.
+      setDensity(params.get('density') ?? storedDensity() ?? DEFAULT_DENSITY);
       for (const key of filterKeys) {
         const select = filters[key];
         if (!select) continue;
@@ -811,6 +977,19 @@ const dashboardConfig = {
       writeUrlState();
     });
 
+    for (const button of densityButtons) {
+      button.addEventListener('click', () => {
+        const density = button.dataset.densityButton ?? DEFAULT_DENSITY;
+        setDensity(density);
+        try {
+          localStorage.setItem(DENSITY_KEY, density);
+        } catch {
+          // Storage blocked (private mode): the URL still carries the choice.
+        }
+        writeUrlState();
+      });
+    }
+
     const onControlChange = () => {
       applyDashboard();
       writeUrlState();
@@ -828,36 +1007,12 @@ const dashboardConfig = {
       filters.director?.focus();
     });
 
+    observeCards(document);
     readUrlState();
 
     // Back from a film page restores the query; bfcache restores need a re-read too.
     window.addEventListener('pageshow', (event) => {
       if (event.persisted) readUrlState();
     });
-
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (!reduce) {
-      document.documentElement.classList.add('js-anim');
-
-      // 4 — cards are "shot into" the archive as they scroll into view
-      const cards = Array.from(document.querySelectorAll<HTMLElement>('.movie-grid .card'));
-      const io = new IntersectionObserver(
-        (entries) => {
-          for (const entry of entries) {
-            if (!entry.isIntersecting) continue;
-            const card = entry.target as HTMLElement;
-            const delay = Number(card.dataset.delay ?? 0);
-            window.setTimeout(() => card.classList.add('is-hit'), delay);
-            io.unobserve(card);
-          }
-        },
-        { threshold: 0.18 }
-      );
-      cards.forEach((card, i) => {
-        card.dataset.delay = String((i % 3) * 90);
-        io.observe(card);
-      });
-
-    }
   </script>
 </BaseLayout>

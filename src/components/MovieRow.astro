@@ -1,0 +1,32 @@
+---
+// One line per film for the archive's compact list mode: no image, same link as the card.
+import { localizePath, type Lang } from '../i18n/ui';
+import { slugOf, type MovieEntry } from '../lib/movies';
+import { caseNo } from '../lib/format';
+
+interface Props {
+  movie: MovieEntry;
+  index?: number;
+  lang: Lang;
+}
+
+const { movie, index = 1, lang } = Astro.props;
+const { data } = movie;
+const href = localizePath(`/films/${slugOf(movie)}/`, lang);
+const visibleTags = data.tags.slice(0, 3);
+---
+
+<a class="movie-row" href={href}>
+  <span class="movie-row-case">{caseNo(index)}</span>
+  <span class="movie-row-title">{data.title}</span>
+  <span class="movie-row-meta">{data.director} · {data.year}</span>
+  {
+    visibleTags.length > 0 && (
+      <span class="movie-row-tags">
+        {visibleTags.map((tag) => (
+          <span class="tag">{tag}</span>
+        ))}
+      </span>
+    )
+  }
+</a>
