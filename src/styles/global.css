@@ -661,6 +661,15 @@ img {
   text-transform: uppercase;
 }
 
+a.tag {
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+a.tag:hover {
+  border-color: var(--accent-muted);
+  color: var(--accent);
+}
+
 .tag-row {
   min-width: 0;
 }
