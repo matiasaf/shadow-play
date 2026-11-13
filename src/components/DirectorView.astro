@@ -5,7 +5,7 @@ import Frame from './Frame.astro';
 import MovieCard from './MovieCard.astro';
 import { useTranslations, localizePath, type Lang } from '../i18n/ui';
 import { obsessionsOf, type DirectorGroup } from '../lib/directors';
-import { runtimeTimecode } from '../lib/format';
+import { runtimeTimecode, themeHref } from '../lib/format';
 import type { MovieEntry } from '../lib/movies';
 
 interface Props {
@@ -102,7 +102,7 @@ const yearSpan =
             <span>{t('director.obsessions')}</span>
             <div class="tag-row">
               {obsessions.slice(0, 10).map((tag) => (
-                <span class="tag">{tag}</span>
+                <a class="tag" href={themeHref(tag, lang)}>{tag}</a>
               ))}
             </div>
           </div>
@@ -148,7 +148,7 @@ const yearSpan =
           <h2>{t('director.obsessions')}</h2>
           <div class="tag-row">
             {obsessions.map((tag) => (
-              <span class="tag">{tag}</span>
+              <a class="tag" href={themeHref(tag, lang)}>{tag}</a>
             ))}
           </div>
         </section>

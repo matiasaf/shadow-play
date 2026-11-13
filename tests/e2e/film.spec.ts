@@ -100,3 +100,28 @@ test('back link falls back to the archive home when opened directly', async ({ p
   await page.goto('/es/films/heat/');
   await expect(page.locator('[data-back-link]')).toHaveAttribute('href', /^\/es\/?$/);
 });
+
+for (const { path, home } of [
+  { path: '/films/heat/', home: '/' },
+  { path: '/es/films/heat/', home: '/es/' },
+  { path: '/directors/michael-mann/', home: '/' },
+]) {
+  test(`theme tags on ${path} open the archive filtered by that theme`, async ({ page }) => {
+    await page.goto(path);
+    const tagLink = page.locator('.dossier-tags a.tag, .director-dossier-tags a.tag').first();
+    const tag = (await tagLink.getAttribute('href'))!.match(/theme=([^&#]+)/)![1];
+    const theme = decodeURIComponent(tag);
+
+    await tagLink.click();
+    await expect(page).toHaveURL((url) => url.pathname === home && url.searchParams.get('theme') === theme);
+    expect(new URL(page.url()).searchParams.get('view')).toBe('themes');
+
+    await expect(page.locator('[data-view-button="themes"]')).toHaveAttribute('aria-selected', 'true');
+    await expect(page.locator('[data-dashboard-filter="theme"]')).toHaveValue(theme);
+
+    const cards = page.locator('[data-dashboard-panel="themes"] .dashboard-card:not([hidden])');
+    await expect(cards.first()).toBeVisible();
+    const tags = await cards.evaluateAll((nodes) => nodes.map((node) => (node as HTMLElement).dataset.tags ?? ''));
+    for (const list of tags) expect(list.split('|')).toContain(theme);
+  });
+}
