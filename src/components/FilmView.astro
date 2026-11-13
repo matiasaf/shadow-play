@@ -5,7 +5,7 @@ import Frame from './Frame.astro';
 import { useTranslations, localizePath, dateLocale, type Lang } from '../i18n/ui';
 import { slugOf, type MovieEntry } from '../lib/movies';
 import { directorSlug } from '../lib/directors';
-import { caseNo, runtimeTimecode } from '../lib/format';
+import { caseNo, readingMinutes, runtimeTimecode } from '../lib/format';
 
 interface Props {
   lang: Lang;
@@ -16,7 +16,8 @@ interface Props {
 const { lang, movie, all } = Astro.props;
 const { data } = movie;
 const t = useTranslations(lang);
-const { Content } = await render(movie);
+const { Content, headings } = await render(movie);
+const outline = headings.filter((h) => h.depth === 2);
 
 // Connections reference language-neutral slugs; resolve within this language.
 const titleBySlug = new Map(all.map((m) => [slugOf(m), m.data.title]));
@@ -26,6 +27,16 @@ const movieBySlug = new Map(all.map((m) => [slugOf(m), m]));
 const idx = all.findIndex((m) => m.id === movie.id);
 const caseNumber = caseNo(idx === -1 ? all.length : all.length - idx);
 const timecode = runtimeTimecode(data.runtime);
+const readingTime = t('film.readingTime').replace('{n}', String(readingMinutes(movie.body ?? '')));
+
+// Pager follows the archive order (newest first): older = previous, newer = next.
+const pager = [
+  { entry: idx === -1 ? undefined : all[idx + 1], label: t('film.previous'), dir: 'previous', offset: 1 },
+  { entry: idx > 0 ? all[idx - 1] : undefined, label: t('film.next'), dir: 'next', offset: -1 },
+].flatMap(({ entry, label, dir, offset }) =>
+  entry ? [{ entry, label, dir, caseNumber: caseNo(all.length - (idx + offset)) }] : []
+);
+const homeHref = localizePath('/', lang);
 
 const watched = data.watchedOn.toLocaleDateString(dateLocale[lang], {
   day: 'numeric',
@@ -78,7 +89,7 @@ function youtubeEmbedUrl(url: string): string | null {
 <BaseLayout title={`${data.title} — ${t('brand')}`} description={data.logline} lang={lang}>
   <article class="film-page">
     <div class="wrap film-backbar">
-      <a href={localizePath('/', lang)} class="back-link"
+      <a href={homeHref} class="back-link" data-back-link
         ><span aria-hidden="true">←</span> {t('film.back')}</a
       >
     </div>
@@ -91,6 +102,8 @@ function youtubeEmbedUrl(url: string): string | null {
           <span>{t('film.studyFile')}</span>
           <span class="film-overline-sep"></span>
           <span>{timecode}</span>
+          <span class="film-overline-sep"></span>
+          <span class="film-reading-time">{readingTime}</span>
         </div>
         <h1>{data.title}</h1>
         {data.originalTitle && <p class="original">{data.originalTitle}</p>}
@@ -171,6 +184,17 @@ function youtubeEmbedUrl(url: string): string | null {
       <aside class="study-rail" aria-label={t('film.studyNavigation')}>
         <a href="#study-frame">{t('film.studyFrame')}</a>
         <a href="#study-notes">{t('film.readingNotes')}</a>
+        {
+          outline.length > 0 && (
+            <ol class="study-outline">
+              {outline.map((h) => (
+                <li>
+                  <a href={`#${h.slug}`}>{h.text}</a>
+                </li>
+              ))}
+            </ol>
+          )
+        }
         {externalComments.length > 0 && <a href="#curated-comments">{t('film.externalComments')}</a>}
         {data.videos.length > 0 && <a href="#study-videos">{t('film.videos')}</a>}
         {data.connections.length > 0 && <a href="#study-connections">{t('film.connections')}</a>}
@@ -323,12 +347,94 @@ function youtubeEmbedUrl(url: string): string | null {
             </section>
           )
         }
+
+        {
+          pager.length > 0 && (
+            <nav class="study-pager" aria-label={t('film.pagerLabel')}>
+              {pager.map(({ entry, label, dir, caseNumber: pagerCase }) => (
+                <a
+                  class={`study-pager-link is-${dir}`}
+                  href={localizePath(`/films/${slugOf(entry)}/`, lang)}
+                  rel={dir === 'previous' ? 'prev' : 'next'}
+                  data-pager={dir}
+                >
+                  <span class="study-pager-kicker">
+                    {dir === 'previous' && <i aria-hidden="true">←</i>}
+                    {label}
+                    {dir === 'next' && <i aria-hidden="true">→</i>}
+                  </span>
+                  <span class="study-pager-title">{entry.data.title}</span>
+                  <span class="study-pager-meta">
+                    <span data-pager-case>{pagerCase}</span>
+                    <span>{entry.data.director}</span>
+                  </span>
+                </a>
+              ))}
+            </nav>
+          )
+        }
       </div>
     </div>
   </article>
 </BaseLayout>
 
 <script>
+  // Highlight the rail entry for the section being read.
+  const railLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>('.study-rail a[href^="#"]'));
+  const targets = railLinks
+    .map((link) => document.getElementById(decodeURIComponent(link.hash.slice(1))))
+    .filter((el): el is HTMLElement => el !== null);
+
+  if (targets.length > 0) {
+    const setCurrent = (id: string | null) => {
+      railLinks.forEach((link) => {
+        if (id && decodeURIComponent(link.hash.slice(1)) === id) link.setAttribute('aria-current', 'true');
+        else link.removeAttribute('aria-current');
+      });
+    };
+    // The current section is the last target, in document order, whose top has
+    // crossed the reading line (40% down the viewport), so a reader between two
+    // headings keeps the earlier one highlighted. Computed from real positions on
+    // scroll: an IntersectionObserver band misses headings that a fast or smooth
+    // jump carries past it within one frame.
+    let queued = false;
+    const update = () => {
+      queued = false;
+      const line = window.innerHeight * 0.4;
+      // At the very bottom a short last section may never reach the line.
+      const atEnd = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
+      const last = targets[targets.length - 1];
+      const passed = targets.filter((el) => el.getBoundingClientRect().top <= line);
+      if (atEnd && last.getBoundingClientRect().top < window.innerHeight) setCurrent(last.id);
+      else setCurrent(passed.length > 0 ? passed[passed.length - 1].id : null);
+    };
+    const schedule = () => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(update);
+    };
+    addEventListener('scroll', schedule, { passive: true });
+    addEventListener('resize', schedule, { passive: true });
+    // Late layout shifts (web fonts, images) move headings without a scroll event.
+    if ('ResizeObserver' in window) new ResizeObserver(schedule).observe(document.body);
+    update();
+  }
+
+  // Return to the archive as the reader left it (view, filters, scroll anchor).
+  const backLink = document.querySelector<HTMLAnchorElement>('[data-back-link]');
+  if (backLink && document.referrer) {
+    try {
+      const from = new URL(document.referrer);
+      const home = new URL(backLink.href);
+      const samePath = (a: string, b: string) => a.replace(/\/$/, '') === b.replace(/\/$/, '');
+      if (from.origin === location.origin && samePath(from.pathname, home.pathname)) {
+        backLink.href = from.href;
+      }
+    } catch {
+      // Malformed referrer: keep the server-rendered link.
+    }
+  }
+
   const openButtons = document.querySelectorAll<HTMLButtonElement>('[data-comment-open]');
   const closeButtons = document.querySelectorAll<HTMLButtonElement>('[data-comment-close]');
 
@@ -616,6 +722,121 @@ function youtubeEmbedUrl(url: string): string | null {
     color: var(--accent);
   }
 
+  .study-rail a[aria-current='true'] {
+    color: var(--accent);
+  }
+
+  .study-outline {
+    display: grid;
+    margin: 0;
+    border-bottom: 1px solid var(--border);
+    padding: 0.2rem 0 0.45rem;
+    list-style: none;
+  }
+
+  .study-rail .study-outline a {
+    display: block;
+    border-bottom: 0;
+    border-left: 1px solid var(--border);
+    padding: 0.35rem 0 0.35rem 0.75rem;
+    font-family: var(--font-body);
+    font-size: 0.78rem;
+    letter-spacing: 0.01em;
+    line-height: 1.35;
+    text-transform: none;
+  }
+
+  .study-rail .study-outline a:hover {
+    padding-left: 1rem;
+  }
+
+  .study-rail .study-outline a[aria-current='true'] {
+    border-left-color: var(--accent);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .study-rail a,
+    .study-pager-link,
+    .study-pager-kicker i {
+      transition: none;
+    }
+  }
+
+  .study-pager {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
+    margin-top: 4rem;
+    border-top: 1px solid var(--accent-muted);
+    padding-top: 2rem;
+  }
+
+  .study-pager-link {
+    display: grid;
+    gap: 0.65rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem;
+    background: rgba(21, 20, 17, 0.72);
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
+
+  .study-pager-link.is-next {
+    grid-column: 2;
+    text-align: right;
+  }
+
+  .study-pager-link:hover {
+    border-color: var(--accent-muted);
+    background: var(--surface-high);
+  }
+
+  .study-pager-kicker,
+  .study-pager-meta {
+    display: flex;
+    gap: 0.65rem;
+    color: var(--text-faint);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    line-height: 1.35;
+    text-transform: uppercase;
+  }
+
+  .study-pager-kicker {
+    color: var(--accent);
+  }
+
+  .study-pager-kicker i {
+    font-style: normal;
+    transition: transform 0.25s ease;
+  }
+
+  .study-pager-link.is-previous:hover .study-pager-kicker i {
+    transform: translateX(-3px);
+  }
+
+  .study-pager-link.is-next:hover .study-pager-kicker i {
+    transform: translateX(3px);
+  }
+
+  .study-pager-link.is-next .study-pager-kicker,
+  .study-pager-link.is-next .study-pager-meta {
+    justify-content: flex-end;
+  }
+
+  .study-pager-title {
+    color: var(--text);
+    font-family: var(--font-serif);
+    font-size: 1.35rem;
+    line-height: 1.12;
+    transition: color 0.2s ease;
+  }
+
+  .study-pager-link:hover .study-pager-title {
+    color: var(--accent);
+  }
+
   .study-main {
     min-width: 0;
   }
@@ -640,6 +861,10 @@ function youtubeEmbedUrl(url: string): string | null {
 
     .study-rail a:hover {
       padding-left: 0.7rem;
+    }
+
+    .study-outline {
+      display: none;
     }
 
     .film-prose {
@@ -1087,6 +1312,15 @@ function youtubeEmbedUrl(url: string): string | null {
     .study-rail {
       grid-template-columns: repeat(2, minmax(0, 1fr));
       margin-bottom: 2.5rem;
+    }
+
+    .study-pager {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    .study-pager-link.is-next {
+      grid-column: auto;
     }
 
     .comment-modal {

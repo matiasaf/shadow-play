@@ -114,6 +114,10 @@ export const ui = {
     'film.framePendingCaption': 'Study frame pending for',
     'film.frameAlt': 'Frame from',
     'film.framePendingLabel': 'Frame pending for',
+    'film.readingTime': '{n} min read',
+    'film.pagerLabel': 'More studies',
+    'film.previous': 'Previous study',
+    'film.next': 'Next study',
 
     'map.title': 'The Map',
     'map.eyebrow': 'Relational archive',
@@ -288,6 +292,10 @@ export const ui = {
     'film.framePendingCaption': 'Fotograma de estudio pendiente para',
     'film.frameAlt': 'Fotograma de',
     'film.framePendingLabel': 'Fotograma pendiente de',
+    'film.readingTime': '{n} min de lectura',
+    'film.pagerLabel': 'Más estudios',
+    'film.previous': 'Estudio anterior',
+    'film.next': 'Estudio siguiente',
 
     'map.title': 'El mapa',
     'map.eyebrow': 'Archivo relacional',

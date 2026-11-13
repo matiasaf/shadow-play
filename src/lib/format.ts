@@ -12,3 +12,9 @@ export function runtimeTimecode(minutes?: number): string {
 export function caseNo(n: number): string {
   return `Nº${String(n).padStart(3, '0')}`;
 }
+
+/** Minutes to read a Markdown body at ~220 words per minute, at least 1. */
+export function readingMinutes(markdown: string): number {
+  const words = markdown.replace(/[#>*_`\-\[\]()]/g, ' ').split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.round(words / 220));
+}
