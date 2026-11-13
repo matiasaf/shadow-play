@@ -1,0 +1,451 @@
+---
+// Site-wide search: a build-time index of films, directors and the watchlist for
+// the page's language, searched in the browser. No essay text, no dependencies.
+import { useTranslations, localizePath, getLangFromUrl } from '../i18n/ui';
+import { getMovies, slugOf } from '../lib/movies';
+import { getDirectors } from '../lib/directors';
+import { getWatchlist, watchSlugOf } from '../lib/watchlist';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+type Kind = 'film' | 'director' | 'watchlist';
+interface SearchItem {
+  kind: Kind;
+  title: string;
+  sub: string;
+  href: string;
+  /** Lowercase, accent-free haystack: the title first, then everything else. */
+  terms: string;
+}
+
+const fold = (s: string) =>
+  s
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase();
+const termsOf = (parts: Array<string | number | undefined>) =>
+  fold(parts.filter((p) => p !== undefined && p !== '').join(' '));
+
+const [movies, directors, watchlist] = await Promise.all([
+  getMovies(lang),
+  getDirectors(lang),
+  getWatchlist(lang),
+]);
+
+const index: SearchItem[] = [
+  ...movies.map((movie) => ({
+    kind: 'film' as const,
+    title: movie.data.title,
+    sub: `${movie.data.director} · ${movie.data.year}`,
+    href: localizePath(`/films/${slugOf(movie)}/`, lang),
+    terms: termsOf([
+      movie.data.title,
+      movie.data.originalTitle,
+      movie.data.director,
+      movie.data.year,
+      ...movie.data.tags,
+    ]),
+  })),
+  ...directors.map((d) => ({
+    kind: 'director' as const,
+    title: d.name,
+    sub: (d.films.length === 1 ? t('dashboard.count.one') : t('dashboard.count.other')).replace(
+      '{n}',
+      String(d.films.length)
+    ),
+    href: localizePath(`/directors/${d.slug}/`, lang),
+    terms: termsOf([d.name]),
+  })),
+  ...watchlist.map((entry) => ({
+    kind: 'watchlist' as const,
+    title: entry.data.title,
+    sub: `${entry.data.director} · ${entry.data.year}`,
+    href: `${localizePath('/up-next/', lang)}#${watchSlugOf(entry)}`,
+    terms: termsOf([entry.data.title, entry.data.originalTitle, entry.data.director, entry.data.year]),
+  })),
+];
+
+const config = {
+  kinds: {
+    film: t('search.kind.film'),
+    director: t('search.kind.director'),
+    watchlist: t('search.kind.watchlist'),
+  },
+};
+---
+
+<button class="search-trigger" type="button" aria-haspopup="dialog" aria-controls="site-search" data-search-open>
+  <svg aria-hidden="true" viewBox="0 0 16 16" width="14" height="14">
+    <circle cx="7" cy="7" r="4.75" fill="none" stroke="currentColor" stroke-width="1.5"></circle>
+    <path d="M10.5 10.5 14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+  </svg>
+  <span class="search-trigger-label">{t('search.open')}</span>
+  <kbd class="search-trigger-key" aria-hidden="true">/</kbd>
+</button>
+
+<dialog class="search-dialog" id="site-search" aria-label={t('search.open')}>
+  <div class="search-panel">
+    <div class="search-field">
+      <svg aria-hidden="true" viewBox="0 0 16 16" width="16" height="16">
+        <circle cx="7" cy="7" r="4.75" fill="none" stroke="currentColor" stroke-width="1.5"></circle>
+        <path d="M10.5 10.5 14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+      </svg>
+      <input
+        type="search"
+        role="combobox"
+        aria-label={t('search.open')}
+        aria-autocomplete="list"
+        aria-controls="site-search-results"
+        aria-expanded="false"
+        placeholder={t('search.placeholder')}
+        autocomplete="off"
+        spellcheck="false"
+        data-search-input
+      />
+      <button class="search-close" type="button" data-search-close aria-label={t('film.closeModal')}>
+        Esc
+      </button>
+    </div>
+    <ul class="search-results" id="site-search-results" role="listbox" aria-label={t('search.results')} hidden></ul>
+    <p class="search-empty" role="status" data-search-empty hidden>{t('search.empty')}</p>
+  </div>
+</dialog>
+
+<script type="application/json" id="search-index" set:html={JSON.stringify(index).replace(/</g, '\\u003c')} />
+<script type="application/json" id="search-config" set:html={JSON.stringify(config)} />
+
+<script>
+  type Kind = 'film' | 'director' | 'watchlist';
+  interface SearchItem {
+    kind: Kind;
+    title: string;
+    sub: string;
+    href: string;
+    terms: string;
+  }
+
+  const MAX_RESULTS = 8;
+  const dialog = document.getElementById('site-search') as HTMLDialogElement | null;
+  const trigger = document.querySelector<HTMLButtonElement>('[data-search-open]');
+  const input = document.querySelector<HTMLInputElement>('[data-search-input]');
+  const list = document.getElementById('site-search-results') as HTMLUListElement | null;
+  const empty = document.querySelector<HTMLElement>('[data-search-empty]');
+
+  if (dialog && trigger && input && list && empty) {
+    const read = <T,>(id: string, fallback: T): T => {
+      try {
+        return JSON.parse(document.getElementById(id)?.textContent || '') as T;
+      } catch {
+        return fallback;
+      }
+    };
+    const index = read<SearchItem[]>('search-index', []);
+    const { kinds } = read<{ kinds: Record<Kind, string> }>('search-config', { kinds: {} as Record<Kind, string> });
+    const fold = (s: string) =>
+      s
+        .normalize('NFD')
+        .replace(/[̀-ͯ]/g, '')
+        .toLowerCase();
+    const titles = index.map((item) => fold(item.title));
+
+    let results: SearchItem[] = [];
+    let active = -1;
+
+    function search(query: string): SearchItem[] {
+      const q = fold(query).trim();
+      const words = q.split(/\s+/).filter(Boolean);
+      if (words.length === 0) return [];
+      // Rank: title starts with the query > title contains it > other terms only.
+      const scored: Array<{ item: SearchItem; rank: number; i: number }> = [];
+      index.forEach((item, i) => {
+        if (!words.every((w) => item.terms.includes(w))) return;
+        const title = titles[i];
+        const rank = title.startsWith(q) ? 0 : title.includes(q) ? 1 : 2;
+        scored.push({ item, rank, i });
+      });
+      return scored
+        .sort((a, b) => a.rank - b.rank || a.i - b.i)
+        .slice(0, MAX_RESULTS)
+        .map(({ item }) => item);
+    }
+
+    function setActive(next: number) {
+      active = next;
+      Array.from(list!.children).forEach((li, i) => li.setAttribute('aria-selected', String(i === active)));
+      const current = active >= 0 ? (list!.children[active] as HTMLElement | undefined) : undefined;
+      if (current) {
+        input!.setAttribute('aria-activedescendant', current.id);
+        current.scrollIntoView({ block: 'nearest' });
+      } else {
+        input!.removeAttribute('aria-activedescendant');
+      }
+    }
+
+    function render() {
+      const query = input!.value;
+      results = search(query);
+      list!.replaceChildren(
+        ...results.map((item, i) => {
+          const li = document.createElement('li');
+          li.id = `site-search-option-${i}`;
+          li.setAttribute('role', 'option');
+          li.setAttribute('aria-selected', 'false');
+          const link = document.createElement('a');
+          link.href = item.href;
+          link.tabIndex = -1;
+          const kind = document.createElement('span');
+          kind.className = 'search-kind';
+          kind.textContent = kinds[item.kind] ?? item.kind;
+          const title = document.createElement('span');
+          title.className = 'search-title';
+          title.textContent = item.title;
+          const sub = document.createElement('span');
+          sub.className = 'search-sub';
+          sub.textContent = item.sub;
+          link.append(kind, title, sub);
+          li.append(link);
+          li.addEventListener('mousemove', () => {
+            if (active !== i) setActive(i);
+          });
+          return li;
+        })
+      );
+      const hasQuery = query.trim() !== '';
+      list!.hidden = results.length === 0;
+      empty!.hidden = !hasQuery || results.length > 0;
+      input!.setAttribute('aria-expanded', String(results.length > 0));
+      setActive(results.length > 0 ? 0 : -1);
+    }
+
+    function open() {
+      if (dialog!.open) return;
+      dialog!.showModal();
+      input!.select();
+      render();
+    }
+
+    function close() {
+      if (dialog!.open) dialog!.close();
+    }
+
+    trigger.addEventListener('click', open);
+    dialog.querySelector('[data-search-close]')?.addEventListener('click', close);
+    // Closing (Escape, button or backdrop) hands focus back to the trigger.
+    dialog.addEventListener('close', () => trigger.focus());
+    dialog.addEventListener('click', (event) => {
+      if (event.target === dialog) close();
+    });
+
+    input.addEventListener('input', render);
+    input.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+        if (results.length === 0) return;
+        event.preventDefault();
+        const step = event.key === 'ArrowDown' ? 1 : -1;
+        setActive((active + step + results.length) % results.length);
+      } else if (event.key === 'Enter') {
+        const item = results[active];
+        if (!item) return;
+        event.preventDefault();
+        close();
+        window.location.assign(item.href);
+      }
+    });
+
+    // `/` (outside text fields) and Cmd/Ctrl+K open the search from anywhere.
+    document.addEventListener('keydown', (event) => {
+      const target = event.target as HTMLElement | null;
+      const typing =
+        !!target &&
+        (target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName));
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault();
+        open();
+      } else if (event.key === '/' && !typing && !event.metaKey && !event.ctrlKey && !event.altKey) {
+        event.preventDefault();
+        open();
+      }
+    });
+  }
+</script>
+
+<style>
+  .search-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    border: 1px solid var(--border-soft, var(--border));
+    border-radius: 999px;
+    padding: 0.32rem 0.45rem 0.32rem 0.75rem;
+    background: transparent;
+    color: var(--text-soft);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .search-trigger:hover {
+    border-color: var(--accent-muted);
+    color: var(--accent);
+  }
+
+  .search-trigger-key {
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 0 0.35rem;
+    color: var(--text-faint);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0;
+  }
+
+  @media (max-width: 640px) {
+    .search-trigger {
+      padding: 0.4rem;
+    }
+
+    /* Icon only on phones; the label stays for screen readers. */
+    .search-trigger-label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+    }
+
+    .search-trigger-key {
+      display: none;
+    }
+  }
+
+  .search-dialog {
+    /* The global `* { margin: 0 }` reset drops the UA's centering of :modal dialogs. */
+    margin: 12vh auto auto;
+    width: min(640px, calc(100vw - 2rem));
+    max-height: min(560px, calc(100vh - 14vh - 1rem));
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+  }
+
+  .search-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.72);
+    backdrop-filter: blur(2px);
+  }
+
+  .search-panel {
+    display: grid;
+  }
+
+  .search-field {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    border-bottom: 1px solid var(--border);
+    padding: 0.9rem 1rem;
+    color: var(--text-faint);
+  }
+
+  .search-field input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    background: transparent;
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 1.1rem;
+  }
+
+  .search-field input:focus {
+    outline: none;
+  }
+
+  .search-field input::-webkit-search-cancel-button {
+    display: none;
+  }
+
+  .search-close {
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 0.15rem 0.45rem;
+    background: transparent;
+    color: var(--text-faint);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    cursor: pointer;
+  }
+
+  .search-results {
+    display: grid;
+    margin: 0;
+    padding: 0.4rem;
+    list-style: none;
+    overflow-y: auto;
+  }
+
+  .search-results :global(a) {
+    display: grid;
+    grid-template-columns: 6.5rem minmax(0, 1fr);
+    gap: 0.1rem 0.9rem;
+    align-items: baseline;
+    border-radius: 3px;
+    padding: 0.6rem 0.75rem;
+    color: var(--text);
+  }
+
+  .search-results :global(li[aria-selected='true'] a) {
+    background: var(--surface-high);
+  }
+
+  .search-results :global(li[aria-selected='true'] .search-title) {
+    color: var(--accent);
+  }
+
+  .search-results :global(.search-kind) {
+    grid-row: span 2;
+    color: var(--text-faint);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .search-results :global(.search-title) {
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    line-height: 1.2;
+  }
+
+  .search-results :global(.search-sub) {
+    color: var(--text-soft);
+    font-size: 0.8rem;
+  }
+
+  .search-empty {
+    padding: 1.25rem 1rem;
+    color: var(--text-soft);
+    font-style: italic;
+  }
+
+  @media (max-width: 640px) {
+    .search-dialog {
+      margin-top: 0.75rem;
+      max-height: calc(100vh - 1.5rem);
+    }
+
+    .search-results :global(a) {
+      grid-template-columns: 1fr;
+    }
+
+    .search-results :global(.search-kind) {
+      grid-row: auto;
+    }
+  }
+</style>
