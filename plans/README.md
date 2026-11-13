@@ -29,7 +29,7 @@ Each plan ships as its own PR through `.agents/skills/ship-pr/SKILL.md`, with a 
 | 008 | Theme tags link to the filtered archive | P2 | S | 007 (hard) | TODO |
 | 009 | Film page navigation (previous/next, outline rail, reading time, back link) | P2 | M | 007 (soft) | DONE: reading time, `##` outline in the rail with scroll-tracked `aria-current`, previous/next pager, referrer-aware back link (`feat/film-navigation`) |
 | 010 | Lighten the home archive (on-demand views, list mode) | P2 | M–L | 007 | TODO |
-| 011 | Site-wide search | P3 | M | — | TODO |
+| 011 | Site-wide search | P3 | M | — | DONE: header search dialog (`/`, Cmd/Ctrl+K) over a build-time index of films, directors and the watchlist, accent-insensitive, ~13 KB per language (`feat/search`) |
 
 Notes:
 

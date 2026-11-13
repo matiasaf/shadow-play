@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import LanguageSwitcher from '../components/LanguageSwitcher.astro';
+import SiteSearch from '../components/SiteSearch.astro';
 import {
   useTranslations,
   localizePath,
@@ -63,6 +64,7 @@ const about = `${home === '/' ? '' : home}/#about`.replace('//', '/');
             <a href={map} aria-current={currentFor('map')}>{t('nav.map')}</a>
             <a href={upnext} aria-current={currentFor('up-next')}>{t('nav.upnext')}</a>
           </nav>
+          <SiteSearch />
           <LanguageSwitcher />
         </div>
       </div>
