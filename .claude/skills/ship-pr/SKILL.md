@@ -91,7 +91,8 @@ messages, PR titles and descriptions, PR comments. Content that is Spanish by de
    git worktree remove ../shadow-play.worktrees/<branch-with-dashes>
    git branch -d <branch>     # squash merges: confirm `git diff <branch> origin/main -- <paths>` is empty, then -D
    git push origin --delete <branch>
-   git fetch origin main:main
+   git fetch origin
+   git -C <main-checkout> merge --ff-only origin/main   # main is checked out there, so `fetch origin main:main` is refused
    ```
 
 ## Rules
